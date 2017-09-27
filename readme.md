@@ -20,11 +20,15 @@ $ composer install
   - configurar a conexão com o banco mysql
 
 - Migração do banco
-- Populando tabelas 
-- Configurando application key
 ```php
 $ php artisan migrate
+```
+- Populando tabelas 
+```php
 $ php artisan db:seed
+```
+- Configurando application key
+```php
 $ php artisan key:generate
 ```
 
