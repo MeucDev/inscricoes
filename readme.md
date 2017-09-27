@@ -19,9 +19,13 @@ $ composer install
 - Fazer uma cópia do arquivo .env.example e renomear para .env
   - configurar a conexão com o banco mysql
 
-## Migração
+- Migração do banco
+- Populando tabelas 
+- Configurando application key
 ```php
 $ php artisan migrate
+$ php artisan db:seed
+$ php artisan key:generate
 ```
 
 ## Run
