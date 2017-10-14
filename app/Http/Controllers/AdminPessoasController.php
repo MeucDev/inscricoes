@@ -20,11 +20,11 @@
 			$this->button_add = true;
 			$this->button_edit = true;
 			$this->button_delete = true;
-			$this->button_detail = true;
-			$this->button_show = true;
+			$this->button_detail = false;
+			$this->button_show = false;
 			$this->button_filter = true;
-			$this->button_import = false;
-			$this->button_export = false;
+			$this->button_import = true;
+			$this->button_export = true;
 			$this->table = "pessoas";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
@@ -36,7 +36,7 @@
 			$this->col[] = ["label"=>"Alojamento","name"=>"alojamento"];
 			$this->col[] = ["label"=>"EquipeRefeicao","name"=>"equipeRefeicao"];
 			$this->col[] = ["label"=>"Idade","name"=>"idade"];
-			$this->col[] = ["label"=>"Presença confirmada","name"=>"presencaConfirmada"];
+			$this->col[] = ["label"=>"Presença confirmada","name"=>"presencaConfirmada","callback_php"=>'$this->toUiPresencaConfirmada($row->presencaConfirmada)'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -59,10 +59,8 @@
 			$this->form[] = ['label'=>'Uf','name'=>'uf','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Telefone','name'=>'telefone','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Conjuge','name'=>'conjuge_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
-			$this->form[] = ['label'=>'Responsável','name'=>'responsavel_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Responsável','name'=>'responsavel_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
 			# END FORM DO NOT REMOVE THIS LINE
-
-			$this->form[] = ['label'=>'Filhos / Dependetes','name'=>'filhos','type'=>'child','columns'=>$this->col,'table'=>'pessoas','foreign_key'=>'responsavel_id'];
 
 			# OLD START FORM
 			//$this->form = [];
@@ -75,7 +73,7 @@
 			//$this->form[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar;ALOJCOL|Alojamento coletivo'];
 			//$this->form[] = ['label'=>'Refeição','name'=>'refeicao','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'QUIOSQUE_COM_CAFE|Quiosque com café;QUIOSQUE_SEM_CAFE|Quiosque sem café'];
 			//$this->form[] = ['label'=>'Equipe refeição','name'=>'equipeRefeicao','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'LAR_A|Lar A;LAR_B|Lar B;QUIOSQUE_A|Quiosque A;QUIOSQUE_B|Quiosque B'];
-			//$this->form[] = ['label'=>'Presenca confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Presenca confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			//$this->form[] = ['label'=>'Cep','name'=>'cep','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Endereço','name'=>'endereco','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10','placeholder'=>'Please enter a valid email address'];
 			//$this->form[] = ['label'=>'Número','name'=>'nroend','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
@@ -84,8 +82,21 @@
 			//$this->form[] = ['label'=>'Uf','name'=>'uf','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Telefone','name'=>'telefone','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Conjuge','name'=>'conjuge_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
-			//$this->form[] = ['label'=>'Responsável','name'=>'responsavel_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Responsável','name'=>'responsavel_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
 			# OLD END FORM
+
+			$columns[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-4'];
+			$columns[] = ['label'=>'Nome cracha','name'=>'nomecracha','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-10'];
+			$columns[] = ['label'=>'Idade','name'=>'idade','type'=>'number','validation'=>'integer|min:0','width'=>'col-sm-10'];
+			$columns[] = ['label'=>'Presenca confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
+			// $columns[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar;ALOJCOL|Alojamento coletivo'];
+			// $columns[] = ['label'=>'Tipo','name'=>'TIPO','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'R|Responsável;C|Conjuge;F|Filho / Dependente'];
+			// $columns[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar;ALOJCOL|Alojamento coletivo'];
+			// $columns[] = ['label'=>'Refeição','name'=>'refeicao','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'QUIOSQUE_COM_CAFE|Quiosque com café;QUIOSQUE_SEM_CAFE|Quiosque sem café'];
+			// $columns[] = ['label'=>'Equipe refeição','name'=>'equipeRefeicao','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'LAR_A|Lar A;LAR_B|Lar B;QUIOSQUE_A|Quiosque A;QUIOSQUE_B|Quiosque B'];
+			// $columns[] = ['label'=>'Presenca confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
+			
+			//$this->form[] = ['label'=>'Filhos / Dependetes','name'=>'filhos','type'=>'child','columns'=>$columns,'table'=>'pessoas','foreign_key'=>'responsavel_id'];
 
 			/* 
 	        | ---------------------------------------------------------------------- 
@@ -99,47 +110,51 @@
 			| @parent_columns = Sparate with comma, e.g : name,created_at
 	        | 
 	        */
-	        $this->sub_module = array();
+			$this->sub_module[] = ['label' => 'Dependentes', 
+			'path' => 'pessoas', 
+			'foreign_key' => 'responsavel_id', 
+			'button_color' => 'primary',
+			'button_icon' => 'fa fa-users',
+			'parent_columns' => 'nome'];
+			
+			
+			/* 
+			| ---------------------------------------------------------------------- 
+			| Add More Action Button / Menu
+			| ----------------------------------------------------------------------     
+			| @label       = Label of action 
+			| @url         = Target URL, you can use field alias. e.g : [id], [name], [title], etc
+			| @icon        = Font awesome class icon. e.g : fa fa-bars
+			| @color 	   = Default is primary. (primary, warning, succecss, info)     
+			| @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
+			| 
+			*/
+			$this->addaction = array();
 
 
-	        /* 
-	        | ---------------------------------------------------------------------- 
-	        | Add More Action Button / Menu
-	        | ----------------------------------------------------------------------     
-	        | @label       = Label of action 
-	        | @url         = Target URL, you can use field alias. e.g : [id], [name], [title], etc
-	        | @icon        = Font awesome class icon. e.g : fa fa-bars
-	        | @color 	   = Default is primary. (primary, warning, succecss, info)     
-	        | @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
-	        | 
-	        */
-	        $this->addaction = array();
+			/* 
+			| ---------------------------------------------------------------------- 
+			| Add More Button Selected
+			| ----------------------------------------------------------------------     
+			| @label       = Label of action 
+			| @icon 	   = Icon from fontawesome
+			| @name 	   = Name of button 
+			| Then about the action, you should code at actionButtonSelected method 
+			| 
+			*/
+			$this->button_selected = array();
 
-
-	        /* 
-	        | ---------------------------------------------------------------------- 
-	        | Add More Button Selected
-	        | ----------------------------------------------------------------------     
-	        | @label       = Label of action 
-	        | @icon 	   = Icon from fontawesome
-	        | @name 	   = Name of button 
-	        | Then about the action, you should code at actionButtonSelected method 
-	        | 
-	        */
-	        $this->button_selected = array();
-
-	                
-	        /* 
-	        | ---------------------------------------------------------------------- 
-	        | Add alert message to this module at overheader
-	        | ----------------------------------------------------------------------     
-	        | @message = Text of message 
-	        | @type    = warning,success,danger,info        
-	        | 
-	        */
-	        $this->alert        = array();
-	                
-
+					
+			/* 
+			| ---------------------------------------------------------------------- 
+			| Add alert message to this module at overheader
+			| ----------------------------------------------------------------------     
+			| @message = Text of message 
+			| @type    = warning,success,danger,info        
+			| 
+			*/
+			$this->alert        = array();
+											
 	        
 	        /* 
 	        | ---------------------------------------------------------------------- 
@@ -172,8 +187,7 @@
 	        | @label, @count, @icon, @color 
 	        |
 	        */
-	        $this->index_statistic = array();
-
+			$this->index_statistic[] = ['label'=>'Pessoas total','count'=>DB::table('pessoas')->count(),'icon'=>'fa fa-check','color'=>'primary'];
 
 
 	        /*
@@ -246,6 +260,14 @@
 	        $this->load_css = array();
 	        
 	        
+	    }
+
+
+	    public function toUiPresencaConfirmada($presenca) {
+			if ($presenca == 1)
+				return "Sim";
+			else
+				return "Não";
 	    }
 
 
