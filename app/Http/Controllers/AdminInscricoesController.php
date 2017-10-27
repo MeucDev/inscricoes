@@ -30,21 +30,21 @@
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Numero","name"=>"numero"];
-			$this->col[] = ["label"=>"Responsavel","name"=>"responsavel_id","join"=>"pessoas,nomecracha"];
-			$this->col[] = ["label"=>"DataInscricao","name"=>"dataInscricao"];
-			$this->col[] = ["label"=>"InscricaoPaga","name"=>"inscricaoPaga"];
-			$this->col[] = ["label"=>"TipoInscricao","name"=>"tipoInscricao"];
-			$this->col[] = ["label"=>"ValorInscricao","name"=>"valorInscricao"];
-			$this->col[] = ["label"=>"ValorInscricaoPago","name"=>"valorInscricaoPago"];
-			$this->col[] = ["label"=>"ValorTotal","name"=>"valorTotal"];
+			$this->col[] = ["label"=>"Número","name"=>"numero"];
+			$this->col[] = ["label"=>"Responsável","name"=>"responsavel_id","join"=>"pessoas,nome"];
+			$this->col[] = ["label"=>"Tipo","name"=>"tipoInscricao"];
+			$this->col[] = ["label"=>"Valor","name"=>"valorInscricao"];
+			$this->col[] = ["label"=>"Total","name"=>"valorTotal"];
+			$this->col[] = ["label"=>"Valor pago","name"=>"valorInscricaoPago"];
+			$this->col[] = ["label"=>"Pagou?","name"=>"inscricaoPaga"];
+			$this->col[] = ["label"=>"Data","name"=>"dataInscricao"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Numero','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'DataInscricao','name'=>'dataInscricao','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'InscricaoPaga','name'=>'inscricaoPaga','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Número','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Data','name'=>'dataInscricao','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Pagou','name'=>'inscricaoPaga','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Observacao','name'=>'observacao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'TipoInscricao','name'=>'tipoInscricao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'ValorInscricao','name'=>'valorInscricao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];

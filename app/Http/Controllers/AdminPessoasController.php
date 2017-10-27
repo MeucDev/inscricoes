@@ -59,7 +59,7 @@
 			$this->form[] = ['label'=>'Uf','name'=>'uf','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Telefone','name'=>'telefone','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Conjuge','name'=>'conjuge_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
-			$this->form[] = ['label'=>'Responsável','name'=>'responsavel_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
+			$this->form[] = ['label'=>'Responsável','name'=>'responsavel_id','type'=>'select2','validation'=>'integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
@@ -85,18 +85,14 @@
 			//$this->form[] = ['label'=>'Responsável','name'=>'responsavel_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
 			# OLD END FORM
 
+			$columns[] = ['label'=>'Tipo','name'=>'TIPO','type'=>'hidden','value'=>'F'];
 			$columns[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-4'];
 			$columns[] = ['label'=>'Nome cracha','name'=>'nomecracha','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-10'];
 			$columns[] = ['label'=>'Idade','name'=>'idade','type'=>'number','validation'=>'integer|min:0','width'=>'col-sm-10'];
-			$columns[] = ['label'=>'Presenca confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-			// $columns[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar;ALOJCOL|Alojamento coletivo'];
-			// $columns[] = ['label'=>'Tipo','name'=>'TIPO','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'R|Responsável;C|Conjuge;F|Filho / Dependente'];
-			// $columns[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar;ALOJCOL|Alojamento coletivo'];
-			// $columns[] = ['label'=>'Refeição','name'=>'refeicao','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'QUIOSQUE_COM_CAFE|Quiosque com café;QUIOSQUE_SEM_CAFE|Quiosque sem café'];
-			// $columns[] = ['label'=>'Equipe refeição','name'=>'equipeRefeicao','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'LAR_A|Lar A;LAR_B|Lar B;QUIOSQUE_A|Quiosque A;QUIOSQUE_B|Quiosque B'];
-			// $columns[] = ['label'=>'Presenca confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
+			$columns[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar;ALOJCOL|Alojamento coletivo'];
+			$columns[] = ['label'=>'Refeição','name'=>'refeicao','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'QUIOSQUE_COM_CAFE|Quiosque com café;QUIOSQUE_SEM_CAFE|Quiosque sem café'];
 			
-			//$this->form[] = ['label'=>'Filhos / Dependetes','name'=>'filhos','type'=>'child','columns'=>$columns,'table'=>'pessoas','foreign_key'=>'responsavel_id'];
+			$this->form[] = ['label'=>'Filhos / Dependetes','name'=>'filhos','type'=>'child','columns'=>$columns,'table'=>'pessoas','foreign_key'=>'responsavel_id'];
 
 			/* 
 	        | ---------------------------------------------------------------------- 
@@ -293,8 +289,11 @@
 	    |
 	    */
 	    public function hook_query_index(&$query) {
-	        //Your code here
-	            
+			//Your code here
+			
+			// if (!Request::has('parent_table')){
+			// 	$query->where('tipo','R');
+			// }
 	    }
 
 	    /*
