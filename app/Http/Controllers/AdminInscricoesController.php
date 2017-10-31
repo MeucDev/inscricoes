@@ -165,6 +165,10 @@
 				->where('ano', '2017')
 				->count(),'icon'=>'fa fa-list','color'=>'primary'];
 
+			$this->index_statistic[] = ['label'=>'Total pagas','count'=>DB::table('inscricoes')
+				->where([['inscricaoPaga', '1'] , ['ano', '2017']])
+				->count(),'icon'=>'fa fa-dollar','color'=>'green'];
+				
 	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Add javascript at body 
