@@ -13,9 +13,9 @@ class RenameResponsavelToPessoaOnInscricoes extends Migration
      */
     public function up()
     {
-        Schema::table('inscricoes', function (Blueprint $table) {
-            $table->renameColumn('responsavel_id', 'pessoa_id');
-        });
+        // Schema::table('inscricoes', function (Blueprint $table) {
+        //     $table->renameColumn('responsavel_id', 'pessoa_id');
+        // });
     }
 
     /**
