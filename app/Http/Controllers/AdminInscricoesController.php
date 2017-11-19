@@ -158,15 +158,14 @@
 	        |
 	        */
 			$this->index_statistic[] = ['label'=>'Total de presentes','count'=>DB::table('inscricoes')
-				->where([['presencaConfirmada', '1'] , ['ano', '2017']])
+				->where('presencaConfirmada', '1')
 				->count(),'icon'=>'fa fa-check','color'=>'green'];
 
 			$this->index_statistic[] = ['label'=>'Total de inscrições','count'=>DB::table('inscricoes')
-				->where('ano', '2017')
 				->count(),'icon'=>'fa fa-list','color'=>'primary'];
 
 			$this->index_statistic[] = ['label'=>'Total pagas','count'=>DB::table('inscricoes')
-				->where([['inscricaoPaga', '1'] , ['ano', '2017']])
+				->where('inscricaoPaga', '1')
 				->count(),'icon'=>'fa fa-dollar','color'=>'green'];
 				
 	        /*
@@ -265,7 +264,7 @@
 	    */
 	    public function hook_query_index(&$query) {
 	        //Your code here
-			$query->where('ano','2017');
+			//$query->where('ano','2017');
 	    }
 
 	    /*

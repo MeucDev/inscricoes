@@ -4,7 +4,7 @@
 	use Request;
 	use DB;
 	use CRUDBooster;
-
+	
 	class AdminPessoasController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
@@ -54,8 +54,6 @@
 			$this->form[] = ['label'=>'Cidade','name'=>'cidade','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Uf','name'=>'uf','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Telefone','name'=>'telefone','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Conjuge','name'=>'conjuge_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
-			$this->form[] = ['label'=>'Responsável','name'=>'responsavel_id','type'=>'select2','validation'=>'integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
@@ -81,14 +79,17 @@
 			//$this->form[] = ['label'=>'Responsável','name'=>'responsavel_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
 			# OLD END FORM
 
-			// $columns[] = ['label'=>'Tipo','name'=>'TIPO','type'=>'hidden','value'=>'F'];
-			// $columns[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-4'];
-			// $columns[] = ['label'=>'Nome cracha','name'=>'nomecracha','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-10'];
-			// $columns[] = ['label'=>'Idade','name'=>'idade','type'=>'number','validation'=>'integer|min:0','width'=>'col-sm-10'];
-			// $columns[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar;ALOJCOL|Alojamento coletivo'];
-			// $columns[] = ['label'=>'Refeição','name'=>'refeicao','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'QUIOSQUE_COM_CAFE|Quiosque com café;QUIOSQUE_SEM_CAFE|Quiosque sem café'];
-			
-			// $this->form[] = ['label'=>'Filhos / Dependetes','name'=>'filhos','type'=>'child','columns'=>$columns,'table'=>'pessoas','foreign_key'=>'responsavel_id'];
+			if ($row->TIPO == "R")
+			{
+				$this->form[] = ['label'=>'Conjuge','name'=>'conjuge_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
+				$columns[] = ['label'=>'Tipo','name'=>'TIPO','type'=>'hidden','value'=>'F'];
+				$columns[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-4'];
+				$columns[] = ['label'=>'Nome cracha','name'=>'nomecracha','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-10'];
+				$columns[] = ['label'=>'Idade','name'=>'idade','type'=>'number','validation'=>'integer|min:0','width'=>'col-sm-10'];
+				$columns[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar;ALOJCOL|Alojamento coletivo'];
+				$columns[] = ['label'=>'Refeição','name'=>'refeicao','type'=>'select','validation'=>'min:1|max:255','width'=>'col-sm-10','dataenum'=>'QUIOSQUE_COM_CAFE|Quiosque com café;QUIOSQUE_SEM_CAFE|Quiosque sem café'];
+				$this->form[] = ['label'=>'Filhos / Dependetes','name'=>'filhos','type'=>'child','columns'=>$columns,'table'=>'pessoas','foreign_key'=>'responsavel_id'];
+			}
 
 			/* 
 	        | ---------------------------------------------------------------------- 
@@ -102,12 +103,13 @@
 			| @parent_columns = Sparate with comma, e.g : name,created_at
 	        | 
 	        */
-			$this->sub_module[] = ['label' => 'Dependentes', 
-			'path' => 'pessoas', 
-			'foreign_key' => 'responsavel_id', 
-			'button_color' => 'primary',
-			'button_icon' => 'fa fa-users',
-			'parent_columns' => 'nome'];
+
+			// $this->sub_module[] = ['label' => 'Dependentes', 
+			// 'path' => 'pessoas', 
+			// 'foreign_key' => 'responsavel_id', 
+			// 'button_color' => 'primary',
+			// 'button_icon' => 'fa fa-users',
+			// 'parent_columns' => 'nome'];
 			
 			
 			/* 
