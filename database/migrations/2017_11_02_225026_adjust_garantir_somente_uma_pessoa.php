@@ -18,8 +18,6 @@ class AdjustGarantirSomenteUmaPessoa extends Migration
     {
         echo "Pessoas excluidas do cadastro de pessoas: \n ";
         $pessoas = App\Pessoa::select('nome')->distinct()->get();
-
-        //$pessoas = App\Pessoa::select('nome')->distinct()->where("nome", "HELENA SCHÜTZ")->get();
         
         foreach ($pessoas as $pessoa) {
             $this->removePessoaVelha($pessoa["nome"]);

@@ -42,7 +42,6 @@ class Meuc_modulsSeeder extends Seeder {
             'is_active'=>1
         ],
         [
-            
             'created_at'=>date('Y-m-d H:i:s'),
             'name'=>trans('Inscrições'),
             'icon'=>'fa fa-list',
