@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Evento;
+use App\Inscricao;
+
 
 class MeucSeeder extends Seeder
 {
@@ -16,6 +19,8 @@ class MeucSeeder extends Seeder
         $this->call('Meuc_modulsSeeder');                         
         
         $this->command->info('Updating the data completed !');
+
+        $this->call('Meuc_eventoSeeder');                         
     }
 }
 
@@ -43,11 +48,11 @@ class Meuc_modulsSeeder extends Seeder {
         ],
         [
             'created_at'=>date('Y-m-d H:i:s'),
-            'name'=>trans('Inscrições'),
-            'icon'=>'fa fa-list',
-            'path'=>'inscricoes',
-            'table_name'=>'inscricoes',
-            'controller'=>'AdminInscricoesController',
+            'name'=>trans('Eventos'),
+            'icon'=>'fa fa-flag',
+            'path'=>'eventos',
+            'table_name'=>'eventos',
+            'controller'=>'AdminEventosController',
             'is_protected'=>0,                                
             'is_active'=>1
         ],
@@ -64,3 +69,43 @@ class Meuc_modulsSeeder extends Seeder {
     }
 }
 
+class Meuc_eventoSeeder extends Seeder {
+    
+        public function run()
+        {      
+            $evento2016 = App\Evento::where("nome", "Congresso de famílias 2016")->first();
+            if (!$evento2016)
+                $evento2016 = new App\Evento;
+
+            $evento2016->nome = "Congresso de famílias 2016";
+            $date = new DateTime();
+            $date->setDate(2016, 1, 1);
+            $evento2016->data_inicio = $date;
+            $evento2016->data_fim = $date;
+            $evento2016->save();
+    
+            $evento2017 = App\Evento::where("nome", "Congresso de famílias 2017")->first();
+            if (!$evento2017)
+                $evento2017 = new App\Evento;
+            $evento2017->nome = "Congresso de famílias 2017";
+            $date = new DateTime();
+            $date->setDate(2017, 1, 1);
+            $evento2017->data_inicio = $date;
+            $evento2017->data_fim = $date;
+            $evento2017->save();
+
+
+            $incricoes = App\Inscricao::where('ano', 2016)->get();
+            foreach ($incricoes as $incricao){
+                $incricao->evento_id = $evento2016->id;
+                $incricao->save();
+            }
+
+            $incricoes = App\Inscricao::where('ano', 2017)->get();
+            foreach ($incricoes as $incricao){
+                $incricao->evento_id = $evento2017->id;
+                $incricao->save();
+            }
+        }
+    }
+    

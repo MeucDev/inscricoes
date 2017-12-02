@@ -30,6 +30,6 @@ class CreateValorItems extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('valor_itens');
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateValores extends Migration
+class AddEventoToInscricoes extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,9 @@ class CreateValores extends Migration
      */
     public function up()
     {
-        Schema::create('valores', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('evento_id')->unsigned();
+        Schema::table('inscricoes', function (Blueprint $table) {
+            $table->integer('evento_id')->unsigned()->nullable();
             $table->foreign('evento_id')->references('id')->on('eventos');
-            $table->string('codigo');
-            $table->string('nome');
-			$table->timestamps();
         });
     }
 
@@ -30,6 +26,8 @@ class CreateValores extends Migration
      */
     public function down()
     {
-        Schema::drop('valores');
+        Schema::table('inscricoes', function (Blueprint $table) {
+            $table->dropColumn('evento_id');
+        });    
     }
 }

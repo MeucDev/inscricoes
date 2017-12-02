@@ -29,6 +29,6 @@ class CreateEventos extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('eventos');
     }
 }
