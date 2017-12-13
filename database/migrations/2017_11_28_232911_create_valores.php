@@ -19,6 +19,8 @@ class CreateValores extends Migration
             $table->foreign('evento_id')->references('id')->on('eventos');
             $table->string('codigo');
             $table->string('nome');
+            $table->float('valor');
+            $table->string('categoria');
 			$table->timestamps();
         });
     }

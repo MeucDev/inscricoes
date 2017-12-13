@@ -61,9 +61,9 @@
 			| @parent_columns = Sparate with comma, e.g : name,created_at
 	        | 
 	        */
-	        $this->sub_module = array();
-
-
+			$this->sub_module[] = ['label'=>'Inscrições','path'=>'inscricoes','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'primary','button_icon'=>'fa fa-list'];
+			$this->sub_module[] = ['label'=>'Valores','path'=>'valores','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'success','button_icon'=>'fa fa-dollar'];
+			
 	        /* 
 	        | ---------------------------------------------------------------------- 
 	        | Add More Action Button / Menu
@@ -75,7 +75,7 @@
 	        | @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
 	        | 
 	        */
-	        $this->addaction = array();
+			$this->addaction = array();
 
 
 	        /* 

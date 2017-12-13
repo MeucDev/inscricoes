@@ -20,8 +20,8 @@
 			$this->button_add = true;
 			$this->button_edit = true;
 			$this->button_delete = true;
-			$this->button_detail = true;
-			$this->button_show = true;
+			$this->button_detail = false;
+			$this->button_show = false;
 			$this->button_filter = true;
 			$this->button_import = false;
 			$this->button_export = false;
@@ -30,15 +30,20 @@
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
+			$this->col[] = ["label"=>"Categoria","name"=>"categoria"];
 			$this->col[] = ["label"=>"Código","name"=>"codigo"];
 			$this->col[] = ["label"=>"Nome","name"=>"nome"];
+			$this->col[] = ["label"=>"Valor","name"=>"valor"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Evento Id','name'=>'evento_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','dataenum'=>'nome','datatable'=>'evento,id'];
+			$this->form[] = ['label'=>'Evento Id','name'=>'evento_id','type'=>'hidden'];
+			$this->form[] = ['label'=>'Categoria','name'=>'categoria','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Codigo','name'=>'codigo','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Valor','name'=>'valor','type'=>'money','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
@@ -47,6 +52,12 @@
 			//$this->form[] = ["label"=>"Codigo","name"=>"codigo","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
 			//$this->form[] = ["label"=>"Nome","name"=>"nome","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
 			# OLD END FORM
+
+			$columns[] = ['label'=>'Valor','name'=>'valor','type'=>'number','required'=>true];
+			$columns[] = ['label'=>'Data até','name'=>'data_ate','type'=>'text'];
+			$columns[] = ['label'=>'Idade inicial','name'=>'idade_inicio','type'=>'number'];
+			$columns[] = ['label'=>'Idade final','name'=>'idade_fim','type'=>'number'];
+			$this->form[] = ['label'=>'Variações','name'=>'valor_variacoes','type'=>'child','columns'=>$columns,'table'=>'valor_variacoes','foreign_key'=>'valor_id'];
 
 			/* 
 	        | ---------------------------------------------------------------------- 

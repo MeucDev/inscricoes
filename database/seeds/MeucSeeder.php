@@ -56,8 +56,27 @@ class Meuc_modulsSeeder extends Seeder {
             'is_protected'=>0,                                
             'is_active'=>1
         ],
+        [
+            'created_at'=>date('Y-m-d H:i:s'),
+            'name'=>trans('Valores'),
+            'icon'=>'fa fa-dollar',
+            'path'=>'valores',
+            'table_name'=>'valores',
+            'controller'=>'AdminValoresController',
+            'is_protected'=>0,                                
+            'is_active'=>1
+        ],
+        [
+            'created_at'=>date('Y-m-d H:i:s'),
+            'name'=>trans('Incrições'),
+            'icon'=>'fa fa-list',
+            'path'=>'inscricoes',
+            'table_name'=>'inscricoes',
+            'controller'=>'AdminInscricoesController',
+            'is_protected'=>0,                                
+            'is_active'=>1
+        ],        
         ];
-
 
         foreach($data as $k=>$d) {
             if(DB::table('cms_moduls')->where('name',$d['name'])->count()) {

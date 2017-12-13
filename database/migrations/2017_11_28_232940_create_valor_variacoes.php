@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateValorItems extends Migration
+class CreateValorVariacoes extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateValorItems extends Migration
      */
     public function up()
     {
-        Schema::create('valor_itens', function (Blueprint $table) {
+        Schema::create('valor_variacoes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('valor_id')->unsigned();
             $table->foreign('valor_id')->references('id')->on('valores');
-            $table->string('codigo');
             $table->float('valor');
-			$table->timestamps();
+            $table->date('data_ate')->nullable();
+            $table->integer('idade_inicio')->nullable();
+            $table->integer('idade_fim')->nullable();
         });
     }
 
