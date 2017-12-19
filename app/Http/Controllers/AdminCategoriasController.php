@@ -4,88 +4,46 @@
 	use Request;
 	use DB;
 	use CRUDBooster;
-	use App\Valor;
-	use App\Variacao;
-	
-	class AdminInscricoesController extends \crocodicstudio\crudbooster\controllers\CBController {
+
+	class AdminCategoriasController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
-
-			# START CONFIGURATION DO NOT REMOVE THIS LINE
-			$this->title_field = "id";
-			$this->limit = "20";
-			$this->orderby = "numero,desc";
-			$this->global_privilege = false;
-			$this->button_table_action = true;
-			$this->button_bulk_action = true;
-			$this->button_action_style = "button_icon";
-			$this->button_add = true;
-			$this->button_edit = true;
-			$this->button_delete = true;
-			$this->button_detail = false;
-			$this->button_show = false;
-			$this->button_filter = true;
-			$this->button_import = false;
-			$this->button_export = false;
-			$this->table = "inscricoes";
+	    	# START CONFIGURATION DO NOT REMOVE THIS LINE
+			$this->table 			   = "categorias";	        
+			$this->title_field         = "id";
+			$this->limit               = 20;
+			$this->orderby             = "id,desc";
+			$this->show_numbering      = FALSE;
+			$this->global_privilege    = FALSE;	        
+			$this->button_table_action = TRUE;   
+			$this->button_action_style = "button_icon";     
+			$this->button_add          = TRUE;
+			$this->button_delete       = TRUE;
+			$this->button_edit         = TRUE;
+			$this->button_detail       = TRUE;
+			$this->button_show         = TRUE;
+			$this->button_filter       = TRUE;        
+			$this->button_export       = FALSE;	        
+			$this->button_import       = FALSE;
+			$this->button_bulk_action  = TRUE;	
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
-
-			$evento = (int)Request::get('parent_id');
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Número","name"=>"numero"];
-			$this->col[] = ["label"=>"Pessoa","name"=>"pessoa_id","join"=>"pessoas,nome"];
-			$this->col[] = ["label"=>"Tipo","name"=>"tipoInscricao"];
-			$this->col[] = ["label"=>"Total","name"=>"valorTotal"];
-			$this->col[] = ["label"=>"Pago","name"=>"valorTotalPago"];
-			$this->col[] = ["label"=>"Incricao","name"=>"valorInscricao"];
-			$this->col[] = ["label"=>"Incricao Pago","name"=>"valorInscricaoPago"];
-			$this->col[] = ["label"=>"Data","name"=>"dataInscricao"];
+			$this->col[] = ["label"=>"Código","name"=>"codigo"];
+			$this->col[] = ["label"=>"Nome","name"=>"nome"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
-
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Número','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Data','name'=>'dataInscricao','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Pessoa','name'=>'pessoa_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
-			$this->form[] = ['label'=>'Pagou?','name'=>'inscricaoPaga','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-
-			$valores = \App\Valor::getValoresAgrupadosPorCategoria();
-
-			foreach($valores as $key => $value) 
-			{
-				$categoria = collect($categorias[$key]);
-				$items = $categoria->map(function ($item, $key) {
-					return $item->codigo . "|" . $item->nome;
-				});
-				$dataenum = implode(";", $items->toArray());
-				$this->form[] = ['label'=>$key,'name'=>$categoria->categoriaCodigo,'type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10', 'dataenum'=>$dataenum];
-			}
-			
-			$this->form[] = ['label'=>'Presença confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-			$this->form[] = ['label'=>'Valor','name'=>'valorInscricao','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Valor total','name'=>'valorTotal','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Valor pago','name'=>'valorInscricaoPago','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Valor total pago','name'=>'valorTotalPago','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Ano','name'=>'ano','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Observação','name'=>'observacao','type'=>'wysiwyg','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Código','name'=>'codigo','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ['label'=>'Numero','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'DataInscricao','name'=>'dataInscricao','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'InscricaoPaga','name'=>'inscricaoPaga','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Observacao','name'=>'observacao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'TipoInscricao','name'=>'tipoInscricao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'ValorInscricao','name'=>'valorInscricao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'ValorInscricaoPago','name'=>'valorInscricaoPago','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'ValorTotal','name'=>'valorTotal','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'ValorTotalPago','name'=>'valorTotalPago','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Responsavel Id','name'=>'responsavel_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'responsavel,id'];
-			//$this->form[] = ['label'=>'Ano','name'=>'ano','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Código','name'=>'codigo','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			# OLD END FORM
 
 			/* 
@@ -172,17 +130,11 @@
 	        | ---------------------------------------------------------------------- 
 	        | @label, @count, @icon, @color 
 	        |
-			*/
-			
-			$this->index_statistic[] = ['label'=>'Total de presentes','count'=>DB::table('inscricoes')
-				->where([['presencaConfirmada', '1'] , ['evento_id', $evento]])
-				->count(),'icon'=>'fa fa-check','color'=>'green'];
-			$this->index_statistic[] = ['label'=>'Total de inscrições','count'=>DB::table('inscricoes')
-				->where('evento_id', $evento)
-				->count(),'icon'=>'fa fa-list','color'=>'primary'];
-			$this->index_statistic[] = ['label'=>'Total pagas','count'=>DB::table('inscricoes')
-				->where([['inscricaoPaga', '1'] , ['evento_id', $evento]])
-				->count(),'icon'=>'fa fa-dollar','color'=>'green'];				
+	        */
+	        $this->index_statistic = array();
+
+
+
 	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Add javascript at body 
@@ -279,7 +231,7 @@
 	    */
 	    public function hook_query_index(&$query) {
 	        //Your code here
-			//$query->where('ano','2017');
+	            
 	    }
 
 	    /*

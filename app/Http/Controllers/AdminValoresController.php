@@ -30,20 +30,19 @@
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Categoria","name"=>"categoria"];
-			$this->col[] = ["label"=>"Código","name"=>"codigo"];
 			$this->col[] = ["label"=>"Nome","name"=>"nome"];
+			$this->col[] = ["label"=>"Código","name"=>"codigo"];
+			$this->col[] = ["label"=>"Categoria","name"=>"categoria_id","join"=>"categorias,nome"];
 			$this->col[] = ["label"=>"Valor","name"=>"valor"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
 			$this->form[] = ['label'=>'Evento Id','name'=>'evento_id','type'=>'hidden'];
-			$this->form[] = ['label'=>'Categoria','name'=>'categoria','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Categoria','name'=>'categoria_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'categorias,nome'];
 			$this->form[] = ['label'=>'Codigo','name'=>'codigo','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor','name'=>'valor','type'=>'money','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM

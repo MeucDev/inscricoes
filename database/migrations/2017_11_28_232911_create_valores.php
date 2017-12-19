@@ -20,7 +20,6 @@ class CreateValores extends Migration
             $table->string('codigo');
             $table->string('nome');
             $table->float('valor');
-            $table->string('categoria');
 			$table->timestamps();
         });
     }

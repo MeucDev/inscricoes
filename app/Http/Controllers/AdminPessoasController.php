@@ -54,6 +54,7 @@
 			$this->form[] = ['label'=>'Cidade','name'=>'cidade','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Uf','name'=>'uf','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Telefone','name'=>'telefone','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Conjuge','name'=>'conjuge_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
@@ -80,7 +81,6 @@
 			# OLD END FORM
 			
 
-			$this->form[] = ['label'=>'Conjuge','name'=>'conjuge_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
 			$columns[] = ['label'=>'Tipo','name'=>'TIPO','type'=>'hidden','value'=>'F'];
 			$columns[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-4'];
 			$columns[] = ['label'=>'Nome cracha','name'=>'nomecracha','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-10'];
