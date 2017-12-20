@@ -36,3 +36,7 @@ $ php artisan key:generate
 ```php
 $ php artisan serve
 ```
+
+## Usuário e senha
+default email : admin@crudbooster.com
+default password : 123456
