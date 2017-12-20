@@ -49,7 +49,7 @@ class Meuc_modulsSeeder extends Seeder {
         [
             'created_at'=>date('Y-m-d H:i:s'),
             'name'=>trans('Eventos'),
-            'icon'=>'fa fa-flag',
+            'icon'=>'fa fa-map-marker',
             'path'=>'eventos',
             'table_name'=>'eventos',
             'controller'=>'AdminEventosController',
@@ -66,6 +66,16 @@ class Meuc_modulsSeeder extends Seeder {
             'is_protected'=>0,                                
             'is_active'=>1
         ],
+        [
+            'created_at'=>date('Y-m-d H:i:s'),
+            'name'=>trans('Categorias'),
+            'icon'=>'fa fa-tag',
+            'path'=>'categorias',
+            'table_name'=>'categorias',
+            'controller'=>'AdminCategoriasController',
+            'is_protected'=>0,                                
+            'is_active'=>1
+        ],         
         [
             'created_at'=>date('Y-m-d H:i:s'),
             'name'=>trans('Incrições'),

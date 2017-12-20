@@ -177,7 +177,7 @@
 			$this->index_statistic[] = ['label'=>'Total de presentes','count'=>DB::table('inscricoes')
 				->where([['presencaConfirmada', '1'] , ['evento_id', $evento]])
 				->count(),'icon'=>'fa fa-check','color'=>'green'];
-			$this->index_statistic[] = ['label'=>'Total de inscrições','count'=>DB::table('inscricoes')
+			$this->index_statistic[] = ['label'=>'Total de inscritos','count'=>DB::table('inscricoes')
 				->where('evento_id', $evento)
 				->count(),'icon'=>'fa fa-list','color'=>'primary'];
 			$this->index_statistic[] = ['label'=>'Total pagas','count'=>DB::table('inscricoes')
