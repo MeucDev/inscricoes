@@ -179,7 +179,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         crocodicstudio\crudbooster\CRUDBoosterServiceProvider::class,
-
+        laravel\pagseguro\Platform\Laravel5\ServiceProvider::class,
     ],
 
     /*
@@ -227,7 +227,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        'PagSeguro' => laravel\pagseguro\Platform\Laravel5\PagSeguro::class
     ],
 
 ];
