@@ -48,7 +48,7 @@ return [
         'adapter' => [
             'type' => 'curl',
             'options' => [
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0,
+                //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0,
                 //CURLOPT_PROXY => 'http://user:pass@host:port', // PROXY OPTION
             ]
         ],

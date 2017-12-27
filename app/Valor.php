@@ -18,8 +18,9 @@ class Valor extends Model
         return $this->belongsTo('App\Categoria');
     }
 
-    public static function getValoresAgrupadosPorCategoria(){
+    public static function getValoresAgrupadosPorCategoria($evento){
         $valores = DB::table('valores')
+            ->where('evento_id', $evento)
             ->join('categorias', 'valores.categoria_id', '=', 'categorias.id')
             ->select('valores.nome', 'valores.codigo', 'valores.valor', 'categorias.codigo as categoriaCodigo', 'categorias.nome as categoria')
             ->get();

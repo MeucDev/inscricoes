@@ -31,6 +31,6 @@ class CreateValorVariacoes extends Migration
      */
     public function down()
     {
-        Schema::drop('valor_itens');
+        Schema::drop('valor_variacoes');
     }
 }

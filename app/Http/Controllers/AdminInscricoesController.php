@@ -31,7 +31,10 @@
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
 			$evento = (int)Request::get('parent_id');
+			if ($evento == 0)
+				$evento = (int)Request::get('evento_id');
 
+				
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			$this->col[] = ["label"=>"Número","name"=>"numero"];
@@ -47,30 +50,30 @@
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Número','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Data','name'=>'dataInscricao','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Número','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','readonly' =>true,'width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Pessoa','name'=>'pessoa_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
-			$this->form[] = ['label'=>'Pagou?','name'=>'inscricaoPaga','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 
-			$valores = \App\Valor::getValoresAgrupadosPorCategoria();
+			$valores = \App\Valor::getValoresAgrupadosPorCategoria($evento);
 
 			foreach($valores as $key => $value) 
 			{
-				$categoria = collect($categorias[$key]);
+				$categoria = collect($valores[$key]);
 				$items = $categoria->map(function ($item, $key) {
 					return $item->codigo . "|" . $item->nome;
 				});
 				$dataenum = implode(";", $items->toArray());
-				$this->form[] = ['label'=>$key,'name'=>$categoria->categoriaCodigo,'type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10', 'dataenum'=>$dataenum];
+				$this->form[] = ['label'=>$key,'name'=>$categoria->categoriaCodigo,'type'=>'select','validation'=>'required','width'=>'col-sm-10', 'dataenum'=>$dataenum];
 			}
 			
+			$this->form[] = ['label'=>'Pagou?','name'=>'inscricaoPaga','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			$this->form[] = ['label'=>'Presença confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-			$this->form[] = ['label'=>'Valor','name'=>'valorInscricao','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Valor inscricão','name'=>'valorInscricao','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Valor inscricão pago','name'=>'valorInscricaoPago','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor total','name'=>'valorTotal','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Valor pago','name'=>'valorInscricaoPago','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor total pago','name'=>'valorTotalPago','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Ano','name'=>'ano','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Observação','name'=>'observacao','type'=>'wysiwyg','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Evento','name'=>'evento_id','type'=>'hidden', 'value'=>$evento];
+			
+			//$this->form[] = ['label'=>'Observação','name'=>'observacao','type'=>'wysiwyg','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
@@ -177,7 +180,7 @@
 			$this->index_statistic[] = ['label'=>'Total de presentes','count'=>DB::table('inscricoes')
 				->where([['presencaConfirmada', '1'] , ['evento_id', $evento]])
 				->count(),'icon'=>'fa fa-check','color'=>'green'];
-			$this->index_statistic[] = ['label'=>'Total de inscritos','count'=>DB::table('inscricoes')
+			$this->index_statistic[] = ['label'=>'Total de inscrições','count'=>DB::table('inscricoes')
 				->where('evento_id', $evento)
 				->count(),'icon'=>'fa fa-list','color'=>'primary'];
 			$this->index_statistic[] = ['label'=>'Total pagas','count'=>DB::table('inscricoes')
@@ -300,8 +303,8 @@
 	    |
 	    */
 	    public function hook_before_add(&$postdata) {        
-	        //Your code here
-
+			$postdata['ano'] = date("Y");
+			$postdata['dataInscricao'] = date("Y-m-d h:i:s");
 	    }
 
 	    /* 
@@ -327,6 +330,7 @@
 	    public function hook_before_edit(&$postdata,$id) {        
 	        //Your code here
 
+			
 	    }
 
 	    /* 
