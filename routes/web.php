@@ -17,5 +17,10 @@ Route::get('/', function () {
 
 
 Route::get('/eventos', function () {
-    return view('evento');
+    return view('eventos');
 });
+
+
+Route::get('/evento/{id}/{nome?}', function ($id, $nome = null) {
+    return view('evento-detalhe');
+})->where([ 'id' => '[0-9]+', 'nome' => '[a-zA-Z0-9-]+' ]);
