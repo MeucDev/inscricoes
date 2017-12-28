@@ -2,6 +2,7 @@
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
+use App\Variacao;
 
 class Valor extends Model
 {
@@ -16,6 +17,22 @@ class Valor extends Model
     public function categoria()
     {
         return $this->belongsTo('App\Categoria');
+    }
+
+
+    public static function getValor($codigo, $evento, $pessoa){
+        $valor = Valor::where("evento_id", $evento)
+        ->where("codigo", $codigo)
+        ->first();
+
+        if ($valor->variacoes->count() == 0)
+            return $valor->valor;
+
+        $valorVariacao = Variacao::getValor($valor->id, $pessoa);
+        if ($valorVariacao)
+            return $valorVariacao;
+        else
+            return $valor->valor;
     }
 
     public static function getValoresAgrupadosPorCategoria($evento){

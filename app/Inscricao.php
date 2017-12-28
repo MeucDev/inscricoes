@@ -9,4 +9,5 @@ class Inscricao extends Model
     protected $primaryKey = 'numero';
     public $timestamps = false;
     protected $table = 'inscricoes';
+
 }
