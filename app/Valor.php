@@ -11,7 +11,7 @@ class Valor extends Model
 
     public function variacoes()
     {
-        return $this->hasMany('App\Variacao', 'valor_id', 'id');
+        return $this->hasMany('App\Variacao', 'valor_id', 'id')->orderBy('data_ate');
     }
     
     public function categoria()
@@ -19,21 +19,40 @@ class Valor extends Model
         return $this->belongsTo('App\Categoria');
     }
 
-
     public static function getValor($codigo, $evento, $pessoa){
         $valor = Valor::where("evento_id", $evento)
         ->where("codigo", $codigo)
         ->first();
 
-        if ($valor->variacoes->count() == 0)
-            return $valor->valor;
+        if (!$valor)
+            return 0;
 
-        $valorVariacao = Variacao::getValor($valor->id, $pessoa);
+        $valorVariacao = $valor->getValorVariacao($pessoa);
+        
         if ($valorVariacao)
             return $valorVariacao;
         else
             return $valor->valor;
     }
+
+    public function getValorVariacao($pessoa){
+        $dateNow = date("Y-m-d");
+
+        $variacoes = Variacao::where("valor_id", $this->id)
+            ->orderBy('data_ate')
+            ->get();
+
+        foreach ($this->variacoes as $variacao) {
+            if ($variacao->data_ate && $dateNow <= $variacao->data_ate)
+                return $variacao->valor;
+            
+            if ($pessoa->idade >= $variacao->idade_inicio && $pessoa->idade <= $variacao->idade_fim)
+                return $variacao->valor;
+        }
+
+        return null;
+    }        
+
 
     public static function getValoresAgrupadosPorCategoria($evento){
         $valores = DB::table('valores')

@@ -306,11 +306,11 @@
 
 			$pessoa = \App\Pessoa::find($postdata['pessoa_id']);
 
-			$postdata['valorInscricao'] = \App\Valor::getValor($postdata['tipoInscricao'], $this->evento, $pessoa);
+			$valorInscricao = \App\Valor::getValor($postdata['tipoInscricao'], $this->evento, $pessoa);
+			$postdata['valorInscricao'] = $valorInscricao;
 
 			$valorAlojamento = \App\Valor::getValor($postdata['alojamento'], $this->evento, $pessoa);
 			$valorRefeicao = \App\Valor::getValor($postdata['refeicao'], $this->evento, $pessoa);
-			
 			$postdata['valorTotal'] = $valorAlojamento + $valorRefeicao;
 	    }
 
