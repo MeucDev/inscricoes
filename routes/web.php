@@ -24,3 +24,8 @@ Route::get('/eventos', function () {
 Route::get('/evento/{id}/{nome?}', function ($id, $nome = null) {
     return view('evento-detalhe');
 })->where([ 'id' => '[0-9]+', 'nome' => '[a-zA-Z0-9-]+' ]);
+
+
+Route::get('/pagamento/{id}/{segredo}', function ($id, $nome = null) {
+    return view('pagamento');
+})->where([ 'id' => '[0-9]+', 'segredo' => '[a-zA-Z0-9]+' ]);
