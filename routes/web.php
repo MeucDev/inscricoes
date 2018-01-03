@@ -16,16 +16,18 @@ Route::get('/', function () {
 });
 
 
+Route::resource('pessoas', 'PessoaController');
+
 Route::get('/eventos', function () {
     return view('eventos');
 });
 
 
-Route::get('/evento/{id}/{nome?}', function ($id, $nome = null) {
-    return view('evento-detalhe');
+Route::get('/eventos/{id}/{nome?}', function ($id, $nome = null) {
+    return view('evento');
 })->where([ 'id' => '[0-9]+', 'nome' => '[a-zA-Z0-9-]+' ]);
 
 
-Route::get('/pagamento/{id}/{segredo}', function ($id, $nome = null) {
+Route::get('/pagamentos/{id}/{segredo}', function ($id, $nome = null) {
     return view('pagamento');
 })->where([ 'id' => '[0-9]+', 'segredo' => '[a-zA-Z0-9]+' ]);
