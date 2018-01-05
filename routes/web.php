@@ -15,8 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
-Route::resource('pessoas', 'PessoaController');
+Route::get('pessoas/{cpf}', 'PessoaController@show');
 
 Route::get('/eventos', function () {
     return view('eventos');
