@@ -15,17 +15,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('pessoas/{cpf}', 'PessoaController@show');
+Route::get('pessoas/{cpf}', 'PessoasController@show');
 
 Route::get('/eventos', function () {
     return view('eventos');
 });
 
-
-Route::get('/eventos/{id}/{nome?}', function ($id, $nome = null) {
-    return view('evento');
-})->where([ 'id' => '[0-9]+', 'nome' => '[a-zA-Z0-9-]+' ]);
-
+Route::get('/eventos/{id}/{nome?}', 'EventosController@show')
+    ->where([ 'id' => '[0-9]+', 'nome' => '[a-zA-Z0-9-]+' ]);
 
 Route::get('/pagamentos/{id}/{segredo}', function ($id, $nome = null) {
     return view('pagamento');

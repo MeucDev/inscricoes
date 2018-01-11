@@ -13,13 +13,17 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example', require('./components/Example.vue'));
+
+Vue.component('responsavel', require('./components/responsavel.vue'));
+Vue.component('dependente', require('./components/dependente.vue'));
+
 
 const app = new Vue({
     el: '#app',
     data () {
         return {
-          message: "olá pessoal",
+          pesquisa: {cpf:"04442206902", email: ""},
+          message: "olá mundo"
         }
     },
 });

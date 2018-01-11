@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
+use App\Evento;
 use App\Http\Controllers\Controller;
 
-class UserController extends Controller
+class EventosController extends Controller
 {
     /**
      * Show the profile for the given user.
@@ -13,8 +13,8 @@ class UserController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function index($id)
+    public function show($id, $nome = null)
     {
-        return view('evento.form');
+        return view('evento', ['evento' => Evento::findOrFail($id)]);
     }
 }
