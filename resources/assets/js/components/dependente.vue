@@ -15,7 +15,6 @@
                     <label for="parentesco">Parentesco</label>
                     <select name="parentesco" v-model="pessoa.TIPO" id="parentesco" class="form-control">
                         <option value="C">Cônjuge</option>
-                        <option value="M">Marido</option>
                         <option value="F">Filho(a)</option>
                         <option value="O">Outro</option>
                     </select>
@@ -74,8 +73,6 @@
                         return 'Cônjuge';
                     case 'F':
                         return 'Filho';
-                    case 'M':
-                        return 'Marido';
                     default:
                         return 'Outro';
                 }                

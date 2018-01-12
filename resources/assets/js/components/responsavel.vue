@@ -71,11 +71,12 @@
                 </div>
                 <div class="clearfix"></div>
             </div>
+
         </div>
     </div>    
 	<dependente v-for="dependente in pessoa.dependentes" v-bind:key="dependente.id" 
     :pessoa="dependente" :remove="removeDependente"></dependente>
-    <div class="commands">
+    <div class="text-right commands">
         <button type="button" class="btn btn-success" @click="addDependente">Adicionar dependente</button>
     </div>
 </div>
@@ -100,14 +101,13 @@
                 });
             },
             removeDependente: function(id){
-                debugger;
                 this.pessoa.dependentes = this.pessoa.dependentes.filter(function( obj ) {
                     return obj.id !== id;
                 })
             },
             getPessoa: function(){
                 // GET /someUrl
-                this.$http.get('http://localhost/pessoas/' + this.pessoa.cpf).then(response => {
+                this.$http.get('/pessoas/' + this.pessoa.cpf).then(response => {
                     // get body data
                     this.pessoa = response.body;
                 }, (error) => {
