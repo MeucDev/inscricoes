@@ -73,9 +73,10 @@
             </div>
         </div>
     </div>    
-	<dependente v-for="dependente in pessoa.dependentes" v-bind:key="dependente.id" :pessoa="dependente"></dependente>
+	<dependente v-for="dependente in pessoa.dependentes" v-bind:key="dependente.id" 
+    :pessoa="dependente" :remove="removeDependente"></dependente>
     <div class="commands">
-        <button type="button" class="btn btn-success">Adicionar dependente</button>
+        <button type="button" class="btn btn-success" @click="addDependente">Adicionar dependente</button>
     </div>
 </div>
 </template>
@@ -87,10 +88,23 @@
         },
         data (){
             return{
-                pessoa : {cpf:'0444220690'}
+                pessoa : {cpf:'0444220690', dependentes: []}
             }
         },
         methods: {
+            addDependente: function(){
+                this.pessoa.dependentes.push({
+                    id: this.pessoa.dependentes.length -100,
+                    alojamento: this.pessoa.alojamento,
+                    refeicao: this.pessoa.refeicao
+                });
+            },
+            removeDependente: function(id){
+                debugger;
+                this.pessoa.dependentes = this.pessoa.dependentes.filter(function( obj ) {
+                    return obj.id !== id;
+                })
+            },
             getPessoa: function(){
                 // GET /someUrl
                 this.$http.get('http://localhost/pessoas/' + this.pessoa.cpf).then(response => {

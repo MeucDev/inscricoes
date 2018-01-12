@@ -4,7 +4,7 @@
         <div class="box-header with-border">
             <span class="badge bg-light-blue">{{getTipo(pessoa.TIPO)}}</span>
             <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool">
+                <button type="button" class="btn btn-box-tool" @click="remove(pessoa.id)">
                     <i class="fa fa-times"></i>
                 </button>
             </div>
@@ -63,7 +63,7 @@
 
 <script>
     export default {
-        props: ['pessoa'],
+        props: ['pessoa', 'remove'],
         mounted() {
             console.log('Component mounted.')
         },
