@@ -23,6 +23,9 @@
 		.jumbotron a.btn {
 			margin-top: 20px;
 		}
+		.commands {
+			margin-bottom: 20px;
+		}		
 
 		.progress {
 			background: #ddd;
@@ -54,16 +57,8 @@
 			</div>
 		</div>
 		<div class="container">
-			<div class="progress progress-sm active">
-				<div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0"
-				    aria-valuemax="100" style="width:40%">
-					<span class="sr-only">60%</span>
-				</div>
-			</div>
-
 			<div id="step_2" data-step="2" class="step">
-				<responsavel :pesquisa="pesquisa"></responsavel>
-				<dependente></dependente>
+				<responsavel></responsavel>
 			</div>
 
 			<div id="step_3" data-step="3" class="step">

@@ -2,7 +2,7 @@
 <div class="box box-primary">
     <div class="person">
         <div class="box-header with-border">
-            <span class="badge bg-light-blue">2</span>
+            <span class="badge bg-light-blue">{{getTipo(pessoa.TIPO)}}</span>
             <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool">
                     <i class="fa fa-times"></i>
@@ -10,49 +10,51 @@
             </div>
         </div>
         <div class="row box-body">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="nome">Nome</label>
-                    <input type="text" class="form-control" id="nome">
-                </div>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label for="parentesco">Parentesco</label>
-                    <select name="parentesco" id="parentesco" class="form-control">
-                        <option value="0">Cônjuge</option>
-                        <option value="1">Filho(a)</option>
-                        <option value="2">Pai/Mãe</option>
-                        <option value="3">Outro</option>
+                    <select name="parentesco" v-model="pessoa.TIPO" id="parentesco" class="form-control">
+                        <option value="C">Cônjuge</option>
+                        <option value="M">Marido</option>
+                        <option value="F">Filho(a)</option>
+                        <option value="O">Outro</option>
                     </select>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="nome">Nome</label>
+                    <input type="text" v-model="pessoa.nome"  class="form-control" id="nome">
+                </div>
+            </div>
+            <div class="col-md-4">
                 <div class="form-group">
                     <label for="datanascimento">Data de Nascimento</label>
-                    <input type="text" class="form-control" id="datanascimento" placeholder="dd/mm/aaaa">
+                    <input type="text" v-model="pessoa.nascimento" class="form-control" id="datanascimento" placeholder="dd/mm/aaaa">
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="hospedagem">Hospedagem</label>
-                    <select name="hospedagem" id="hospedagem" class="form-control">
-                        <option value="0">Camping</option>
-                        <option value="1">Lar Filadélfia</option>
-                        <option value="2">Outro / Hotel na cidade</option>
-                    </select>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="alojamento">Hospedagem</label>
+                        <select name="alojamento" id="alojamento" v-model="pessoa.alojamento" class="form-control">
+                            <option value="CAMPING">Camping</option>
+                            <option value="LAR">Lar Filadélfia</option>
+                            <option value="OUTROS">Outro / Hotel na cidade</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="alimentacao">Alimentação</label>
-                    <select name="alimentacao" id="alimentacao" class="form-control">
-                        <option value="0">Quiosque</option>
-                        <option value="1">Lar Filadélfia</option>
-                        <option value="2">Outro / Não necessito</option>
-                    </select>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="refeicao">Refeição</label>
+                        <select name="refeicao" id="refeicao" v-model="pessoa.refeicao" class="form-control">
+                            <option value="QUIOSQUE_COM_CAFE">Quiosque com café</option>
+                            <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
+                            <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
+                            <option value="LAR_SEM_CAFE">Lar Filadélfia sem café</option>
+                            <option value="NENHUMA">Nenhuma</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
             <div class="clearfix"></div>
         </div>
     </div>
@@ -61,9 +63,23 @@
 
 <script>
     export default {
-        props: ['message'],
+        props: ['pessoa'],
         mounted() {
             console.log('Component mounted.')
+        },
+        methods:{
+            getTipo : function(tipo){
+                switch(tipo) {
+                    case 'C':
+                        return 'Cônjuge';
+                    case 'F':
+                        return 'Filho';
+                    case 'M':
+                        return 'Marido';
+                    default:
+                        return 'Outro';
+                }                
+            }
         }
     }
 </script>

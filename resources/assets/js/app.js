@@ -22,8 +22,6 @@ const app = new Vue({
     el: '#app',
     data () {
         return {
-          pesquisa: {cpf:"04442206902", email: ""},
-          message: "olá mundo"
         }
     },
 });
