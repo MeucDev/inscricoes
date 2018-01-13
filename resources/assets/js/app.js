@@ -12,11 +12,8 @@ require('./bootstrap');
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-
-
-Vue.component('responsavel', require('./components/responsavel.vue'));
+Vue.component('inscricao', require('./components/inscricao.vue'));
 Vue.component('dependente', require('./components/dependente.vue'));
-
 
 const app = new Vue({
     el: '#app',

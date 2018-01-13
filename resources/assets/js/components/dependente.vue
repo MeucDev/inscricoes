@@ -32,29 +32,33 @@
                     <input type="text" v-model="pessoa.nascimento" class="form-control" id="datanascimento" placeholder="dd/mm/aaaa">
                 </div>
             </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="alojamento">Hospedagem</label>
-                        <select name="alojamento" id="alojamento" v-model="pessoa.alojamento" class="form-control">
-                            <option value="CAMPING">Camping</option>
-                            <option value="LAR">Lar Filadélfia</option>
-                            <option value="OUTROS">Outro / Hotel na cidade</option>
-                        </select>
-                    </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="alojamento">Hospedagem</label>
+                    <select name="alojamento" id="alojamento" v-model="pessoa.alojamento" class="form-control">
+                        <option value="CAMPING">Camping</option>
+                        <option value="LAR">Lar Filadélfia</option>
+                        <option value="OUTROS">Outro / Hotel na cidade</option>
+                    </select>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="refeicao">Refeição</label>
-                        <select name="refeicao" id="refeicao" v-model="pessoa.refeicao" class="form-control">
-                            <option value="QUIOSQUE_COM_CAFE">Quiosque com café</option>
-                            <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
-                            <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
-                            <option value="LAR_SEM_CAFE">Lar Filadélfia sem café</option>
-                            <option value="NENHUMA">Nenhuma</option>
-                        </select>
-                    </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="refeicao">Refeição</label>
+                    <select name="refeicao" id="refeicao" v-model="pessoa.refeicao" class="form-control">
+                        <option value="QUIOSQUE_COM_CAFE">Quiosque com café</option>
+                        <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
+                        <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
+                        <option value="LAR_SEM_CAFE">Lar Filadélfia sem café</option>
+                        <option value="NENHUMA">Nenhuma</option>
+                    </select>
                 </div>
-            <div class="clearfix"></div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-right">
+                    <h2>{{"R$ " + formatPrice(pessoa.valor)}}</h2>
+                </div>
+            </div>
         </div>
     </div>
 </div>        
@@ -76,7 +80,11 @@
                     default:
                         return 'Outro';
                 }                
-            }
+            },
+            formatPrice: function(value) {
+                let val = (value/1).toFixed(2).replace('.', ',')
+                return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+            }            
         }
     }
 </script>
