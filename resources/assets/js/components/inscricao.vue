@@ -7,43 +7,48 @@
         <div class="person">
             <div class="row box-body">
                 <div class="col-md-4">
-                    <div class="form-group">
+                    <div :class="{'form-group': true, 'has-error': errors.has('cpf') }">
                         <label for="cpf">CPF</label>
-                        <input type="text" v-model="pessoa.cpf" @change="getPessoa" class="form-control" id="cpf">
+                        <input type="text" v-validate="'required|digits:{11}'" v-model="pessoa.cpf" @change="getPessoa" class="form-control" id="cpf" name="cpf">
+                        <span v-show="errors.has('cpf')" class="help-block">O cpf deve ter 11 dígitos</span>                        
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="form-group">
+                    <div :class="{'form-group': true, 'has-error': errors.has('nome') }">
                         <label for="nome">Nome</label>
-                        <input type="text" v-model="pessoa.nome" class="form-control" id="nome">
+                        <input v-validate="'required'" type="text" v-model="pessoa.nome" class="form-control" name="nome" id="nome">
+                        <span v-show="errors.has('nome')" class="help-block">Campo obrigatório</span>                        
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div :class="{'form-group has-error': errors.has('email') }">
+                    <div :class="{'form-group': true, 'has-error': errors.has('email') }">
                         <label for="email">Email</label>
-                        <input type="email" v-validate="'required|email'" class="form-control" id="email">
-                        <span v-show="errors.has('email')" class="help-block">{{ errors.first('email') }}</span>                        
+                        <input v-validate="'required|email'" v-model="pessoa.email" name="email" id="email" type="text" class="form-control">
+                        <span v-show="errors.has('email')" class="help-block">O e-mail deve ser válido</span>                        
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="datanascimento">Data de Nascimento</label>
-                        <input type="text" class="form-control" @change="getValor(pessoa, 'R')" v-model="pessoa.nascimento" id="nascimento" placeholder="dd/mm/aaaa">
+                    <div :class="{'form-group': true, 'has-error': errors.has('nascimento') }">
+                        <label for="nascimento">Data de Nascimento</label>
+                        <input v-mask="'##/##/####'" type="text" v-validate="'required|date_format:{dd/mm/yyyy}'" class="form-control" @change="getValor(pessoa, 'R')" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
+                        <span v-show="errors.has('nascimento')" class="help-block">A data deve estar no formato dd/mm/aaaa</span>                        
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="form-group">
+                    <div :class="{'form-group': true, 'has-error': errors.has('sexo') }">
                         <label for="sexo">Sexo</label>
-                        <select name="sexo" v-model="pessoa.sexo" id="sexo" class="form-control">
+                        <select v-validate="'required'" v-model="pessoa.sexo" id="sexo" class="form-control" name="sexo">
                             <option value="masculino">Masculino</option>
                             <option value="feminino">Feminino</option>
                         </select>
+                        <span v-show="errors.has('sexo')" class="help-block">Campo obrigatório</span>                        
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="form-group">
+                    <div :class="{'form-group': true, 'has-error': errors.has('telefone') }">
                         <label for="telefone">Telefone</label>
-                        <input type="text" v-model="pessoa.telefone" class="form-control" id="telefone">
+                        <input type="text" v-validate="{required:true, regex:/\d{2}\s\d{8,9}/}" v-model="pessoa.telefone" class="form-control" name="telefone" id="telefone" placeholder="47 999999999">
+                        <span v-show="errors.has('telefone')" class="help-block">O telefone deve estar no formato 47 999999999</span>                        
                     </div>
                 </div>
             </div>
@@ -53,9 +58,10 @@
         </div>
         <div class="row box-body">
             <div class="col-md-3">
-                <div class="form-group">
+                <div :class="{'form-group': true, 'has-error': errors.has('cep') }">
                     <label for="cep">CEP</label>
-                    <input type="text" v-model="pessoa.cep" class="form-control" id="cep">
+                    <input type="text" v-validate="{required:true, regex:/\d{5}-\d{3}/}"  v-model="pessoa.cep" class="form-control" id="cep" name="cep" placeholder="99999-999">
+                    <span v-show="errors.has('cep')" class="help-block">O cep deve estar no formato 99999-999</span>                        
                 </div>
             </div>
             <div class="col-md-1">
@@ -161,7 +167,6 @@
         props: ['evento'],
         mixins: [helpers],
         components: {dependente},
-        
         mounted() {
             console.log('Component mounted.')
         },
@@ -195,7 +200,7 @@
                 if (!pessoa.alojamento || !pessoa.refeicao || !pessoa.nascimento)
                     return;
 
-                this.$http.post('/valores/' + this.evento , pessoa).then(response => {
+                this.$http.get('/valores/' + this.evento , pessoa).then(response => {
                     pessoa.valor = response.body;
                 }, (error) => {
                     console.log("erro ao carregar pessoa" + error);

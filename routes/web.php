@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Route::get('/pessoas/{cpf}/{evento}', 'PessoasController@show');
 
-Route::post('/valores/{evento}', 'ValoresController@valor');
+Route::get('/valores/{evento}', 'ValoresController@valor');
 
 Route::get('/eventos', function () {
     return view('eventos');
