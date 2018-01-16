@@ -19,9 +19,10 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="form-group">
+                    <div :class="{'form-group has-error': errors.has('email') }">
                         <label for="email">Email</label>
-                        <input type="email" v-model="pessoa.email" class="form-control" id="email">
+                        <input type="email" v-validate="'required|email'" class="form-control" id="email">
+                        <span v-show="errors.has('email')" class="help-block">{{ errors.first('email') }}</span>                        
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -149,8 +150,12 @@
 </template>
 
 <script>
+    import Vue from 'vue';
+    import VeeValidate from 'vee-validate';
     import helpers from './helpers'
     import dependente from './dependente.vue'
+
+    Vue.use(VeeValidate);    
     
     export default {
         props: ['evento'],
