@@ -18,13 +18,10 @@ class PessoasController extends Controller
         $pessoa = Pessoa::where("cpf", $cpf)->firstOrFail();
         $pessoa->dependentes->prepend($pessoa->conjuge);
 
-        $pessoa->valor = $pessoa->getValor($evento);
-
-        $pessoa->valorTotal = $pessoa->valor;
+        $pessoa->valor = $pessoa->getMeuValor($evento);
 
         foreach ($pessoa->dependentes as $dependente) {
-            $dependente->valor = $dependente->getValor($evento);
-            $pessoa->valorTotal += $dependente->valor;
+            $dependente->valor = $dependente->getMeuValor($evento);
         }
 
         return response()->json($pessoa);

@@ -27,7 +27,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="datanascimento">Data de Nascimento</label>
-                        <input type="text" class="form-control" v-model="pessoa.nascimento" id="nascimento" placeholder="dd/mm/aaaa">
+                        <input type="text" class="form-control" @change="getValor(pessoa, 'R')" v-model="pessoa.nascimento" id="nascimento" placeholder="dd/mm/aaaa">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -95,7 +95,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="alojamento">Hospedagem</label>
-                    <select name="alojamento" id="alojamento" v-model="pessoa.alojamento" class="form-control">
+                    <select name="alojamento" id="alojamento" @change="getValor(pessoa, 'R')" v-model="pessoa.alojamento" class="form-control">
                         <option value="CAMPING">Camping</option>
                         <option value="LAR">Lar Filadélfia</option>
                         <option value="OUTROS">Outro / Hotel na cidade</option>
@@ -105,7 +105,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="refeicao">Refeição</label>
-                    <select name="refeicao" id="refeicao" v-model="pessoa.refeicao" class="form-control">
+                    <select name="refeicao" id="refeicao" @change="getValor(pessoa, 'R')" v-model="pessoa.refeicao" class="form-control">
                         <option value="QUIOSQUE_COM_CAFE">Quiosque com café</option>
                         <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
                         <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
@@ -123,7 +123,9 @@
     </div>    
 	<dependente v-for="dependente in pessoa.dependentes" v-bind:key="dependente.id" 
         :pessoa="dependente" 
-        :remove="removeDependente">
+        :remove="removeDependente"
+        :getvalor = "getValor"
+        >
     </dependente>
     <div class="text-right commands">
         <button type="button" class="btn btn-primary" @click="addDependente">Adicionar dependente</button>
@@ -134,7 +136,7 @@
         </div>
         <div class="row box-body">
             <div class="col-md-6">
-                <h1>{{"R$ " + formatPrice(pessoa.valorTotal)}}</h1>
+                <h1>{{"R$ " + getValorTotal()}}</h1>
             </div>
             <div class="col-md-6">
                 <div class="text-right commands">
@@ -147,8 +149,14 @@
 </template>
 
 <script>
+    import helpers from './helpers'
+    import dependente from './dependente.vue'
+    
     export default {
         props: ['evento'],
+        mixins: [helpers],
+        components: {dependente},
+        
         mounted() {
             console.log('Component mounted.')
         },
@@ -172,10 +180,18 @@
                 })
             },
             getPessoa: function(){
-                // GET /someUrl
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
-                    // get body data
                     this.pessoa = response.body;
+                }, (error) => {
+                    console.log("erro ao carregar pessoa" + error);
+                });            
+            },
+            getValor: function(pessoa){
+                if (!pessoa.alojamento || !pessoa.refeicao || !pessoa.nascimento)
+                    return;
+
+                this.$http.post('/valores/' + this.evento , pessoa).then(response => {
+                    pessoa.valor = response.body;
                 }, (error) => {
                     console.log("erro ao carregar pessoa" + error);
                 });            
@@ -183,10 +199,15 @@
             fazerIncricao: function(){
                 console.log('Incrição feita :D');
             },
-            formatPrice: function(value) {
-                let val = (value/1).toFixed(2).replace('.', ',')
-                return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-            }            
+            getValorTotal: function(pessoa){
+                var total = this.pessoa.valor;
+
+                this.pessoa.dependentes.forEach(dependente => {
+                    total += dependente.valor;
+                });
+
+                return this.formatPrice(total);
+            },            
         }
     }
 </script>

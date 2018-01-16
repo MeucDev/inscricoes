@@ -29,13 +29,13 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="datanascimento">Data de Nascimento</label>
-                    <input type="text" v-model="pessoa.nascimento" class="form-control" id="datanascimento" placeholder="dd/mm/aaaa">
+                    <input type="text" v-model="pessoa.nascimento" @change="getvalor(pessoa, 'R')" class="form-control" id="datanascimento" placeholder="dd/mm/aaaa">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="alojamento">Hospedagem</label>
-                    <select name="alojamento" id="alojamento" v-model="pessoa.alojamento" class="form-control">
+                    <select name="alojamento" id="alojamento" @change="getvalor(pessoa, 'R')" v-model="pessoa.alojamento" class="form-control">
                         <option value="CAMPING">Camping</option>
                         <option value="LAR">Lar Filadélfia</option>
                         <option value="OUTROS">Outro / Hotel na cidade</option>
@@ -45,7 +45,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="refeicao">Refeição</label>
-                    <select name="refeicao" id="refeicao" v-model="pessoa.refeicao" class="form-control">
+                    <select name="refeicao" id="refeicao" @change="getvalor(pessoa, 'R')" v-model="pessoa.refeicao" class="form-control">
                         <option value="QUIOSQUE_COM_CAFE">Quiosque com café</option>
                         <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
                         <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
@@ -65,8 +65,11 @@
 </template>
 
 <script>
+    import helpers from './helpers'
+
     export default {
-        props: ['pessoa', 'remove'],
+        props: ['pessoa', 'remove', 'getvalor'],
+        mixins: [helpers],
         mounted() {
             console.log('Component mounted.')
         },
@@ -81,10 +84,6 @@
                         return 'Outro';
                 }                
             },
-            formatPrice: function(value) {
-                let val = (value/1).toFixed(2).replace('.', ',')
-                return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-            }            
         }
     }
 </script>

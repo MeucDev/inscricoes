@@ -43,6 +43,9 @@ class Valor extends Model
             ->get();
 
         foreach ($this->variacoes as $variacao) {
+            if ($variacao->tipo_pessoa && $variacao->tipo_pessoa != $pessoa->TIPO)
+                return 0;
+
             if ($variacao->data_ate && $dateNow <= $variacao->data_ate)
                 return $variacao->valor;
             
