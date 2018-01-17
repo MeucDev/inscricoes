@@ -9,8 +9,8 @@
                 <div class="col-md-4">
                     <div :class="{'form-group': true, 'has-error': errors.has('cpf') }">
                         <label for="cpf">CPF</label>
-                        <input type="text" v-validate="'required|digits:{11}'" v-model="pessoa.cpf" @change="getPessoa" class="form-control" id="cpf" name="cpf">
-                        <span v-show="errors.has('cpf')" class="help-block">O cpf deve ter 11 dígitos</span>                        
+                        <input type="text" v-validate="'required|digits:11'" v-model="pessoa.cpf" @change="getPessoa" class="form-control" id="cpf" name="cpf">
+                        <span v-show="errors.has('cpf')" class="help-block">O CPF deve ter 11 dígitos</span>                        
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -27,6 +27,8 @@
                         <span v-show="errors.has('email')" class="help-block">O e-mail deve ser válido</span>                        
                     </div>
                 </div>
+            </div>
+            <div class="row box-body">
                 <div class="col-md-4">
                     <div :class="{'form-group': true, 'has-error': errors.has('nascimento') }">
                         <label for="nascimento">Data de Nascimento</label>
@@ -65,33 +67,40 @@
                 </div>
             </div>
             <div class="col-md-1">
-                <div class="form-group">
+                <div :class="{'form-group': true, 'has-error': errors.has('uf') }">
                     <label for="uf">UF</label>
-                    <input type="text" v-model="pessoa.uf" class="form-control" id="uf">
+                    <input type="text" v-validate="'required'" v-model="pessoa.uf" class="form-control" id="uf" name="uf">
+                    <span v-show="errors.has('uf')" class="help-block">Campo obrigatório</span>                        
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="form-group">
+                <div :class="{'form-group': true, 'has-error': errors.has('cidade') }">
                     <label for="cidade">Cidade</label>
-                    <input type="text" v-model="pessoa.cidade" class="form-control" id="cidade">
+                    <input type="text" v-validate="'required'" v-model="pessoa.cidade" class="form-control" id="cidade" name="cidade">
+                    <span v-show="errors.has('cidade')" class="help-block">Campo obrigatório</span>                        
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="form-group">
+                <div :class="{'form-group': true, 'has-error': errors.has('bairro') }">
                     <label for="bairro">Bairro</label>
-                    <input type="text" v-model="pessoa.bairro" class="form-control" id="bairro">
+                    <input type="text" v-validate="'required'" v-model="pessoa.bairro" class="form-control" id="bairro" name="bairro">
+                    <span v-show="errors.has('bairro')" class="help-block">Campo obrigatório</span>                        
                 </div>
             </div>
+        </div>
+        <div class="row box-body">
             <div class="col-md-10">
-                <div class="form-group">
+                <div :class="{'form-group': true, 'has-error': errors.has('endereco') }">
                     <label for="endereco">Endereço</label>
-                    <input type="text" v-model="pessoa.endereco" class="form-control" id="endereco">
+                    <input type="text" v-validate="'required'" v-model="pessoa.endereco" class="form-control" id="endereco" name="endereco">
+                    <span v-show="errors.has('endereco')" class="help-block">Campo obrigatório</span>                        
                 </div>
             </div>
             <div class="col-md-2">
-                <div class="form-group">
+                <div :class="{'form-group': true, 'has-error': errors.has('nroend') }">
                     <label for="nroend">Número</label>
-                    <input type="text" v-model="pessoa.nroend" class="form-control" id="nroend">
+                    <input type="text" v-validate="'required'" v-model="pessoa.nroend" class="form-control" id="nroend" name="nroend">
+                    <span v-show="errors.has('nroend')" class="help-block">Campo obrigatório</span>                        
                 </div>
             </div>
         </div>  
