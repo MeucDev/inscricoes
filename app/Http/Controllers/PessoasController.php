@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Pessoa;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use \DateTime;
+
 
 class PessoasController extends Controller
 {
@@ -16,14 +18,27 @@ class PessoasController extends Controller
     public function show($cpf, $evento)
     {
         $pessoa = Pessoa::where("cpf", $cpf)->firstOrFail();
-        $pessoa->dependentes->prepend($pessoa->conjuge);
+     
+        if ($pessoa->nascimento)
+            $pessoa->nascimento = DateTime::createFromFormat('Y-m-d', $pessoa->nascimento)->format('d/m/Y');
+            
+        if ($pessoa->conjuge)
+            $pessoa->dependentes->prepend($pessoa->conjuge);
 
         $pessoa->valor = $pessoa->getMeuValor($evento);
 
         foreach ($pessoa->dependentes as $dependente) {
             $dependente->valor = $dependente->getMeuValor($evento);
+            if ($dependente->nascimento)
+                $dependente->nascimento = DateTime::createFromFormat('Y-m-d', $dependente->nascimento)->format('d/m/Y');
         }
 
-        return response()->json($pessoa);
+        $result = (object) $pessoa->toArray();
+
+        $result->dependentes = $pessoa->dependentes->reject(function($item) {
+            return $item->inativo == 1;
+        });
+
+        return response()->json($result);
     }
 }

@@ -6,21 +6,28 @@
         </div>
         <div class="person">
             <div class="row box-body">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div :class="{'form-group': true, 'has-error': errors.has('cpf') }">
                         <label for="cpf">CPF</label>
                         <input type="text" v-validate="'required|digits:11'" v-model="pessoa.cpf" @change="getPessoa" class="form-control" id="cpf" name="cpf">
                         <span v-show="errors.has('cpf')" class="help-block">O CPF deve ter 11 dígitos</span>                        
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div :class="{'form-group': true, 'has-error': errors.has('nome') }">
                         <label for="nome">Nome</label>
                         <input v-validate="'required'" type="text" v-model="pessoa.nome" class="form-control" name="nome" id="nome">
                         <span v-show="errors.has('nome')" class="help-block">Campo obrigatório</span>                        
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <div :class="{'form-group': true, 'has-error': errors.has('nomecracha') }">
+                        <label for="nomecracha">Nome cracha</label>
+                        <input v-validate="'required'" type="text" v-model="pessoa.nomecracha" class="form-control" name="nomecracha" id="nomecracha">
+                        <span v-show="errors.has('nomecracha')" class="help-block">Campo obrigatório</span>                        
+                    </div>
+                </div>                
+                <div class="col-md-3">
                     <div :class="{'form-group': true, 'has-error': errors.has('email') }">
                         <label for="email">Email</label>
                         <input v-validate="'required|email'" v-model="pessoa.email" name="email" id="email" type="text" class="form-control">
@@ -32,7 +39,7 @@
                 <div class="col-md-4">
                     <div :class="{'form-group': true, 'has-error': errors.has('nascimento') }">
                         <label for="nascimento">Data de Nascimento</label>
-                        <input type="text" v-validate="'required|date_format:{dd/mm/yyyy}'" class="form-control" @change="getValor(pessoa, 'R')" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
+                        <input type="text" v-validate="'required|date_format:DD/MM/YYYY'" class="form-control" @change="getValor(pessoa, 'R')" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
                         <span v-show="errors.has('nascimento')" class="help-block">A data deve estar no formato dd/mm/aaaa</span>                        
                     </div>
                 </div>
@@ -113,7 +120,7 @@
                     <label for="alojamento">Hospedagem</label>
                     <select name="alojamento" id="alojamento" @change="getValor(pessoa, 'R')" v-model="pessoa.alojamento" class="form-control">
                         <option value="CAMPING">Camping</option>
-                        <option value="LAR">Lar Filadélfia</option>
+                        <option value="LAR">Lar Filadélfia (Tratar direto)</option>
                         <option value="OUTROS">Outro / Hotel na cidade</option>
                     </select>
                 </div>
@@ -132,7 +139,7 @@
             </div>
             <div class="col-md-4">
                 <div class="text-right">
-                    <h2>{{"R$ " + formatPrice(pessoa.valor)}}</h2>
+                    <h3>{{"Valor parcial: R$ " + formatPrice(pessoa.valor)}}</h3>
                 </div>
             </div>
         </div>
@@ -146,13 +153,23 @@
     <div class="text-right commands">
         <button type="button" class="btn btn-primary" @click="addDependente">Adicionar dependente</button>
     </div>
+    <div v-if="erro" class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h4><i class="icon fa fa-ban"></i> Erro!</h4>
+        {{erro}}
+    </div>
+    <div v-if="sucesso" class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-warning"></i> Sucesso!</h4>
+            {{sucesso}}
+    </div>        
     <div class="box box-primary">
         <div class="box-header with-border">
             <h4 class="box-title">Valor total da inscrição</h4>
         </div>
         <div class="row box-body">
             <div class="col-md-6">
-                <h1>{{"R$ " + getValorTotal()}}</h1>
+                <h1>{{"TOTAL: R$ " + getValorTotal()}}</h1>
             </div>
             <div class="col-md-6">
                 <div class="text-right commands">
@@ -167,8 +184,8 @@
 <script>
     import Vue from 'vue';
     import VeeValidate from 'vee-validate';
-    import helpers from './helpers'
-    import dependente from './dependente.vue'
+    import helpers from './helpers';
+    import dependente from './dependente.vue';
 
     Vue.use(VeeValidate);    
     
@@ -181,7 +198,9 @@
         },
         data (){
             return{
-                pessoa : {cpf:'0444220690', valor : 0, valorTotal : 0, dependentes: []}
+                pessoa : {id: -1, TIPO: 'R', cpf:'0444220690', valor : 0, valorTotal : 0, dependentes: []},
+                erro: '',
+                sucesso: ''
             }
         },
         methods: {
@@ -209,14 +228,26 @@
                 if (!pessoa.alojamento || !pessoa.refeicao || !pessoa.nascimento)
                     return;
 
-                this.$http.get('/valores/' + this.evento , pessoa).then(response => {
+                this.$http.post('/valores/' + this.evento , pessoa).then(response => {
                     pessoa.valor = response.body;
                 }, (error) => {
                     console.log("erro ao carregar pessoa" + error);
                 });            
             },
             fazerIncricao: function(){
-                console.log('Incrição feita :D');
+                this.$validator.validateAll().then((result) => {
+                    if (!result) {
+                        this.erro = "Existem dados incorretos!";
+                        return;
+                    }
+
+                    this.$http.post('/eventos/' + this.evento + '/inscricao' , this.pessoa).then(response => {
+                        this.sucesso = "Inscrição efetuada com sucesso!";
+                    }, (error) => {
+                        debugger;
+                        this.erro = error;
+                    });            
+                });                
             },
             getValorTotal: function(pessoa){
                 var total = this.pessoa.valor;

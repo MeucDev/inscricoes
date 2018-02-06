@@ -17,11 +17,13 @@ Route::get('/', function () {
 
 Route::get('/pessoas/{cpf}/{evento}', 'PessoasController@show');
 
-Route::get('/valores/{evento}', 'ValoresController@valor');
+Route::post('/valores/{evento}', 'ValoresController@valor');
 
 Route::get('/eventos', function () {
     return view('eventos');
 });
+
+Route::post('/eventos/{id}/inscricao', 'EventosController@createInscricao');
 
 Route::get('/eventos/{id}/{nome?}', 'EventosController@show')
     ->where([ 'id' => '[0-9]+', 'nome' => '[a-zA-Z0-9-]+' ]);

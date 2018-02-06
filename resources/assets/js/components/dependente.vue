@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="row box-body">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for="parentesco">Parentesco</label>
                     <select name="parentesco" v-model="pessoa.TIPO" id="parentesco" class="form-control">
@@ -20,13 +20,20 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for="nome">Nome</label>
                     <input type="text" v-model="pessoa.nome"  class="form-control" id="nome">
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <div :class="{'form-group': true, 'has-error': errors.has('nomecracha') }">
+                    <label for="nomecracha">Nome cracha</label>
+                    <input v-validate="'required'" type="text" v-model="pessoa.nomecracha" class="form-control" name="nomecracha" id="nomecracha">
+                    <span v-show="errors.has('nomecracha')" class="help-block">Campo obrigatório</span>                        
+                </div>
+            </div>             
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for="datanascimento">Data de Nascimento</label>
                     <input type="text" v-model="pessoa.nascimento" @change="getvalor(pessoa, 'R')" class="form-control" id="datanascimento" placeholder="dd/mm/aaaa">
@@ -56,7 +63,7 @@
             </div>
             <div class="col-md-4">
                 <div class="text-right">
-                    <h2>{{"R$ " + formatPrice(pessoa.valor)}}</h2>
+                    <h3>{{"Valor parcial: R$ " + formatPrice(pessoa.valor)}}</h3>
                 </div>
             </div>
         </div>
