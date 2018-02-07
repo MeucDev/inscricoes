@@ -1,4 +1,4 @@
 Options -Indexes
 
 RewriteEngine On
-RewriteRule . /public
+RewriteRule ^/$ /public [R]
