@@ -193,7 +193,7 @@
         },
         data (){
             return{
-                pessoa : {id: -1, TIPO: 'R', cpf:'0444220690', valor : 0, valorTotal : 0, dependentes: []}
+                pessoa : {id: -1, TIPO: 'R', cpf:'', valor : 0, valorTotal : 0, dependentes: []}
             }
         },
         methods: {
