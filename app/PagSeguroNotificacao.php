@@ -13,8 +13,8 @@ class PagSeguroNotificacao
         $code = $info->getCode();
 
         if (!$code){
-            print_r("Código nulo retornado pelo pagseguro.");
-            Response::setStatusCode(Response::HTTP_BAD_REQUEST);
+            print_r("Erro: Código nulo retornado pelo pagseguro.");
+            http_response_code(Response::HTTP_BAD_REQUEST);
             return;
         }
         
@@ -23,7 +23,7 @@ class PagSeguroNotificacao
 
         if (!$inscricao){
             print_r("Não foi encontrada a inscrição com o código:" . $code);
-            Response::setStatusCode(Response::HTTP_BAD_REQUEST);
+            http_response_code(Response::HTTP_BAD_REQUEST);
             return;
         }
 
@@ -34,7 +34,7 @@ class PagSeguroNotificacao
             print_r("Inscrição paga:" . $inscricao->id);
         }catch(Exception $e){
             print_r($e.getMessage());
-            Response::setStatusCode(Response::HTTP_BAD_REQUEST);
+            http_response_code(Response::HTTP_BAD_REQUEST);
         }
     }
 }
