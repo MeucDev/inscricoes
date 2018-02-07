@@ -163,7 +163,7 @@
         </div>
         <div class="row box-body">
             <div class="col-md-6">
-                <h1>{{"TOTAL: R$ " + getValorTotal()}}</h1>
+                <h1>{{"R$ " + getValorTotal()}}</h1>
             </div>
             <div class="col-md-6">
                 <div class="text-right commands">
