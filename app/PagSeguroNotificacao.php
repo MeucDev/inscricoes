@@ -8,7 +8,7 @@ use Exception;
 
 class PagSeguroNotificacao
 {
-    public function notificar($info){
+    public static function notificar($info){
 
         $code = $info->getNotificationCode();
 
