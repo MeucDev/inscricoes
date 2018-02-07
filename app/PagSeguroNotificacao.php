@@ -20,7 +20,6 @@ class PagSeguroNotificacao
         
         $inscricao = Inscricao::where('pagseguroCode', $code)->first();
 
-
         if (!$inscricao){
             print_r("Não foi encontrada a inscrição com o código:" . $code);
             http_response_code(Response::HTTP_BAD_REQUEST);
