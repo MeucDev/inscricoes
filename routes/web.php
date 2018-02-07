@@ -29,7 +29,7 @@ Route::get('/eventos/{id}/{nome?}', 'EventosController@show')
     ->where([ 'id' => '[0-9]+', 'nome' => '[a-zA-Z0-9-]+' ]);
 
 Route::post('/pagseguro/notification', [
-    'uses' => 'PagSeguroController@notification',
+    'uses' => '\laravel\pagseguro\Platform\Laravel5\NotificationController@notification',
     'as' => 'pagseguro.notification',
 ]);
 

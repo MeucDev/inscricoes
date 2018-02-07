@@ -4,9 +4,9 @@ namespace App;
 
 use laravel\pagseguro\Platform\Laravel5\PagSeguro;
 
-class IntegracaoPagSeguro
+class PagSeguroIntegracao
 {
-    private static function gerarPagamento($inscricao){
+    public static function gerarPagamento($inscricao){
         $data = [
             'items' => [
                 [

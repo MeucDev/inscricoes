@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\IntegracaoPagSeguro;
+use App\PagSeguroIntegracao;
 
 class EventosController extends Controller
 {
@@ -34,7 +34,7 @@ class EventosController extends Controller
 
         $inscricao = Inscricao::criarInscricao($pessoa, $id);
 
-        $result = IntegracaoPagSeguro::gerarPagamento($inscricao);
+        $result = PagSeguroIntegracao::gerarPagamento($inscricao);
 
         return response()->json($result);
     }

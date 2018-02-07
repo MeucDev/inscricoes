@@ -241,8 +241,8 @@
                     var pagseguro = response.body;
                     swal.close();
                     swal(
-                        'Sucesso!',
-                        'Sua inscrição foi feita! Você será redirecionado para a página de pagamento!',
+                        'Estamos quase lá!',
+                        'Ao clicar OK você será redirecionado para a página de pagamento!',
                         'success'
                     ).then((result) => {
                         window.location.replace(pagseguro.link);

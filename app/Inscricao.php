@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Exception;
 
 class Inscricao extends Model
 {
@@ -46,6 +47,10 @@ class Inscricao extends Model
     }
 
     public static function criarInscricao($pessoa, $evento){
+
+        if (Inscricao::where("pessoa_id", $pessoa->id)->where("evento_id", $evento)->exists())
+            throw new Exception("Já existe uma inscrição para o evento no seu nome. Entre em contato com a organização do evento");
+
         $inscricao = new Inscricao;
         $inscricao->populate($pessoa, $evento);
         $inscricao->save();
