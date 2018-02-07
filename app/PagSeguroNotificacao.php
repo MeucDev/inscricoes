@@ -10,7 +10,7 @@ class PagSeguroNotificacao
 {
     public static function notificar($info){
 
-        $code = $info->getNotificationCode();
+        $code = $info->getCode();
 
         if (!$code){
             print_r("Código nulo retornado pelo pagseguro.");
