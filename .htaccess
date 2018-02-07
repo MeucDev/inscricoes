@@ -1,10 +1,4 @@
 RewriteEngine on
-RewriteBase /
-
-RewriteCond %{REQUEST_URI} !^/public/
-
-# Rewrites all URLS [Replace "example" with the actual domain, without the TLD (.com, .net, .biz, etc)]
-RewriteCond %{HTTP_HOST} ^(inscricoes\.)?congressodefamilias\.
-
-# Rewrite all those to insert /folder
+RewriteCond %{HTTP_HOST} congressodefamilias\.com.br [NC]
+RewriteCond %{REQUEST_URI} ^/$
 RewriteRule ^(.*)$ /public/$1 [L]
