@@ -1,4 +1,5 @@
 Options -Indexes
 
-RewriteEngine On
-RewriteRule ^/$ /public [R]
+RewriteEngine on
+RewriteCond %{HTTP_HOST} =inscricoes.congressodefamilias.com.br
+RewriteRule ^/$ /public/index.php [R]
