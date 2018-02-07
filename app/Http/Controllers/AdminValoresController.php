@@ -23,8 +23,8 @@
 			$this->button_detail = false;
 			$this->button_show = false;
 			$this->button_filter = true;
-			$this->button_import = false;
-			$this->button_export = false;
+			$this->button_import = true;
+			$this->button_export = true;
 			$this->table = "valores";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 

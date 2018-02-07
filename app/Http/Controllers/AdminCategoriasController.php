@@ -23,8 +23,8 @@
 			$this->button_detail       = TRUE;
 			$this->button_show         = TRUE;
 			$this->button_filter       = TRUE;        
-			$this->button_export       = FALSE;	        
-			$this->button_import       = FALSE;
+			$this->button_export       = TRUE;	        
+			$this->button_import       = TRUE;
 			$this->button_bulk_action  = TRUE;	
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
