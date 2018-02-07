@@ -86,6 +86,16 @@ class Meuc_modulsSeeder extends Seeder {
             'is_protected'=>0,                                
             'is_active'=>1
         ],        
+        [
+            'created_at'=>date('Y-m-d H:i:s'),
+            'name'=>trans('Descontos'),
+            'icon'=>'fa fa-minus-square',
+            'path'=>'Descontos',
+            'table_name'=>'descontos',
+            'controller'=>'AdminDescontosController',
+            'is_protected'=>0,                                
+            'is_active'=>1
+        ],        
         ];
 
         foreach($data as $k=>$d) {
@@ -122,7 +132,6 @@ class Meuc_eventoSeeder extends Seeder {
             $evento2017->data_inicio = $date;
             $evento2017->data_fim = $date;
             $evento2017->save();
-
 
             $incricoes = App\Inscricao::where('ano', 2016)->get();
             foreach ($incricoes as $incricao){

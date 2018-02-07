@@ -92,7 +92,7 @@ class Pessoa extends Model
         $this->inativo = 0;
     }
 
-    public static function atualizaPessoa($dados){
+    public static function atualizarCadastros($dados){
         if ($dados->id < 0)
             $pessoa = new Pessoa;
         else
@@ -103,10 +103,19 @@ class Pessoa extends Model
         $dadosDependentes = collect($dados->dependentes);
 
         $dadosConjuge = $dadosDependentes->first(function($item) {
-            $d = (object) $item;
+            $d = (object) $item; 
             return $d->TIPO == "C";
         });
 
+        Pessoa::atualizaConjuge($pessoa, $dadosConjuge);
+        
+        $pessoa->save();
+
+        Pessoa::atualizaDependentes($pessoa, $dadosDependentes);
+
+        return $pessoa;
+    }
+    public static function atualizaConjuge($pessoa, $dadosConjuge){
         if ($dadosConjuge){
             $dadosConjuge = (object)$dadosConjuge;
             if ($pessoa->conjuge){
@@ -123,21 +132,26 @@ class Pessoa extends Model
         }else{
             $pessoa->conjuge()->associate(null);
         }
-        
-        $pessoa->save();
+    }
 
+    public static function atualizaDependentes($pessoa, $dadosDependentes){
         foreach ($dadosDependentes as $dadosDependente) {
             $dadosDependente = (object) $dadosDependente;
-            if ($dadosDependente->TIPO == 'C')
+            if ($dadosDependente->TIPO == "C") 
                 continue;
 
             $dependente = null;
 
-            foreach ($pessoa->dependentes as $item) {
-                if ($item->nome == $dadosDependente->nome)
-                    $dependente = $item;
+            $dependente = $pessoa->dependentes->first(function($item) use ($dadosDependente) {
+                return ($item->id == $dadosDependente->id);
+            });
+
+            if (!$dependente){
+                $dependente = $pessoa->dependentes->first(function($item) use ($dadosDependente) {
+                    return ($item->nome == $dadosDependente->nome);
+                });
             }
-            
+
             if ($dependente){
                 $dependente->populate($dadosDependente);
                 $dependente->save();
@@ -156,8 +170,6 @@ class Pessoa extends Model
                 $dependente->save();
             }
         }
-        
-        return $pessoa;
     }
     
 }

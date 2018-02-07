@@ -30,31 +30,13 @@ class EventosController extends Controller
         $evento = Evento::findOrFail($id);
         $dados = (object) json_decode($request->getContent(), true);
 
-        //todo: validar os dados da pessoa
-        $pessoa = Pessoa::atualizaPessoa($dados);
+        $pessoa = Pessoa::atualizarCadastros($dados);
 
-        $inscricao = $this->criarInscricao($pessoa, $id);
+        $inscricao = Inscricao::criarInscricao($pessoa, $id);
 
         $result = $this->integrarPagSeguro($inscricao);
 
         return response()->json($result);
-    }
-
-    private function criarInscricao($pessoa, $evento){
-        $inscricao = new Inscricao;
-        $inscricao->populate($pessoa, $evento);
-        $inscricao->save();
-
-        foreach ($pessoa->dependentes as $dependente) {
-            if ($dependente->inativo == 1)
-                continue;
-
-            $inscricaoDependente = new Inscricao;
-            $inscricaoDependente->populate($dependente, $evento);
-            $inscricao->dependentes()->save($inscricaoDependente);
-        }
-
-        return $inscricao;
     }
 
     private function integrarPagSeguro($inscricao){

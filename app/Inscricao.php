@@ -42,9 +42,32 @@ class Inscricao extends Model
         $this->valorInscricaoPago = 0;
         $this->valorRefeicao = Pessoa::getValorRefeicao($pessoa, $evento);
         $this->valorAlojamento = Pessoa::getValorAlojamento($pessoa, $evento);
-        $this->valorTotal = $inscricao->valorInscricao + $inscricao->valorRefeicao + $inscricao->valorAlojamento;
+        $this->valorTotal = $this->valorInscricao + $this->valorRefeicao + $this->valorAlojamento;
         $this->valorTotalPago = 0;
     }
+
+    public static function criarInscricao($pessoa, $evento){
+        $inscricao = new Inscricao;
+        $inscricao->populate($pessoa, $evento);
+        $inscricao->save();
+
+        if ($pessoa->conjuge){
+            $inscricaoConjuge = new Inscricao;
+            $inscricaoConjuge->populate($pessoa->conjuge, $evento);
+            $inscricao->dependentes()->save($inscricaoConjuge);
+        }
+
+        foreach ($pessoa->dependentes as $dependente) {
+            if ($dependente->inativo == 1)
+                continue;
+
+            $inscricaoDependente = new Inscricao;
+            $inscricaoDependente->populate($dependente, $evento);
+            $inscricao->dependentes()->save($inscricaoDependente);
+        }
+
+        return $inscricao;
+    }    
 }
 
 

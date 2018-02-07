@@ -3,7 +3,7 @@
 <!-- AdminLTE App -->
 <script src="{{ asset ('vendor/crudbooster/assets/adminlte/dist/js/app.js') }}" type="text/javascript"></script>
 
-<!--BOOTSTRAP DATEPICKER-->	
+{{--  <!--BOOTSTRAP DATEPICKER-->	
 <script src="{{ asset ('vendor/crudbooster/assets/adminlte/plugins/datepicker/bootstrap-datepicker.js') }}"></script>
 
 <!--BOOTSTRAP DATERANGEPICKER-->
@@ -15,7 +15,8 @@
 <script src="{{ asset('vendor/crudbooster/assets/lightbox/dist/js/lightbox.min.js') }}"></script> 	
 
 <!--SWEET ALERT-->
-<script src="{{asset('vendor/crudbooster/assets/sweetalert/dist/sweetalert.min.js')}}"></script> 
+<script src="{{asset('vendor/crudbooster/assets/sweetalert/dist/sweetalert.min.js')}}"></script>   --}}
+
 <script>
         window.Laravel = {!! json_encode(['csrfToken' => csrf_token()]) !!};
 </script>

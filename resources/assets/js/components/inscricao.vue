@@ -211,8 +211,8 @@
                 this.pessoa.dependentes.push({
                     id: this.pessoa.dependentes.length -100,
                     alojamento: this.pessoa.alojamento,
-                    valor: 0,
-                    refeicao: this.pessoa.refeicao
+                    refeicao: this.pessoa.refeicao,
+                    valor: 0
                 });
             },
             removeDependente: function(id){
@@ -247,11 +247,13 @@
                 });            
             },
             fazerIncricao: function(){
+                this.erro = '';
+
                 var promises = [];
                 if (this.$refs.dependentes){
                     this.$refs.dependentes.forEach(function(dependente) {
                         var promise = dependente.validateAll().then(dependente, (result) => {
-                            dependente.valido = result;
+                            return result;
                         });
                         promises.push(promise);
                     });                
@@ -260,16 +262,9 @@
                 var self = this;
                 Promise.all(promises).then(function(values) {
                     self.$validator.validateAll().then((result) => {
-                        var valido = true;
-                        if (self.$refs.dependentes){
-                            self.$refs.dependentes.forEach(function(dependente) {
-                                if (!dependente.valido){
-                                    valido = false;
-                                    return;
-                                }
-                            });
-                        }
-                        
+
+                        var valido = !values.some(function(item){ return item == false; });
+
                         if (!valido){
                             self.erro = "Existem dados incorretos no cadatro dos dependentes!";
                             return;

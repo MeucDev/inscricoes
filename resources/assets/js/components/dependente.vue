@@ -95,9 +95,6 @@
     export default {
         props: ['pessoa', 'remove', 'getvalor'],
         mixins: [helpers],
-        mounted() {
-            console.log('Component mounted.')
-        },
         methods:{
             getTipo : function(tipo){
                 switch(tipo) {
