@@ -1,5 +1,10 @@
-Options -Indexes
-
 RewriteEngine on
-RewriteCond %{HTTP_HOST} =inscricoes.congressodefamilias.com.br
-RewriteRule ^/$ /public/index.php [R]
+RewriteBase /
+
+RewriteCond %{REQUEST_URI} !^/public/
+
+# Rewrites all URLS [Replace "example" with the actual domain, without the TLD (.com, .net, .biz, etc)]
+RewriteCond %{HTTP_HOST} ^(inscricoes\.)?congressodefamilias\.
+
+# Rewrite all those to insert /folder
+RewriteRule ^(.*)$ /public/$1 [L]
