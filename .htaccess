@@ -1,6 +1,4 @@
 Options -Indexes
 
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteRule . /public
-</IfModule>
+RewriteEngine On
+RewriteRule . /public
