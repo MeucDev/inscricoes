@@ -76,7 +76,7 @@
             <div class="col-md-1">
                 <div :class="{'form-group': true, 'has-error': errors.has('uf') }">
                     <label for="uf">UF</label>
-                    <input type="text" v-validate="'required'" v-model="pessoa.uf" class="form-control" id="uf" name="uf">
+                    <input type="text" v-validate="'required|min:2|max:2'" v-model="pessoa.uf" class="form-control" id="uf" name="uf" style="text-transform:uppercase">
                     <span v-show="errors.has('uf')" class="help-block">Campo obrigatório</span>                        
                 </div>
             </div>

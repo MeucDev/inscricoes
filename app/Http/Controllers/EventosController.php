@@ -32,9 +32,11 @@ class EventosController extends Controller
 
         $pessoa = Pessoa::atualizarCadastros($dados);
 
-        $inscricao = Inscricao::criarInscricao($pessoa, $id);
-
-        $result = PagSeguroIntegracao::gerarPagamento($inscricao);
+        $result = DB::transaction(function() use ($dados, $pessoa, $id) {
+            $inscricao = Inscricao::criarInscricao($pessoa, $id);
+            $result = PagSeguroIntegracao::gerarPagamento($inscricao);
+            return $result;
+        });        
 
         return response()->json($result);
     }

@@ -91,7 +91,7 @@ class Pessoa extends Model
         $this->email = $dados->email;
         $this->endereco = $dados->endereco;
         $this->telefone = $dados->telefone;
-        $this->uf = $dados->uf;
+        $this->uf = strtoupper($dados->uf);
         $this->cpf = $dados->cpf;
         $this->nroend = $dados->nroend;
         $this->sexo = $dados->sexo;

@@ -61,7 +61,7 @@ class Inscricao extends Model
             $inscricao->dependentes()->save($inscricaoConjuge);
         }
 
-        foreach ($pessoa->dependentes as $dependente) {
+        foreach ($pessoa->dependentes as $key => $dependente) {
             if ($dependente->inativo == 1)
                 continue;
 
