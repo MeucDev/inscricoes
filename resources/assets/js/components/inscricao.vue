@@ -156,16 +156,6 @@
     <div class="text-right commands">
         <button type="button" class="btn btn-primary" @click="addDependente">Adicionar dependente</button>
     </div>
-    <div v-if="erro" class="alert alert-danger alert-dismissible">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-        <h4><i class="icon fa fa-ban"></i> Erro!</h4>
-        {{erro}}
-    </div>
-    <div v-if="sucesso" class="alert alert-success alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            <h4><i class="icon fa fa-warning"></i> Sucesso!</h4>
-            {{sucesso}}
-    </div>        
     <div class="box box-primary">
         <div class="box-header with-border">
             <h4 class="box-title">Valor total da inscrição</h4>
@@ -187,6 +177,7 @@
 <script>
     import Vue from 'vue';
     import VeeValidate from 'vee-validate';
+    import swal from 'sweetalert2';
     import helpers from './helpers';
     import dependente from './dependente.vue';
 
@@ -201,9 +192,7 @@
         },
         data (){
             return{
-                pessoa : {id: -1, TIPO: 'R', cpf:'0444220690', valor : 0, valorTotal : 0, dependentes: []},
-                erro: '',
-                sucesso: ''
+                pessoa : {id: -1, TIPO: 'R', cpf:'0444220690', valor : 0, valorTotal : 0, dependentes: []}
             }
         },
         methods: {
@@ -238,17 +227,30 @@
                 });            
             },
             postIncricao: function(){
+
+                swal({
+                    title: 'Processando!',
+                    text: 'Estamos ajeitando tudo para que você tenha um ótimo congresso.',
+                    onOpen: () => {
+                        swal.showLoading()
+                    }
+                });
+
                 this.$http.post('/eventos/' + this.evento + '/inscricao' , this.pessoa).then(response => {
-                    this.sucesso = "Inscrição efetuada! Redirecionando para o pagamento.";
                     var pagseguro = response.body;
-                    window.location.replace(pagseguro.link);
+                    swal.close();
+                    swal(
+                        'Sucesso!',
+                        'Sua inscrição foi feita! Você será redirecionado para a página de pagamento!',
+                        'success'
+                    ).then((result) => {
+                        window.location.replace(pagseguro.link);
+                    });
                 }, (error) => {
                     this.showError(error);
                 });            
             },
-            fazerIncricao: function(){
-                this.erro = '';
-
+            fazerIncricao: function(){               
                 var promises = [];
                 if (this.$refs.dependentes){
                     this.$refs.dependentes.forEach(function(dependente) {
@@ -266,12 +268,12 @@
                         var valido = !values.some(function(item){ return item == false; });
 
                         if (!valido){
-                            self.erro = "Existem dados incorretos no cadatro dos dependentes!";
+                            self.showError("Existem dados incorretos no cadatro dos dependentes!");
                             return;
                         }
                         
                         if (!result){
-                            self.erro = "Existem dados incorretos no cadastro do responsável!";
+                            self.showError("Existem dados incorretos no cadastro do responsável!");
                             return;
                         }
 
@@ -289,8 +291,16 @@
                 return this.formatPrice(total);
             },
             showError: function(error){
-                console.log(error.body);
-                this.erro = error.body.message;
+                var message;
+                if (typeof error == "string")
+                    message = error;
+                else
+                {
+                    message = error.body.message;
+                    console.log(error.body);
+                }
+
+                swal('Oops...', message, 'error');
             }
         }
     }
