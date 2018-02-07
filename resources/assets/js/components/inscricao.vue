@@ -140,8 +140,9 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="text-right">
-                    <h3>{{"Valor parcial: R$ " + formatPrice(pessoa.valor)}}</h3>
+                <div class="form-group text-right">
+                    <label for="refeicao">Valor parcial</label>
+                    <input type="text" class="form-control text-right" :value="'R$ ' + formatPrice(pessoa.valor)"  disabled="">
                 </div>
             </div>
         </div>

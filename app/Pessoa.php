@@ -45,7 +45,13 @@ class Pessoa extends Model
         if ($pessoa->nascimento)
             $pessoa->idade = Pessoa::getIdade($pessoa->nascimento);
         
-        $valorInscricao = $pessoa->TIPO == 'R' ? \App\Valor::getValor("NORMAL", $evento, $pessoa) : 0;
+        $valorInscricao = $pessoa->TIPO == 'R' ? Valor::getValor("NORMAL", $evento, $pessoa) : 0;
+
+        $desconto = Desconto::getDesconto($pessoa);
+        if ($desconto > 0){
+            $valorInscricao = ($desconto * $valorInscricao) / 100;
+        }
+
         return $valorInscricao;
     }
 
@@ -53,7 +59,7 @@ class Pessoa extends Model
         if ($pessoa->nascimento)
             $pessoa->idade = Pessoa::getIdade($pessoa->nascimento);
         
-        $valorRefeicao = \App\Valor::getValor($pessoa->refeicao, $evento, $pessoa);
+        $valorRefeicao = Valor::getValor($pessoa->refeicao, $evento, $pessoa);
         return $valorRefeicao;
     }
     
@@ -61,7 +67,7 @@ class Pessoa extends Model
         if ($pessoa->nascimento)
             $pessoa->idade = Pessoa::getIdade($pessoa->nascimento);
         
-        $valorAlojamento = \App\Valor::getValor($pessoa->alojamento, $evento, $pessoa);
+        $valorAlojamento = Valor::getValor($pessoa->alojamento, $evento, $pessoa);
         return $valorAlojamento;
     }
 

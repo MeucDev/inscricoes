@@ -25,7 +25,6 @@ class Inscricao extends Model
         return $this->belongsTo('App\Evento', 'evento_id');
     }
 
-
     public function populate($pessoa, $evento){
         $this->dataInscricao = date("Y-m-d h:i:s");
         $this->ano = date("Y");

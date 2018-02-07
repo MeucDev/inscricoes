@@ -1,6 +1,7 @@
-*desconto conforme a tabela de descontos
 *validar se já existe uma inscrição feita
 *notificação após receber o pagamento
+*melhorar a forma de mostrar os valores
+*validação no servidor
 *atribuir a equipe de refeição
 *enviar e-mail após fazer a inscrição
 *google analytics
