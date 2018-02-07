@@ -23,11 +23,17 @@ Route::get('/eventos', function () {
     return view('eventos');
 });
 
-Route::post('/eventos/{id}/inscricao', 'EventosController@createInscricao');
+Route::post('/eventos/{id}/inscricao', 'EventosController@fazerInscricao');
 
 Route::get('/eventos/{id}/{nome?}', 'EventosController@show')
     ->where([ 'id' => '[0-9]+', 'nome' => '[a-zA-Z0-9-]+' ]);
 
-Route::get('/pagamentos/{id}/{segredo}', function ($id, $nome = null) {
-    return view('pagamento');
-})->where([ 'id' => '[0-9]+', 'segredo' => '[a-zA-Z0-9]+' ]);
+Route::post('/pagseguro/notification', [
+    'uses' => 'PagSeguroController@notification',
+    'as' => 'pagseguro.notification',
+]);
+
+Route::get('/pagseguro/redirect', [
+    'uses' => 'PagSeguroController@redirect',
+    'as' => 'pagseguro.redirect',
+]);

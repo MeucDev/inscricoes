@@ -15,6 +15,17 @@ class Inscricao extends Model
         return $this->hasMany('App\Inscricao', 'numero_inscricao_responsavel', 'numero');
     }
 
+    public function pessoa()
+    {
+        return $this->belongsTo('App\Pessoa', 'pessoa_id');
+    }
+
+    public function evento()
+    {
+        return $this->belongsTo('App\Evento', 'evento_id');
+    }
+
+
     public function populate($pessoa, $evento){
         $this->dataInscricao = date("Y-m-d h:i:s");
         $this->ano = date("Y");

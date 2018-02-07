@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "22e18063ad1d18f33f842b47f2355074",
+    "content-hash": "a6ac0a0a610c6174838f2b7496493335",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -1356,12 +1356,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/michaeldouglas/laravel-pagseguro.git",
-                "reference": "d65bb8b8d97f7b5ce41cd381a870abbd51d5bf27"
+                "reference": "713e9aae507b906f8ed813b8c3b30db288d9d59e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/michaeldouglas/laravel-pagseguro/zipball/d65bb8b8d97f7b5ce41cd381a870abbd51d5bf27",
-                "reference": "d65bb8b8d97f7b5ce41cd381a870abbd51d5bf27",
+                "url": "https://api.github.com/repos/michaeldouglas/laravel-pagseguro/zipball/713e9aae507b906f8ed813b8c3b30db288d9d59e",
+                "reference": "713e9aae507b906f8ed813b8c3b30db288d9d59e",
                 "shasum": ""
             },
             "require": {
@@ -1373,9 +1373,19 @@
                 "php": ">=5.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*.*"
+                "phpunit/phpunit": "^4.8.35"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "laravel\\pagseguro\\Platform\\Laravel5\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "PagSeguro": "laravel\\pagseguro\\Platform\\Laravel5\\ServiceProvider"
+                    }
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "laravel\\pagseguro\\": "src/"
@@ -1402,7 +1412,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2017-07-17T15:32:52+00:00"
+            "time": "2018-01-23T00:55:58+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -1810,6 +1820,7 @@
                 "xls",
                 "xlsx"
             ],
+            "abandoned": "phpoffice/phpspreadsheet",
             "time": "2015-05-01T07:00:55+00:00"
         },
         {

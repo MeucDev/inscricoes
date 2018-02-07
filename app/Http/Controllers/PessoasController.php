@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Pessoa;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use \DateTime;
@@ -18,7 +19,7 @@ class PessoasController extends Controller
     public function show($cpf, $evento)
     {
         $pessoa = Pessoa::where("cpf", $cpf)->firstOrFail();
-     
+    
         if ($pessoa->nascimento)
             $pessoa->nascimento = DateTime::createFromFormat('Y-m-d', $pessoa->nascimento)->format('d/m/Y');
             
@@ -35,9 +36,9 @@ class PessoasController extends Controller
 
         $result = (object) $pessoa->toArray();
 
-        $result->dependentes = $pessoa->dependentes->reject(function($item) {
+        $result->dependentes = array_values($pessoa->dependentes->reject(function($item) {
             return $item->inativo == 1;
-        });
+        })->toArray());
 
         return response()->json($result);
     }

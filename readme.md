@@ -27,6 +27,10 @@ $ php artisan migrate
 ```php
 $ php artisan db:seed
 ```
+- Publicando bibliotecas de terceiros
+```php
+$ php artisan vendor:publish
+```
 - Configurando application key
 ```php
 $ php artisan key:generate

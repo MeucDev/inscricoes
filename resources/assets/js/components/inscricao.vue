@@ -116,25 +116,27 @@
         </div>
         <div class="row box-body">
             <div class="col-md-4">
-                <div class="form-group">
+                <div :class="{'form-group': true, 'has-error': errors.has('alojamento') }">
                     <label for="alojamento">Hospedagem</label>
-                    <select name="alojamento" id="alojamento" @change="getValor(pessoa, 'R')" v-model="pessoa.alojamento" class="form-control">
+                    <select name="alojamento" v-validate="'required'" id="alojamento" @change="getValor(pessoa, 'R')" v-model="pessoa.alojamento" class="form-control">
                         <option value="CAMPING">Camping</option>
                         <option value="LAR">Lar Filadélfia (Tratar direto)</option>
                         <option value="OUTROS">Outro / Hotel na cidade</option>
                     </select>
+                    <span v-show="errors.has('alojamento')" class="help-block">Campo obrigatório</span>                        
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="form-group">
+                <div :class="{'form-group': true, 'has-error': errors.has('refeicao') }">
                     <label for="refeicao">Refeição</label>
-                    <select name="refeicao" id="refeicao" @change="getValor(pessoa, 'R')" v-model="pessoa.refeicao" class="form-control">
+                    <select name="refeicao" v-validate="'required'" id="refeicao" @change="getValor(pessoa, 'R')" v-model="pessoa.refeicao" class="form-control">
                         <option value="QUIOSQUE_COM_CAFE">Quiosque com café</option>
                         <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
                         <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
                         <option value="LAR_SEM_CAFE">Lar Filadélfia sem café</option>
                         <option value="NENHUMA">Nenhuma</option>
                     </select>
+                    <span v-show="errors.has('refeicao')" class="help-block">Campo obrigatório</span>                        
                 </div>
             </div>
             <div class="col-md-4">
@@ -145,6 +147,7 @@
         </div>
     </div>    
 	<dependente v-for="dependente in pessoa.dependentes" v-bind:key="dependente.id" 
+        ref="dependentes"
         :pessoa="dependente" 
         :remove="removeDependente"
         :getvalor = "getValor"
@@ -221,7 +224,7 @@
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
                     this.pessoa = response.body;
                 }, (error) => {
-                    console.log("erro ao carregar pessoa" + error);
+                    this.showError(error);
                 });            
             },
             getValor: function(pessoa){
@@ -231,23 +234,55 @@
                 this.$http.post('/valores/' + this.evento , pessoa).then(response => {
                     pessoa.valor = response.body;
                 }, (error) => {
-                    console.log("erro ao carregar pessoa" + error);
+                    this.showError(error);
+                });            
+            },
+            postIncricao: function(){
+                this.$http.post('/eventos/' + this.evento + '/inscricao' , this.pessoa).then(response => {
+                    this.sucesso = "Inscrição efetuada! Redirecionando para o pagamento.";
+                    var pagseguro = response.body;
+                    window.location.replace(pagseguro.link);
+                }, (error) => {
+                    this.showError(error);
                 });            
             },
             fazerIncricao: function(){
-                this.$validator.validateAll().then((result) => {
-                    if (!result) {
-                        this.erro = "Existem dados incorretos!";
-                        return;
-                    }
+                var promises = [];
+                if (this.$refs.dependentes){
+                    this.$refs.dependentes.forEach(function(dependente) {
+                        var promise = dependente.validateAll().then(dependente, (result) => {
+                            dependente.valido = result;
+                        });
+                        promises.push(promise);
+                    });                
+                }
 
-                    this.$http.post('/eventos/' + this.evento + '/inscricao' , this.pessoa).then(response => {
-                        this.sucesso = "Inscrição efetuada com sucesso!";
-                    }, (error) => {
-                        debugger;
-                        this.erro = error;
-                    });            
-                });                
+                var self = this;
+                Promise.all(promises).then(function(values) {
+                    self.$validator.validateAll().then((result) => {
+                        var valido = true;
+                        if (self.$refs.dependentes){
+                            self.$refs.dependentes.forEach(function(dependente) {
+                                if (!dependente.valido){
+                                    valido = false;
+                                    return;
+                                }
+                            });
+                        }
+                        
+                        if (!valido){
+                            self.erro = "Existem dados incorretos no cadatro dos dependentes!";
+                            return;
+                        }
+                        
+                        if (!result){
+                            self.erro = "Existem dados incorretos no cadastro do responsável!";
+                            return;
+                        }
+
+                        self.postIncricao();
+                    });
+                });
             },
             getValorTotal: function(pessoa){
                 var total = this.pessoa.valor;
@@ -257,7 +292,11 @@
                 });
 
                 return this.formatPrice(total);
-            },            
+            },
+            showError: function(error){
+                console.log(error.body);
+                this.erro = error.body.message;
+            }
         }
     }
 </script>

@@ -89,6 +89,7 @@ class Pessoa extends Model
         $this->cpf = $dados->cpf;
         $this->nroend = $dados->nroend;
         $this->sexo = $dados->sexo;
+        $this->inativo = 0;
     }
 
     public static function atualizaPessoa($dados){
@@ -130,10 +131,13 @@ class Pessoa extends Model
             if ($dadosDependente->TIPO == 'C')
                 continue;
 
-            $dependente = $pessoa->dependentes->first(function($item) {
-                return $item->nome == $dadosDependente->nome;
-            });
+            $dependente = null;
 
+            foreach ($pessoa->dependentes as $item) {
+                if ($item->nome == $dadosDependente->nome)
+                    $dependente = $item;
+            }
+            
             if ($dependente){
                 $dependente->populate($dadosDependente);
                 $dependente->save();
