@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 
 class Handler extends ExceptionHandler
 {
@@ -45,7 +46,7 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $e)
     {
         // If the request wants JSON (AJAX doesn't always want JSON)
-        if ($request->wantsJson()) {
+        if ($request->wantsJson() || Request::is('pagseguro/*')) {
             // Define the response
             $response = [
                 'errors' => 'Sorry, something went wrong.'
