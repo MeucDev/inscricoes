@@ -9,8 +9,7 @@ use Exception;
 class PagSeguroNotificacao
 {
     public static function notificar($info){
-
-        $code = $info->getCode();
+        $code = str_replace('-', '', $info->getCode());
 
         if (!$code){
             throw new Exception("Erro: Código nulo retornado pelo pagseguro.");
