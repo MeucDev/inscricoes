@@ -72,10 +72,6 @@ class Handler extends ExceptionHandler
             // Return a JSON response with the response array and status code
             return response()->json($response, $status);
         }
-        if ($request::is('pagseguro/*')){
-            return response($e->getMessage(), 400);
-        }
-
         return parent::render($request, $e);
     }
 
