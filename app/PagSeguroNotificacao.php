@@ -12,13 +12,15 @@ class PagSeguroNotificacao
         $code = str_replace('-', '', $info->getCode());
 
         if (!$code){
-            throw new Exception("Erro: Código nulo retornado pelo pagseguro.");
+            print_r("Erro: Código nulo retornado pelo pagseguro.");
+            return;
         }
         
         $inscricao = Inscricao::where('pagseguroCode', $code)->first();
 
         if (!$inscricao){
-            throw new Exception("Não foi encontrada a inscrição com o código:" . $code);
+            print_r("Não foi encontrada a inscrição com o código:" . $code);
+            return;
         }
 
         $inscricao->inscricaoPaga = 1;
