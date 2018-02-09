@@ -17,7 +17,9 @@ class ValoresController extends Controller
     public function valor(Request $request, $evento)
     {
         $pessoa = (object) json_decode($request->getContent(), true);
-        $valor = Pessoa::getValor($pessoa, $evento);
-        return response()->json($valor);
+
+        $valores = Pessoa::getValores($pessoa, $evento);
+
+        return response()->json($valores);
     }
 }

@@ -30,15 +30,54 @@ class Pessoa extends Model
                  ->y;
         }
     }
+
+    public function toUI($evento){
+        if ($this->nascimento)
+            $this->nascimento = DateTime::createFromFormat('Y-m-d', $this->nascimento)->format('d/m/Y');
+
+        if ($this->conjuge)
+            $this->dependentes->prepend($this->conjuge);
+
+        $this->valores = $this->getMeusValores($evento);
+
+        foreach ($this->dependentes as $dependente) {
+            $dependente->valores = $dependente->getMeusValores($evento);
+            if ($dependente->nascimento)
+                $dependente->nascimento = DateTime::createFromFormat('Y-m-d', $dependente->nascimento)->format('d/m/Y');
+        }
+
+        $result = (object) $this->toArray();
+
+        $result->dependentes = array_values($this->dependentes->reject(function($item) {
+            return $item->inativo == 1;
+        })->toArray());
+
+        return $result;
+    }
+
     public function getMeuValor($evento){
         return Pessoa::getValor($this, $evento);
     }
+
+    public function getMeusValores($evento){
+        return Pessoa::getValores($this, $evento);
+    }    
 
     public static function getValor($pessoa, $evento){
         $valorInscricao = Pessoa::getValorInscricao($pessoa, $evento);
         $valorRefeicao = Pessoa::getValorRefeicao($pessoa, $evento);
         $valorAlojamento = Pessoa::getValorAlojamento($pessoa, $evento);
         return $valorInscricao + $valorRefeicao + $valorAlojamento;
+    }
+
+    public static function getValores($pessoa, $evento){
+        $valores = (object)[];
+        $valores->inscricao = Pessoa::getValorInscricao($pessoa, $evento);
+        $valores->alojamento = Pessoa::getValorAlojamento($pessoa, $evento);
+        $valores->refeicao = Pessoa::getValorRefeicao($pessoa, $evento);
+        $valores->total = $valores->inscricao + $valores->alojamento + $valores->refeicao;
+        
+        return $valores;
     }
 
     public static function getValorInscricao($pessoa, $evento){

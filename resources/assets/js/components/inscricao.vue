@@ -142,7 +142,7 @@
             <div class="col-md-4">
                 <div class="form-group text-right">
                     <label for="refeicao">Valor parcial</label>
-                    <input type="text" class="form-control text-right" :value="'R$ ' + formatPrice(pessoa.valor)"  disabled="">
+                    <input type="text" class="form-control text-right" :value="'R$ ' + formatPrice(pessoa.valores.total)"  disabled="">
                 </div>
             </div>
         </div>
@@ -159,15 +159,56 @@
     </div>
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h4 class="box-title">Valor total da inscrição</h4>
+            <h4 class="box-title">Valores</h4>
         </div>
         <div class="row box-body">
-            <div class="col-md-6">
-                <h1>{{"R$ " + getValorTotal()}}</h1>
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th><h4>Total inscrição<small> (pago no ato da inscrição)</small></h4></th>
+                            <td class="text-right"><h4><nobr>{{formatPrice(pessoa.valores.inscricao)}}</nobr></h4></td>
+                        </tr>
+                        <tr>
+                            <th>{{pessoa.nome}}</th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Alojamento</td>
+                            <td class="text-right">{{formatPrice(pessoa.valores.alojamento)}}</td>
+                        </tr>
+                        <tr>
+                            <td>Refeição</td>
+                            <td class="text-right">{{formatPrice(pessoa.valores.refeicao)}}</td>
+                        </tr>
+                        <template v-for="dependente in pessoa.dependentes">
+                            <tr>
+                                <th>{{dependente.nome}}</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Alojamento</td>
+                                <td class="text-right">{{formatPrice(dependente.valores.alojamento)}}</td>
+                            </tr>
+                            <tr>
+                                <td>Refeição</td>
+                                <td class="text-right">{{formatPrice(dependente.valores.refeicao)}}</td>
+                            </tr>
+                        </template>  
+                        <tr>
+                            <th><h4>Total alojamento/refeição<small> (pago no dia do evento)</small></h4></th>
+                            <td class="text-right"><h4><nobr>{{getTotalAlojamentoRefeicao()}}</nobr></h4></td>
+                        </tr>
+                        <tr>
+                            <th>Total geral</th>
+                            <td class="text-right"><nobr>{{getTotalGeral()}}</nobr></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="text-right commands">
-                    <button type="button" class="btn btn-success btn-lg" @click="fazerIncricao">Fazer inscrição</button>
+                    <button type="button" class="btn btn-success btn-lg" @click="fazerIncricao">Confirmar inscrição</button>
                 </div>
             </div>
         </div>
@@ -193,7 +234,12 @@
         },
         data (){
             return{
-                pessoa : {id: -1, TIPO: 'R', cpf:'', valor : 0, valorTotal : 0, dependentes: []}
+                pessoa : {
+                    id: -1, 
+                    TIPO: 'R', 
+                    cpf:'', 
+                    valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
+                    dependentes: []}
             }
         },
         methods: {
@@ -202,7 +248,7 @@
                     id: this.pessoa.dependentes.length -100,
                     alojamento: this.pessoa.alojamento,
                     refeicao: this.pessoa.refeicao,
-                    valor: 0
+                    valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
                 });
             },
             removeDependente: function(id){
@@ -214,7 +260,7 @@
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
                     this.pessoa = response.body;
                 }, (error) => {
-                    this.showError(error);
+                    console.log(error.body);
                 });            
             },
             getValor: function(pessoa){
@@ -222,15 +268,15 @@
                     return;
 
                 this.$http.post('/valores/' + this.evento , pessoa).then(response => {
-                    pessoa.valor = response.body;
+                    pessoa.valores = response.body;
                 }, (error) => {
                     this.showError(error);
                 });            
             },
             postIncricao: function(){
-
                 swal({
                     title: 'Processando!',
+                    allowOutsideClick: false,
                     text: 'Estamos ajeitando tudo para que você tenha um ótimo congresso.',
                     onOpen: () => {
                         swal.showLoading()
@@ -240,11 +286,12 @@
                 this.$http.post('/eventos/' + this.evento + '/inscricao' , this.pessoa).then(response => {
                     var pagseguro = response.body;
                     swal.close();
-                    swal(
-                        'Estamos quase lá!',
-                        'Ao clicar OK você será redirecionado para a página de pagamento!',
-                        'success'
-                    ).then((result) => {
+                    swal({
+                        allowOutsideClick: false,
+                        title: 'Estamos quase lá!',
+                        text: 'Ao clicar em OK você será redirecionado para o pagamento da inscrição ('+this.formatPrice(this.pessoa.valores.inscricao)+ '). O restante acertamos no dia do evento, até lá!',
+                        type: 'success'
+                    }).then((result) => {
                         window.location.replace(pagseguro.link);
                     });
                 }, (error) => {
@@ -282,11 +329,20 @@
                     });
                 });
             },
-            getValorTotal: function(pessoa){
-                var total = this.pessoa.valor;
+            getTotalAlojamentoRefeicao: function(){
+                var total = this.pessoa.valores.alojamento + this.pessoa.valores.refeicao;
 
                 this.pessoa.dependentes.forEach(dependente => {
-                    total += dependente.valor;
+                    total += dependente.valores.total;
+                });
+
+                return this.formatPrice(total);
+            },
+            getTotalGeral: function(){
+                var total = this.pessoa.valores.total;
+
+                this.pessoa.dependentes.forEach(dependente => {
+                    total += dependente.valores.total;
                 });
 
                 return this.formatPrice(total);

@@ -20,25 +20,7 @@ class PessoasController extends Controller
     {
         $pessoa = Pessoa::where("cpf", $cpf)->firstOrFail();
     
-        if ($pessoa->nascimento)
-            $pessoa->nascimento = DateTime::createFromFormat('Y-m-d', $pessoa->nascimento)->format('d/m/Y');
-            
-        if ($pessoa->conjuge)
-            $pessoa->dependentes->prepend($pessoa->conjuge);
-
-        $pessoa->valor = $pessoa->getMeuValor($evento);
-
-        foreach ($pessoa->dependentes as $dependente) {
-            $dependente->valor = $dependente->getMeuValor($evento);
-            if ($dependente->nascimento)
-                $dependente->nascimento = DateTime::createFromFormat('Y-m-d', $dependente->nascimento)->format('d/m/Y');
-        }
-
-        $result = (object) $pessoa->toArray();
-
-        $result->dependentes = array_values($pessoa->dependentes->reject(function($item) {
-            return $item->inativo == 1;
-        })->toArray());
+        $result = $pessoa->toUI($evento);
 
         return response()->json($result);
     }
