@@ -9,22 +9,22 @@ use Exception;
 class PagSeguroNotificacao
 {
     public static function notificar($info){
-        $code = $info->getReference();
+        $numero = $info->getReference();
 
-        if (!$code){
+        if (!$numero){
             print_r("Erro: Código nulo retornado pelo pagseguro.");
             return;
         }
         
-        $inscricao = Inscricao::where('pagseguroCode', $code)->first();
+        $inscricao = Inscricao::where('numero', $numero)->first();
 
         if (!$inscricao){
-            print_r("Não foi encontrada a inscrição com o código:" . $code);
+            print_r("Não foi encontrada a inscrição com o código:" . $numero);
             return;
         }
 
         $inscricao->inscricaoPaga = 1;
-        $inscricao->valorInscricaoPago = $inscricao.valorInscricao;
+        $inscricao->valorInscricaoPago = $info->getAmounts()->getGrossAmount();
         $inscricao->save();
         print_r("Inscrição paga:" . $inscricao->id);
     }

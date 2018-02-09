@@ -3,7 +3,6 @@
 *bloquear inscrições após um prazo
 *bloquear inscrições por quantidade (1600)
 *redirecionar para /eventos/3
-*melhorar a forma de mostrar os valores
 *validação dos dados no servidor
 *atribuir a equipe de refeição deve ser feita na confirmação da presença
 *google analytics

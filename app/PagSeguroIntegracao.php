@@ -8,6 +8,7 @@ class PagSeguroIntegracao
 {
     public static function gerarPagamento($inscricao){
         $data = [
+            'reference' => $inscricao->numero,
             'items' => [
                 [
                     'id' => $inscricao->numero,
