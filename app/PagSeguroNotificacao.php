@@ -26,6 +26,6 @@ class PagSeguroNotificacao
         $inscricao->inscricaoPaga = 1;
         $inscricao->valorInscricaoPago = $info->getAmounts()->getGrossAmount();
         $inscricao->save();
-        print_r("Inscrição paga:" . $inscricao->id);
+        print_r("Inscrição paga:" . $numero);
     }
 }

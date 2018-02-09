@@ -1,4 +1,4 @@
-*notificação após receber o pagamento
+*ajustar mapa
 *enviar email
 *bloquear inscrições após um prazo
 *bloquear inscrições por quantidade (1600)
