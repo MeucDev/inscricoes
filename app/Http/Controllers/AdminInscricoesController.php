@@ -178,13 +178,17 @@
 	        |
 			*/
 			
+			$this->index_statistic[] = ['label'=>'Total de pessoas','count'=>DB::table('inscricoes')
+				->where('evento_id', $this->evento)
+				->count(),'icon'=>'fa fa-users','color'=>'primary'];
 			$this->index_statistic[] = ['label'=>'Total de presentes','count'=>DB::table('inscricoes')
 				->where([['presencaConfirmada', '1'] , ['evento_id', $this->evento]])
 				->count(),'icon'=>'fa fa-check','color'=>'green'];
-			$this->index_statistic[] = ['label'=>'Total de inscrições','count'=>DB::table('inscricoes')
+				$this->index_statistic[] = ['label'=>'Total de inscrições','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)
+				->where('numero_inscricao_responsavel', null)
 				->count(),'icon'=>'fa fa-list','color'=>'primary'];
-			$this->index_statistic[] = ['label'=>'Total pagas','count'=>DB::table('inscricoes')
+			$this->index_statistic[] = ['label'=>'Total de inscrições pagas','count'=>DB::table('inscricoes')
 				->where([['inscricaoPaga', '1'] , ['evento_id', $this->evento]])
 				->count(),'icon'=>'fa fa-dollar','color'=>'green'];				
 	        /*
