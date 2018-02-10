@@ -48,9 +48,6 @@ class PagSeguroIntegracao
         $credentials = PagSeguro::credentials()->get();
         $information = $checkout->send($credentials); // Retorna um objeto de laravel\pagseguro\Checkout\Information\Information
 
-        $inscricao->pagseguroCode = $information->getCode();
-        $inscricao->save();
-        
         $result = (object)[];
         $result->link = $information->getLink();
         return $result;
