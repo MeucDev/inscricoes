@@ -142,7 +142,7 @@
             <div class="col-md-4">
                 <div class="form-group text-right">
                     <label for="refeicao">Valor parcial</label>
-                    <input type="text" class="form-control text-right" :value="'R$ ' + formatPrice(pessoa.valores.total)"  disabled="">
+                    <input type="text" class="form-control text-right" :value="formatPrice(pessoa.valores.total)"  disabled="">
                 </div>
             </div>
         </div>
