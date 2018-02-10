@@ -23,7 +23,11 @@ class EventosController extends Controller
      */
     public function show($id, $nome = null)
     {
-        return view('evento', ['evento' => Evento::findOrFail($id)]);
+        $evento = Evento::findOrFail($id);
+        $evento->data_inicio = strtotime($evento->data_inicio);
+        $evento->data_fim = strtotime($evento->data_fim);
+
+        return view('evento', ['evento' => $evento]);
     }
 
     public function fazerInscricao(Request $request, $id){
