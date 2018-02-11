@@ -71,7 +71,7 @@
 			$this->form[] = ['label'=>'Valor refeição','name'=>'valorRefeicao','type'=>'number','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor total','name'=>'valorTotal','type'=>'number','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor total pago','name'=>'valorTotalPago','type'=>'number','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'PagSeguro code','name'=>'pagseguroCode','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'PagSeguro code','name'=>'pagseguroCode','type'=>'text','validation'=>'','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Evento','name'=>'evento_id','type'=>'hidden', 'value'=>$this->evento];
 			
 			//$this->form[] = ['label'=>'Observação','name'=>'observacao','type'=>'wysiwyg','width'=>'col-sm-10'];
