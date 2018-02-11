@@ -39,8 +39,8 @@
                 <div class="col-md-4">
                     <div :class="{'form-group': true, 'has-error': errors.has('nascimento') }">
                         <label for="nascimento">Data de Nascimento</label>
-                        <input type="text" v-mask="'##/##/####'" v-validate="validations.nascimento" class="form-control" @change="getValor(pessoa)" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
-                        <span v-show="errors.has('nascimento')" class="help-block">A data deve estar no formato dd/mm/aaaa e ser válida</span>                        
+                        <input type="text" v-mask="'##/##/####'" v-validate="'required|date_format:DD/MM/YYYY'" class="form-control" @change="getValor(pessoa)" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
+                        <span v-show="errors.has('nascimento')" class="help-block">A data deve estar no formato dd/mm/aaaa</span>                        
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -240,9 +240,6 @@
                     cpf:'', 
                     valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
                     dependentes: []
-                },
-                validations: {
-                    nascimento: 'required|date_format:DD/MM/YYYY|date_between:01/01/1900,' + new Date().toLocaleDateString('pt-BR')
                 }
             }
         },
