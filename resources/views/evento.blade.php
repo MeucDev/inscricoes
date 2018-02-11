@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Congresso de Famílias 2018 - Inscrições MEUC</title>
+	<title>{{$evento->nome}}</title>
 	@include('head')
 
 	<style media="all">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Pessoa;
+use App\Inscricao;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -19,7 +20,7 @@ class PessoasController extends Controller
     public function show($cpf, $evento)
     {
         $pessoa = Pessoa::where("cpf", $cpf)->firstOrFail();
-    
+
         $result = $pessoa->toUI($evento);
 
         return response()->json($result);

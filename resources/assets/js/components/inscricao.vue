@@ -208,7 +208,7 @@
             </div>
             <div class="col-md-12">
                 <div class="text-right commands">
-                    <button type="button" class="btn btn-success btn-lg" @click="fazerIncricao">Confirmar inscrição</button>
+                    <button type="button" id="confirmar" class="btn btn-success btn-lg" @click="fazerIncricao">Confirmar inscrição</button>
                 </div>
             </div>
         </div>
@@ -272,6 +272,28 @@
             getPessoa: function(){
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
                     this.pessoa = response.body;
+
+                    if (this.pessoa.inscricaoPaga){
+                        swal(
+                            'Já está tudo certo',
+                            'Identificamos em nosso sistema que sua inscrição já foi feita e está paga. Nos encontramos no dia do evento!',
+                            'sucesso'
+                        ).then((result) =>{
+                            $("#confirmar").remove();
+                        });                   
+                    }else if(this.pessoa.pagseguroLink){
+                        swal({
+                            title: 'Só falta pagar',
+                            text: "Identificamos em nosso sistema que sua inscrição não está paga. Se deseja fazer o pagamento clique em Pagar. Caso você queira fazer alguma alteração clique em cancelar e refaça a sua inscrição",
+                            type: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Pagar'
+                        }).then((result) =>{
+                            if (result.value){
+                                window.location.replace(this.pessoa.pagseguroLink);
+                            }
+                        });                         
+                    }
                 }, (error) => {
                     console.log(error.body);
                 });            

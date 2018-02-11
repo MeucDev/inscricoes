@@ -39,11 +39,20 @@ class Pessoa extends Model
             $this->dependentes->prepend($this->conjuge);
 
         $this->valores = $this->getMeusValores($evento);
-
+        
         foreach ($this->dependentes as $dependente) {
             $dependente->valores = $dependente->getMeusValores($evento);
             if ($dependente->nascimento)
                 $dependente->nascimento = DateTime::createFromFormat('Y-m-d', $dependente->nascimento)->format('d/m/Y');
+        }
+
+        $inscricao = Inscricao::where("pessoa_id", $this->id)
+            ->where("evento_id", $evento)
+            ->first();
+            
+        if ($inscricao){
+            $this->inscricaoPaga = $inscricao->inscricaoPaga == 1;
+            $this->pagseguroLink = $inscricao->pagseguroLink;
         }
 
         $result = (object) $this->toArray();

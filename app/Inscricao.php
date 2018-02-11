@@ -48,8 +48,17 @@ class Inscricao extends Model
 
     public static function criarInscricao($pessoa, $evento){
 
-        if (Inscricao::where("pessoa_id", $pessoa->id)->where("evento_id", $evento)->exists())
-            throw new Exception("Já existe uma inscrição para o evento no seu nome. Entre em contato com a organização do evento");
+        $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
+            ->where("evento_id", $evento)
+            ->first();
+        
+        if ($inscricao){
+            if ($inscricao->pagseguroCode || $inscricao->inscricaoPaga)
+                throw new Exception("Já existe uma inscrição para o evento no seu nome. Entre em contato com a organização do evento");
+
+            Inscricao::where('numero_inscricao_responsavel', $inscricao->numero)->delete();
+            $inscricao->delete();
+        }
 
         $inscricao = new Inscricao;
         $inscricao->populate($pessoa, $evento);
