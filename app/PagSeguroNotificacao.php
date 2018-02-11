@@ -43,8 +43,6 @@ class PagSeguroNotificacao
 
     public static function enviarEmail($inscricao, $slug){
         $data = ['nome'=>$inscricao->pessoa->nome,'link'=>$inscricao->pagseguroLink];
-        $data->nome = $inscricao->pessoa->nome;
-        $data->link = $inscricao->pagseguroLink;
 
         try{
             CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>$slug,'attachments'=>[]]);
