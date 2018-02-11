@@ -11,22 +11,17 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::get('/pessoas/{cpf}/{evento}', 'PessoasController@show');
 
 Route::post('/valores/{evento}', 'ValoresController@valor');
 
+
+Route::get('/', 'EventosController@first');
+Route::get('/eventos/{id}', 'EventosController@show');
+Route::post('/eventos/{id}/inscricao', 'EventosController@fazerInscricao');
 Route::get('/eventos', function () {
     return view('eventos');
 });
-
-Route::post('/eventos/{id}/inscricao', 'EventosController@fazerInscricao');
-
-Route::get('/eventos/{id}/{nome?}', 'EventosController@show')
-    ->where([ 'id' => '[0-9]+', 'nome' => '[a-zA-Z0-9-]+' ]);
 
 Route::post('/pagseguro/notification', [
     'uses' => '\laravel\pagseguro\Platform\Laravel5\NotificationController@notification',

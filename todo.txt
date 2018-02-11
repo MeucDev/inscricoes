@@ -1,15 +1,3 @@
-OK*no pagseguro tem um telefone de contato. Esse telefone será 24 horas? Entendo que não. Sugiro colocar o horário de atendimento, ou retirar.
-OK*ao abrir nosso site (congressodefamilias.com.br), não constam os detalhes do evento, e também não achei o link para baixar o convite.
-OK*na página principal do sistema de inscrição a data está do CF de 2017.
-OK*no link "ver detalhes sobre o evento" o direcionamento não está para o site do CF, e sim da MEUC.
-OK*no título da página principal da inscrição "famílias" o "f" está com letra minúscula.
-OK*cliquei no link do 'Mapa', e não funcionou.
-OK*não encontrei a opção de pagamento via boleto. Entendi que o pagseguro seria uma alternativa, não a única forma. Se for a única forma, o congressista será obrigado a se cadastrar no pagseguro, o que para muitos pode ser inconveniente.
-OK*o formato da data, poderia ser com preenchimento automático das barras, acaba sendo inconveniente (pelo menos não é o que normalmente tenho visto em outros sistemas).
-OK*o hífen do CEP também poderia ser automático.
-OK*não há limites para inclusão de dependentes, ou seja, é possível fazer uma inscrição (com somente uma taxa de inscrição), 10-20 etc pessoas. Sugiro limitar em conjuge+4 filhos, a partir daí o congressista deve entrar em contato para adicionar mais dependentes. Testei até 20, e aceitou... rsrsrs
-OK*na opção de alojamento "Lar" não deveria aparecer as opções de refeição no Quiosque, entendo que o Lar só oferece a opção pacote (pensão completa). Assim, nem a opção de Lar "sem café". Na verdade, se a opção de hospedagem for o Lar, o valor deveria apresentar "zerado", ou seja, ele irá pagar tudo no Lar. Neste caso, a sugestão seria apresentar no campo de refeições a mesma resposta, ou seja, "Lar Filadélfia (Tratar direto").
-OK*se a pessoa quiser fazer uma simulação de valores, e não colocar a data de nascimento, obviamente o valor não altera, mas, poderia informar ao congressista que para tal situação há a necessidade de informar a data de nascimento antes.
 *erro ao salvar inscrição em admin
 *acho que poderia ter uma logo do CF ou do evento.
 *como não finalizei a cobrança, o sistema deveria entender como uma inscrição provisória (em aberto), ou seja, ao entrar novamente com o CPF, deveria ser possível editar/finalizar, o que não conseguir fazer (apresenta inscrição já realizada). Neste caso, a tendência será do congressista fazer uma nova inscrição com outro CPF, como já aconteceu algumas vezes em anos anteriores. Sugiro, prever essa forma de 'rascunho' da inscrição, ou seja, nos sites de compra seria como uma 'compra no carrinho' sem finalizar (compra em aberto). Outro problema que isso gera é que se o congressita desistir ou querer finalizar a 'compra' em outro momento, não poderá mais, por não conseguir mais acessar aquela inscrição.
