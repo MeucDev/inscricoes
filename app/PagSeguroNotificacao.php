@@ -42,7 +42,7 @@ class PagSeguroNotificacao
     }
 
     public static function enviarEmail($inscricao, $slug){
-        $data = (object)[];
+        $data = ['nome'=>$inscricao->pessoa->nome,'link'=>$inscricao->pagseguroLink];
         $data->nome = $inscricao->pessoa->nome;
         $data->link = $inscricao->pagseguroLink;
 
