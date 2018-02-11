@@ -26,29 +26,32 @@ class PagSeguroNotificacao
 
         //3) Paga: a transação foi paga pelo comprador e o PagSeguro já recebeu uma confirmação da instituição financeira responsável pelo processamento.
         //4) Disponível: a transação foi paga e chegou ao final de seu prazo de liberação sem ter sido retornada e sem que haja nenhuma disputa aberta.
-        if ($info->getStatus() == 3 || $info->getStatus() == 4){
+        if ($info->getStatus()->getCode() == 3 || $info->getStatus()->getCode() == 4){
             print_r("Inscrição paga: " . $numero);
             $inscricao->inscricaoPaga = 1;
             $inscricao->valorInscricaoPago = $info->getAmounts()->getGrossAmount();
             $inscricao->pagseguroCode = $info->getCode();
             $inscricao->save();
+
+            PagSeguroNotificacao::enviarEmail($inscricao, "confirmacao");
         }else{
             print_r("Inscrição não está paga: " . $numero);
-        }
 
+            PagSeguroNotificacao::enviarEmail($inscricao, "pagamento_rejeitado");
+        }
+    }
+
+    public static function enviarEmail($inscricao, $slug){
+        $data = (object)[];
+        $data->nome = $inscricao->pessoa->nome;
+        $data->link = $inscricao->pagseguroLink;
 
         try{
-            if ($info->getStatus() == 3 || $info->getStatus() == 4){
-                $data = (object)[];
-                $data->nome = $inscricao->pessoa->nome;
-                $data->link = $inscricao->pagseguroLink;
-                CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>'confirmacao','attachments'=>[]]);
-            }else{
-                CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>'pagamento_rejeitado','attachments'=>[]]);
-            }            
+            CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>$slug,'attachments'=>[]]);
         }   
         catch(Exception $e){
             print_r("Erro ao enviar email: " . $e->getMessage());
         }
+
     }
 }
