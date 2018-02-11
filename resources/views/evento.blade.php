@@ -49,7 +49,7 @@
 						<a class="btn btn-primary" target="_blank" href="{{$evento->linkDetalhes}}">Ver detalhes sobre o evento</a>
 					</div>
 					<div class="col-md-4 text-right align-bottom">
-						<h4>{{date('d', $evento->data_inicio)}} a {{date('d', $evento->data_fim)}} de {{date('F', $evento->data_fim)}} de {{date('Y', $evento->data_fim)}}</h4>
+						<h4>{{$evento->periodo}}</h4>
 						<h4>{{$evento->local}} (
 							<a href="{{$evento->linkMapa}}" target="_blank">Mapa</a>)</h4>
 					</div>

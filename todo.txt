@@ -1,12 +1,8 @@
 *erro ao salvar inscrição em admin
 *acho que poderia ter uma logo do CF ou do evento.
-*como não finalizei a cobrança, o sistema deveria entender como uma inscrição provisória (em aberto), ou seja, ao entrar novamente com o CPF, deveria ser possível editar/finalizar, o que não conseguir fazer (apresenta inscrição já realizada). Neste caso, a tendência será do congressista fazer uma nova inscrição com outro CPF, como já aconteceu algumas vezes em anos anteriores. Sugiro, prever essa forma de 'rascunho' da inscrição, ou seja, nos sites de compra seria como uma 'compra no carrinho' sem finalizar (compra em aberto). Outro problema que isso gera é que se o congressita desistir ou querer finalizar a 'compra' em outro momento, não poderá mais, por não conseguir mais acessar aquela inscrição.
 *achei o sistema um pouco lento ao responder. Parece ter um 'delay' em cada alteração. Pode ser a minha internet rsrsrs
 *curiosidade: o sistema aceita qualquer ano, nas datas de nascimento, inclusive 0000.
-*enviar email
-*bloquear inscrições após um prazo
 *bloquear inscrições por quantidade (1600)
-*redirecionar para /eventos/3
 *validação dos dados no servidor
 *atribuir a equipe de refeição deve ser feita na confirmação da presença
 *google analytics

@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
 
 Route::get('/pessoas/{cpf}/{evento}', 'PessoasController@show');
 
