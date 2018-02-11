@@ -33,10 +33,17 @@ class PagSeguroNotificacao
             $inscricao->pagseguroCode = $info->getCode();
             $inscricao->save();
 
-            //CRUDBooster::sendEmail()
+            $data = [];
+            $data->nome = $inscricao->pessoa->nome;
+
+            CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>'confirmacao','attachments'=>[]]);
         }else{
             print_r("Inscrição não está paga:" . $numero);
-            //CRUDBooster::sendEmail()
+            $data = [];
+            $data->nome = $inscricao->pessoa->nome;
+            $data->link = $inscricao->pagseguroLink;
+
+            CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>'pagamento_rejeitado','attachments'=>[]]);
         }
 
     }
