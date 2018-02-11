@@ -1,6 +1,5 @@
 *erro ao salvar inscrição em admin
 *acho que poderia ter uma logo do CF ou do evento.
-*achei o sistema um pouco lento ao responder. Parece ter um 'delay' em cada alteração. Pode ser a minha internet rsrsrs
 *curiosidade: o sistema aceita qualquer ano, nas datas de nascimento, inclusive 0000.
 *bloquear inscrições por quantidade (1600)
 *validação dos dados no servidor

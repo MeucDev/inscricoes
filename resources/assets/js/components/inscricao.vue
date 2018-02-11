@@ -274,7 +274,7 @@
                         swal(
                             'Já está tudo certo',
                             'Identificamos em nosso sistema que sua inscrição já foi feita e está paga. Nos encontramos no dia do evento!',
-                            'sucesso'
+                            'success'
                         ).then((result) =>{
                             $("#confirmar").remove();
                         });                   
