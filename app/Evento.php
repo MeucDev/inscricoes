@@ -14,7 +14,7 @@ class Evento extends Model
     public function encerrado(){
         $dateNow = date("Y-m-d");
         
-        if (dateNow >= $this.data_inicio)
+        if (dateNow >= $this->data_inicio)
             return true;
 
         return false;
