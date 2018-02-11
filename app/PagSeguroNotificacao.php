@@ -32,19 +32,23 @@ class PagSeguroNotificacao
             $inscricao->valorInscricaoPago = $info->getAmounts()->getGrossAmount();
             $inscricao->pagseguroCode = $info->getCode();
             $inscricao->save();
-
-            $data = [];
-            $data->nome = $inscricao->pessoa->nome;
-
-            CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>'confirmacao','attachments'=>[]]);
         }else{
-            print_r("Inscrição não está paga:" . $numero);
-            $data = [];
-            $data->nome = $inscricao->pessoa->nome;
-            $data->link = $inscricao->pagseguroLink;
-
-            CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>'pagamento_rejeitado','attachments'=>[]]);
+            print_r("Inscrição não está paga: " . $numero);
         }
 
+
+        try{
+            if ($info->getStatus() == 3 || $info->getStatus() == 4){
+                $data = (object)[];
+                $data->nome = $inscricao->pessoa->nome;
+                $data->link = $inscricao->pagseguroLink;
+                CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>'confirmacao','attachments'=>[]]);
+            }else{
+                CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>'pagamento_rejeitado','attachments'=>[]]);
+            }            
+        }   
+        catch(Exception $e){
+            print_r("Erro ao enviar email: " . $e->getMessage());
+        }
     }
 }
