@@ -39,8 +39,8 @@
                 <div class="col-md-4">
                     <div :class="{'form-group': true, 'has-error': errors.has('nascimento') }">
                         <label for="nascimento">Data de Nascimento</label>
-                        <input type="text" v-validate="'required|date_format:DD/MM/YYYY'" class="form-control" @change="getValor(pessoa, 'R')" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
-                        <span v-show="errors.has('nascimento')" class="help-block">A data deve estar no formato dd/mm/aaaa</span>                        
+                        <input type="text" v-mask="'##/##/####'" v-validate="validations.nascimento" class="form-control" @change="getValor(pessoa)" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
+                        <span v-show="errors.has('nascimento')" class="help-block">A data deve estar no formato dd/mm/aaaa e ser válida</span>                        
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -56,7 +56,7 @@
                 <div class="col-md-4">
                     <div :class="{'form-group': true, 'has-error': errors.has('telefone') }">
                         <label for="telefone">Telefone</label>
-                        <input type="text" v-validate="{required:true, regex:/\d{2}\s\d{8,9}/}" v-model="pessoa.telefone" class="form-control" name="telefone" id="telefone" placeholder="47 999999999">
+                        <input type="text" v-mask="'## #########'" v-validate="{required:true, regex:/\d{2}\s\d{8,9}/}" v-model="pessoa.telefone" class="form-control" name="telefone" id="telefone" placeholder="47 999999999">
                         <span v-show="errors.has('telefone')" class="help-block">O telefone deve estar no formato 47 999999999</span>                        
                     </div>
                 </div>
@@ -69,7 +69,7 @@
             <div class="col-md-3">
                 <div :class="{'form-group': true, 'has-error': errors.has('cep') }">
                     <label for="cep">CEP</label>
-                    <input type="text" v-validate="{required:true, regex:/\d{5}-\d{3}/}"  v-model="pessoa.cep" class="form-control" id="cep" name="cep" placeholder="99999-999">
+                    <input type="text" v-mask="'#####-###'" v-validate="{required:true, regex:/\d{5}-\d{3}/}"  v-model="pessoa.cep" class="form-control" id="cep" name="cep" placeholder="99999-999">
                     <span v-show="errors.has('cep')" class="help-block">O cep deve estar no formato 99999-999</span>                        
                 </div>
             </div>
@@ -77,7 +77,7 @@
                 <div :class="{'form-group': true, 'has-error': errors.has('uf') }">
                     <label for="uf">UF</label>
                     <input type="text" v-validate="'required|min:2|max:2'" v-model="pessoa.uf" class="form-control" id="uf" name="uf" style="text-transform:uppercase">
-                    <span v-show="errors.has('uf')" class="help-block">Campo obrigatório</span>                        
+                    <span v-show="errors.has('uf')" class="help-block">O campo deve ter apenas duas letras ex: SC</span>                        
                 </div>
             </div>
             <div class="col-md-4">
@@ -118,7 +118,7 @@
             <div class="col-md-4">
                 <div :class="{'form-group': true, 'has-error': errors.has('alojamento') }">
                     <label for="alojamento">Hospedagem</label>
-                    <select name="alojamento" v-validate="'required'" id="alojamento" @change="getValor(pessoa, 'R')" v-model="pessoa.alojamento" class="form-control">
+                    <select name="alojamento" v-validate="'required'" id="alojamento" @change="hospedagemChange(pessoa);getValor(pessoa)" v-model="pessoa.alojamento" class="form-control">
                         <option value="CAMPING">Camping</option>
                         <option value="LAR">Lar Filadélfia (Tratar direto)</option>
                         <option value="OUTROS">Outro / Hotel na cidade</option>
@@ -129,7 +129,7 @@
             <div class="col-md-4">
                 <div :class="{'form-group': true, 'has-error': errors.has('refeicao') }">
                     <label for="refeicao">Refeição</label>
-                    <select name="refeicao" v-validate="'required'" id="refeicao" @change="getValor(pessoa, 'R')" v-model="pessoa.refeicao" class="form-control">
+                    <select name="refeicao" id="refeicao" @change="getValor(pessoa)" v-model="pessoa.refeicao" class="form-control">
                         <option value="QUIOSQUE_COM_CAFE">Quiosque com café</option>
                         <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
                         <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
@@ -151,7 +151,7 @@
         ref="dependentes"
         :pessoa="dependente" 
         :remove="removeDependente"
-        :getvalor = "getValor"
+        :get-valor = "getValor"
         >
     </dependente>
     <div class="text-right commands">
@@ -219,31 +219,44 @@
 <script>
     import Vue from 'vue';
     import VeeValidate from 'vee-validate';
+    import VueTheMask from 'vue-the-mask';
     import swal from 'sweetalert2';
     import helpers from './helpers';
     import dependente from './dependente.vue';
 
     Vue.use(VeeValidate);    
+    Vue.use(VueTheMask);
     
     export default {
         props: ['evento'],
         mixins: [helpers],
         components: {dependente},
-        mounted() {
-            console.log('Component mounted.')
-        },
         data (){
             return{
-                pessoa : {
+                pessoa : 
+                {
                     id: -1, 
                     TIPO: 'R', 
                     cpf:'', 
                     valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
-                    dependentes: []}
+                    dependentes: []
+                },
+                validations: {
+                    nascimento: 'required|date_format:DD/MM/YYYY|date_between:01/01/1900,' + new Date().toLocaleDateString('pt-BR')
+                }
             }
         },
         methods: {
             addDependente: function(){
+                if (this.pessoa.dependentes.length == 6)
+                {
+                    swal(
+                        'Opa, sua família é bem grande',
+                        'Caso deseja adicionar mais dependentes, entre em contato com a organização!',
+                        'warning'
+                    );
+                    return;
+                }
                 this.pessoa.dependentes.push({
                     id: this.pessoa.dependentes.length -100,
                     alojamento: this.pessoa.alojamento,
@@ -264,14 +277,26 @@
                 });            
             },
             getValor: function(pessoa){
-                if (!pessoa.alojamento || !pessoa.refeicao || !pessoa.nascimento)
+                if (!pessoa.nascimento){
+                    var focused = $(':focus');
+                    swal(
+                        'Informação',
+                        'Informe a data de nascimento para obter o valor!',
+                        'info'
+                    ).then((result) =>{
+                        var box = focused.closest(".box");
+                        box.find("#nascimento").focus();
+                    });                   
                     return;
+                }
 
-                this.$http.post('/valores/' + this.evento , pessoa).then(response => {
-                    pessoa.valores = response.body;
-                }, (error) => {
-                    this.showError(error);
-                });            
+                if (pessoa.nascimento && (pessoa.alojamento || pessoa.refeicao)){
+                    this.$http.post('/valores/' + this.evento , pessoa).then(response => {
+                        pessoa.valores = response.body;
+                    }, (error) => {
+                        console.log(error);
+                    });            
+                }
             },
             postIncricao: function(){
                 swal({
