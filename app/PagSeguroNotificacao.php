@@ -45,7 +45,7 @@ class PagSeguroNotificacao
         $data = ['nome'=>$inscricao->pessoa->nome,'link'=>$inscricao->pagseguroLink];
 
         try{
-            CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template_name_you_created'=>$slug,'attachments'=>[]]);
+            CRUDBooster::sendEmail(['to'=>$inscricao->pessoa->email,'data'=>$data,'template'=>$slug,'attachments'=>[]]);
         }   
         catch(Exception $e){
             print_r("Erro ao enviar email: " . $e->getMessage());
