@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -52,7 +53,14 @@ class Handler extends ExceptionHandler
                 'errors' => 'Sorry, something went wrong.'
             ];
 
-            $response['message'] = $e->getMessage();
+            if ($e instanceof ValidationException){
+                $message = "Existem dados incorretos no cadastro: <br>";
+                $message .= join('<br>', $e->validator->errors()->all());
+                $response['message'] = $message;
+            }else{
+                $response['message'] = $e->getMessage();
+            }
+
             // If the app is in debug mode
             if (config('app.debug')) {
                 // Add the exception class name, message and stack trace to response
