@@ -10,7 +10,6 @@ return [
     'credentials' => [//INFORME AS CREDENCIAIS PADRÕES DE SUA LOJA, MAS PORDERÁ SER ALTERADA EM RUNTIME
         'email' => 'contato@congressodefamilias.com.br',
         'token' => '561EAB97CF9E48038618050B722D1C03',
-        // producao 'token' => '0112F46C7E7F4E129395A6E4562117D1',
     ],
 
     /*

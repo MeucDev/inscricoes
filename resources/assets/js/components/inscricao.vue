@@ -15,7 +15,7 @@
                 </div>
                 <div class="col-md-3">
                     <div :class="{'form-group': true, 'has-error': errors.has('nome') }">
-                        <label for="nome">Nome</label>
+                        <label for="nome">Nome completo</label>
                         <input v-validate="'required'" type="text" v-model="pessoa.nome" class="form-control" name="nome" id="nome">
                         <span v-show="errors.has('nome')" class="help-block">Campo obrigatório</span>                        
                     </div>
@@ -106,7 +106,7 @@
             <div class="col-md-2">
                 <div :class="{'form-group': true, 'has-error': errors.has('nroend') }">
                     <label for="nroend">Número</label>
-                    <input type="text" v-validate="'required'" v-model="pessoa.nroend" class="form-control" id="nroend" name="nroend">
+                    <input type="text" v-validate="'required|numeric'" v-model="pessoa.nroend" class="form-control" id="nroend" name="nroend">
                     <span v-show="errors.has('nroend')" class="help-block">Campo obrigatório</span>                        
                 </div>
             </div>
@@ -142,7 +142,7 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group text-right">
-                    <label for="refeicao">Valor parcial</label>
+                    <label >Valor parcial</label>
                     <input type="text" class="form-control text-right" :value="formatPrice(pessoa.valores.total)"  disabled="">
                 </div>
             </div>

@@ -1,9 +1,6 @@
-*quando o cadastro já tem o lar selecionado está ocorrendo erro
-*está aceitando data 00/00/0000
+*validar nome completo
 *erro ao salvar inscrição em admin
 *acho que poderia ter uma logo do CF ou do evento.
-*curiosidade: o sistema aceita qualquer ano, nas datas de nascimento, inclusive 0000.
 *bloquear inscrições por quantidade (1600)
-*validação dos dados no servidor
 *atribuir a equipe de refeição deve ser feita na confirmação da presença
 *google analytics
