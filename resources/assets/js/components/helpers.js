@@ -1,4 +1,8 @@
 
+import Vue from 'vue';
+import swal from 'sweetalert2';
+
+
 // define a mixin object
 export default {
     methods: {
@@ -20,29 +24,51 @@ export default {
             $('select[id=refeicao]').each(function(index){
                 if ($(this).val() == "LAR")
                     $(this).prop("disabled", true);
-                console.log($(this).val());
-            });
-        },
-        refeicaoChange: function(event){
-            alert('oi');
-            $(event.target).find("option[value='LAR']").each(function() {
-                $(this).remove();
             });
         },
         hospedagemChange: function(pessoa, event){
             var box = $(event.target).closest(".box");
             var refeicao = box.find("#refeicao");
 
-            refeicao.find("option[value='LAR']").each(function() {
-                $(this).remove();
-            });
-
             if (pessoa.alojamento == "LAR"){
                 refeicao.prop("disabled", true);
-                refeicao.append(new Option('Lar Filadélfia (Tratar direto)', 'LAR', false, false));
                 pessoa.refeicao = "LAR";
             }else{
+                if (pessoa.refeicao = "LAR")
+                    pessoa.refeicao = "";
                 refeicao.prop("disabled", false);
+            }
+        },
+        refeicaoChange: function(pessoa){
+            if (pessoa.refeicao == "LAR" && pessoa.alojamento != "LAR"){
+                pessoa.refeicao = "";
+                swal(
+                    'Opção inválida',
+                    'Essa opção é válida apenas se a hospedagem for no Lar Filadélfia.',
+                    'warning'
+                );                
+            }
+        },
+        getValor: function(pessoa, evento, event){
+            if (!pessoa.nascimento){
+                var el =  $(event.target);
+                swal(
+                    'Informação',
+                    'Informe a data de nascimento para obter o valor!',
+                    'info'
+                ).then((result) =>{
+                    var box = el.closest(".box");
+                    box.find("#nascimento").focus();
+                });                   
+                return;
+            }
+
+            if (pessoa.nascimento && (pessoa.alojamento || pessoa.refeicao)){
+                this.$http.post('/valores/' + evento , pessoa).then(response => {
+                    pessoa.valores = response.body;
+                }, (error) => {
+                    console.log(error);
+                });            
             }
         },
     }

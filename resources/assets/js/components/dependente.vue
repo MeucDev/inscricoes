@@ -38,7 +38,7 @@
             <div class="col-md-3">
                 <div :class="{'form-group': true, 'has-error': errors.has('nascimento') }">
                     <label for="nascimento">Data de Nascimento</label>
-                    <input type="text" v-mask="'##/##/####'" v-validate="'required|date_format:DD/MM/YYYY'" class="form-control" @change="getValor(pessoa)" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
+                    <input type="text" v-mask="'##/##/####'" v-validate="'required|date_format:DD/MM/YYYY'" class="form-control" @change="getValor(pessoa, evento, $event)" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
                     <span v-show="errors.has('nascimento')" class="help-block">A data deve estar no formato dd/mm/aaaa</span>                        
                 </div>
             </div>
@@ -57,7 +57,7 @@
             <div class="col-md-3">
                 <div :class="{'form-group': true, 'has-error': errors.has('alojamento') }">
                     <label for="alojamento">Hospedagem</label>
-                    <select name="alojamento" v-validate="'required'" id="alojamento" @change="hospedagemChange(pessoa, $event);getValor(pessoa)" v-model="pessoa.alojamento" class="form-control">
+                    <select name="alojamento" v-validate="'required'" id="alojamento" @change="hospedagemChange(pessoa, $event);getValor(pessoa, evento, $event)" v-model="pessoa.alojamento" class="form-control">
                         <option value="CAMPING">Camping</option>
                         <option value="LAR">Lar Filadélfia (Tratar direto)</option>
                         <option value="OUTROS">Outro / Hotel na cidade</option>
@@ -68,7 +68,7 @@
             <div class="col-md-3">
                 <div :class="{'form-group': true, 'has-error': errors.has('refeicao') }">
                     <label for="refeicao">Refeição</label>
-                    <select name="refeicao" v-validate="'required'" id="refeicao" @change="refeicaoChange($event);getValor(pessoa)" v-model="pessoa.refeicao" class="form-control">
+                    <select name="refeicao" v-validate="'required'" id="refeicao" @change="refeicaoChange(pessoa);getValor(pessoa, evento, $event)" v-model="pessoa.refeicao" class="form-control">
                         <option value="QUIOSQUE_COM_CAFE">Quiosque com café</option>
                         <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
                         <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
@@ -99,7 +99,7 @@
     Vue.use(VueTheMask)
 
     export default {
-        props: ['pessoa', 'remove', 'getValor'],
+        props: ['pessoa', 'remove', 'evento'],
         mixins: [helpers],
         methods:{
             getTipo : function(tipo){
