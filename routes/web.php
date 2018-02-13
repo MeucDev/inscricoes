@@ -19,7 +19,7 @@ Route::post('/valores/{evento}', 'ValoresController@valor');
 
 Route::get('/', 'EventosController@first');
 Route::get('/eventos/{id}', 'EventosController@show');
-Route::post('/eventos/{id}/inscricao', 'EventosController@fazerInscricao');
+Route::post('/eventos/{id}/inscricao', 'EventosController@inscricao');
 Route::get('/eventos', function () {
     return view('eventos');
 });
