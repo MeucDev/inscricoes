@@ -81,6 +81,9 @@ class EventosController extends Controller
 
         $dados = (object) json_decode($request->getContent(), true);
 
+        if (!strrpos($dados->nome, ' '))
+            throw new Exception("O nome do responsável deve ser completo");
+
         $pessoa = Pessoa::atualizarCadastros($dados);
 
         $result = DB::transaction(function() use ($dados, $pessoa, $id) {

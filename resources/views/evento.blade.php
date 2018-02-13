@@ -50,8 +50,7 @@
 					</div>
 					<div class="col-md-4 text-right align-bottom">
 						<h4>{{$evento->periodo}}</h4>
-						<h4>{{$evento->local}} (
-							<a href="{{$evento->linkMapa}}" target="_blank">Mapa</a>)</h4>
+						<h4>{{$evento->local}} (<a href="{{$evento->linkMapa}}" target="_blank">Mapa</a>)</h4>
 						<img src="{{ asset('images/congresso.png') }}" />
 					</div>
 				</div>
