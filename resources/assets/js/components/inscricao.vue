@@ -129,7 +129,7 @@
             <div class="col-md-4">
                 <div :class="{'form-group': true, 'has-error': errors.has('refeicao') }">
                     <label for="refeicao">Refeição</label>
-                    <select name="refeicao" id="refeicao" @change="refeicaoChange($event);getValor(pessoa)" v-model="pessoa.refeicao" class="form-control">
+                    <select name="refeicao" v-validate="'required'" id="refeicao" @change="refeicaoChange($event);getValor(pessoa)" v-model="pessoa.refeicao" class="form-control">
                         <option value="QUIOSQUE_COM_CAFE">Quiosque com café</option>
                         <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
                         <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
