@@ -268,6 +268,9 @@
                 })
             },
             getPessoa: function(){
+                if (!this.pessoa.cpf)
+                    return;
+                    
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
                     this.pessoa = response.body;
                     
