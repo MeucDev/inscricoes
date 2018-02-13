@@ -118,7 +118,7 @@
             <div class="col-md-4">
                 <div :class="{'form-group': true, 'has-error': errors.has('alojamento') }">
                     <label for="alojamento">Hospedagem</label>
-                    <select name="alojamento" v-validate="'required'" id="alojamento" @change="hospedagemChange(pessoa);getValor(pessoa)" v-model="pessoa.alojamento" class="form-control">
+                    <select name="alojamento" v-validate="'required'" id="alojamento" @change="hospedagemChange(pessoa, $event);getValor(pessoa)" v-model="pessoa.alojamento" class="form-control">
                         <option value="CAMPING">Camping</option>
                         <option value="LAR">Lar Filadélfia (Tratar direto)</option>
                         <option value="OUTROS">Outro / Hotel na cidade</option>
@@ -129,11 +129,12 @@
             <div class="col-md-4">
                 <div :class="{'form-group': true, 'has-error': errors.has('refeicao') }">
                     <label for="refeicao">Refeição</label>
-                    <select name="refeicao" id="refeicao" @change="getValor(pessoa)" v-model="pessoa.refeicao" class="form-control">
+                    <select name="refeicao" id="refeicao" @change="refeicaoChange($event);getValor(pessoa)" v-model="pessoa.refeicao" class="form-control">
                         <option value="QUIOSQUE_COM_CAFE">Quiosque com café</option>
                         <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
                         <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
                         <option value="LAR_SEM_CAFE">Lar Filadélfia sem café</option>
+                        <option value="LAR">Lar Filadélfia (Tratar direto)</option>
                         <option value="NENHUMA">Nenhuma</option>
                     </select>
                     <span v-show="errors.has('refeicao')" class="help-block">Campo obrigatório</span>                        
@@ -269,14 +270,21 @@
             getPessoa: function(){
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
                     this.pessoa = response.body;
+                    
+                    var self = this;
+                    setTimeout(function(){
+                        self.ajustarTodasRefeicoes(self.pessoa);
+                    }, 100);
 
+                    $("#confirmar").show();
+                    
                     if (this.pessoa.inscricaoPaga){
                         swal(
                             'Já está tudo certo',
                             'Identificamos em nosso sistema que sua inscrição já foi feita e está paga. Nos encontramos no dia do evento!',
                             'success'
                         ).then((result) =>{
-                            $("#confirmar").remove();
+                            $("#confirmar").hide();
                         });                   
                     }else if(this.pessoa.pagseguroLink){
                         swal({

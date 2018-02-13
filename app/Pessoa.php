@@ -147,10 +147,10 @@ class Pessoa extends Model
     }
 
     public static function atualizarCadastros($dados){
-        if ($dados->id < 0)
+        $pessoa = Pessoa::where('cpf', $dados->cpf)->first();
+
+        if (!$pessoa)
             $pessoa = new Pessoa;
-        else
-            $pessoa = Pessoa::findOrFail($dados->id);
 
         $pessoa->populate($dados);
 

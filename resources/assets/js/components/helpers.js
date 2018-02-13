@@ -8,9 +8,29 @@ export default {
 
             return 'R$ ' + price;
         },    
-        hospedagemChange: function(pessoa){
-            var focused = $(':focus');
-            var box = focused.closest(".box");
+        ajustarTodasRefeicoes: function(pessoa){
+            if (pessoa.alojamento == "LAR")
+                pessoa.refeicao = "LAR";
+
+            pessoa.dependentes.forEach(dependente => {
+                if (dependente.alojamento == "LAR")
+                    dependente.refeicao = "LAR";
+            });
+
+            $('select[id=refeicao]').each(function(index){
+                if ($(this).val() == "LAR")
+                    $(this).prop("disabled", true);
+                console.log($(this).val());
+            });
+        },
+        refeicaoChange: function(event){
+            alert('oi');
+            $(event.target).find("option[value='LAR']").each(function() {
+                $(this).remove();
+            });
+        },
+        hospedagemChange: function(pessoa, event){
+            var box = $(event.target).closest(".box");
             var refeicao = box.find("#refeicao");
 
             refeicao.find("option[value='LAR']").each(function() {
