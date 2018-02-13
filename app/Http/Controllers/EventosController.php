@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\PagSeguroIntegracao;
+use Illuminate\Validation\ValidationExceptionion;
 
 class EventosController extends Controller
 {
@@ -45,8 +46,39 @@ class EventosController extends Controller
     }
 
 
-    public function fazerInscricao(Request $request, $id){
+    public function validar(Request $request){
+        $this->validate($request, [
+            'TIPO' => 'required',
+            'cpf' => 'required|digits:11',
+            'nome' => 'required',
+            'nomecracha' => 'required',
+            'email' => 'required|email',
+            'nascimento' => 'required|date_format:d/m/Y|after:01/01/1900|before:' . date("d/m/Y"),
+            'sexo' => 'required',
+            'telefone' => 'required|regex:/\d{2}\s\d{8,9}/u',
+            'cep' => 'required|regex:/\d{5}-\d{3}/u',
+            'uf' => 'required|min:2|max:2',
+            'cidade' => 'required',
+            'bairro' => 'required',
+            'endereco' => 'required',
+            'nroend' => 'required|numeric',
+            'alojamento' => 'required',
+            'refeicao' => 'required',
+
+            'dependentes.*.TIPO' => 'required',
+            'dependentes.*.nome' => 'required',
+            'dependentes.*.nomecracha' => 'required',
+            'dependentes.*.nascimento' => 'required|date_format:d/m/Y|after:01/01/1900',
+            'dependentes.*.sexo' => 'required',
+            'dependentes.*.alojamento' => 'required',
+            'dependentes.*.refeicao' => 'required',
+        ]);        
+    }
+   public function inscricao(Request $request, $id){
         $evento = Evento::findOrFail($id);
+
+        $this->validar($request);
+
         $dados = (object) json_decode($request->getContent(), true);
 
         $pessoa = Pessoa::atualizarCadastros($dados);
