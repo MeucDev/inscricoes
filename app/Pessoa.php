@@ -60,9 +60,8 @@ class Pessoa extends Model
             $this->inscricaoPaga = $inscricao->inscricaoPaga == 1;
             if (!$inscricao->inscricaoPaga){
                 PagSeguroIntegracao::gerarPagamento($inscricao);
+                $this->pagseguroLink = $inscricao->pagseguroLink;
             }
-
-            $this->pagseguroLink = $inscricao->pagseguroLink;
         }
 
         $result = (object) $this->toArray();

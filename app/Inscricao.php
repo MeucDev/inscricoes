@@ -51,6 +51,7 @@ class Inscricao extends Model
     }
 
     public static function criarInscricao($pessoa, $evento){
+
         $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
             ->where("evento_id", $evento)
             ->first();
@@ -60,10 +61,10 @@ class Inscricao extends Model
                 throw new Exception("Já existe uma inscrição para o evento no seu nome. Entre em contato com a organização do evento");
 
             Inscricao::where('numero_inscricao_responsavel', $inscricao->numero)->delete();
-        }else{
-            $inscricao = new Inscricao;
+            $inscricao->delete();
         }
 
+        $inscricao = new Inscricao;
         $inscricao->populate($pessoa, $evento);
         $inscricao->save();
 
