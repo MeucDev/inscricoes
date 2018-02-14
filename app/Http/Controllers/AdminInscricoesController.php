@@ -12,7 +12,8 @@
 	    public function cbInit() {
 
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
-			$this->title_field = "id";
+			$this->primary_key = "numero";
+			$this->title_field = "numero";
 			$this->limit = "20";
 			$this->orderby = "numero,desc";
 			$this->global_privilege = false;
@@ -41,14 +42,14 @@
 			$this->col[] = ["label"=>"Tipo","name"=>"tipoInscricao"];
 			$this->col[] = ["label"=>"Total","name"=>"valorTotal"];
 			$this->col[] = ["label"=>"Pago","name"=>"valorTotalPago"];
-			$this->col[] = ["label"=>"Incricao","name"=>"valorInscricao"];
-			$this->col[] = ["label"=>"Incricao Pago","name"=>"valorInscricaoPago"];
-			$this->col[] = ["label"=>"Data","name"=>"dataInscricao"];
+			$this->col[] = ["label"=>"Incrição","name"=>"valorInscricao"];
+			$this->col[] = ["label"=>"Incrição pago","name"=>"valorInscricaoPago"];
+			$this->col[] = ["label"=>"Dependentes","name"=>"(select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero) as total_inscritos"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			//$this->form[] = ['label'=>'Número','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','readonly' =>true,'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Número','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','readonly' =>true,'width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Pessoa','name'=>'pessoa_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
 
 			$valores = \App\Valor::getValoresAgrupadosPorCategoria($this->evento);
@@ -71,7 +72,7 @@
 			$this->form[] = ['label'=>'Valor refeição','name'=>'valorRefeicao','type'=>'number','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor total','name'=>'valorTotal','type'=>'number','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor total pago','name'=>'valorTotalPago','type'=>'number','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'PagSeguro code','name'=>'pagseguroCode','type'=>'text','validation'=>'','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'PagSeguro code','name'=>'pagseguroCode','type'=>'text','validation'=>'','readonly' => true, 'width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Evento','name'=>'evento_id','type'=>'hidden', 'value'=>$this->evento];
 			
 			//$this->form[] = ['label'=>'Observação','name'=>'observacao','type'=>'wysiwyg','width'=>'col-sm-10'];
@@ -287,7 +288,7 @@
 	    */
 	    public function hook_query_index(&$query) {
 	        //Your code here
-			//$query->where('ano','2017');
+			$query->whereNull('numero_inscricao_responsavel');
 	    }
 
 	    /*

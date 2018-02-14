@@ -42,8 +42,12 @@ class Inscricao extends Model
         $this->valorInscricaoPago = 0;
         $this->valorRefeicao = Pessoa::getValorRefeicao($pessoa, $evento);
         $this->valorAlojamento = Pessoa::getValorAlojamento($pessoa, $evento);
-        $this->valorTotal = $this->valorInscricao + $this->valorRefeicao + $this->valorAlojamento;
+        $this->valorTotal = $this->getValorTotal();
         $this->valorTotalPago = 0;
+    }
+
+    public function getValorTotal(){
+        return $this->valorInscricao + $this->valorRefeicao + $this->valorAlojamento;
     }
 
     public static function criarInscricao($pessoa, $evento){
@@ -79,8 +83,20 @@ class Inscricao extends Model
             $inscricao->dependentes()->save($inscricaoDependente);
         }
 
+        $inscricao->calcularTotais();
+
         return $inscricao;
-    }    
+    }  
+    
+    public function calcularTotais(){
+        $totalDependentes = 0;
+        foreach ($this->dependentes as $dependente) {
+            $totalDependentes += $dependente->getValorTotal();
+        }
+
+        $this->valorTotal = $this->getValorTotal() + $totalDependentes;
+        $this->save();
+    }
 }
 
 

@@ -30,6 +30,7 @@ class PagSeguroNotificacao
             print_r("Inscrição paga: " . $numero);
             $inscricao->inscricaoPaga = 1;
             $inscricao->valorInscricaoPago = $info->getAmounts()->getGrossAmount();
+            $inscricao->valorTotalPago += $inscricao->valorInscricaoPago;
             $inscricao->pagseguroCode = $info->getCode();
             $inscricao->save();
 
