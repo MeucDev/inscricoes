@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use \DateTime;
+use App\PagSeguroIntegracao;
 
 class Pessoa extends Model
 {
@@ -37,7 +38,7 @@ class Pessoa extends Model
         if ($this->alojamento == "LAR")
             $this->refeicao = "LAR";
     }
-    
+
     public function toUI($evento){
 
         if ($this->conjuge)
@@ -57,6 +58,10 @@ class Pessoa extends Model
             
         if ($inscricao){
             $this->inscricaoPaga = $inscricao->inscricaoPaga == 1;
+            if (!$inscricao->inscricaoPaga){
+                PagSeguroIntegracao::gerarPagamento($inscricao);
+            }
+
             $this->pagseguroLink = $inscricao->pagseguroLink;
         }
 

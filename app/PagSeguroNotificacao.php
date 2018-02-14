@@ -6,6 +6,7 @@ use laravel\pagseguro\Platform\Laravel5\PagSeguro;
 use Illuminate\Http\Response;
 use Exception;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
+use App\PagSeguroIntegracao;
 
 class PagSeguroNotificacao
 {
@@ -38,6 +39,7 @@ class PagSeguroNotificacao
         }else{
             print_r("Inscrição não está paga: " . $numero);
 
+            PagSeguroIntegracao::gerarPagamento($inscricao);
             PagSeguroNotificacao::enviarEmail($inscricao, "pagamento_rejeitado");
         }
     }
