@@ -6,6 +6,7 @@
 	use CRUDBooster;
 	use App\Valor;
 	use App\Variacao;
+ use App\Inscricao;
 	
 	class AdminInscricoesController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -368,8 +369,7 @@
 	    | 
 	    */
 	    public function hook_before_delete($id) {
-	        //Your code here
-
+			Inscricao::where("numero_inscricao_responsavel", $id)->delete();
 	    }
 
 	    /* 
