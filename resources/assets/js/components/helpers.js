@@ -21,10 +21,13 @@ export default {
                     dependente.refeicao = "LAR";
             });
 
-            $('select[id=refeicao]').each(function(index){
-                if ($(this).val() == "LAR")
-                    $(this).prop("disabled", true);
-            });
+            setTimeout(function(){
+                $('select[id=refeicao]').each(function(index){
+                    console.log($(this).val());
+                    if ($(this).val() == "LAR")
+                        $(this).prop("disabled", true);
+                });
+            }, 100);
         },
         hospedagemChange: function(pessoa, event){
             var box = $(event.target).closest(".box");

@@ -274,10 +274,7 @@
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
                     this.pessoa = response.body;
                     
-                    var self = this;
-                    setTimeout(function(){
-                        self.ajustarTodasRefeicoes(self.pessoa);
-                    }, 100);
+                    this.ajustarTodasRefeicoes(this.pessoa);
 
                     $("#confirmar").show();
                     
