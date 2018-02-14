@@ -31,19 +31,24 @@ class Pessoa extends Model
         }
     }
 
-    public function toUI($evento){
+    public function ajustarDados(){
         if ($this->nascimento)
             $this->nascimento = DateTime::createFromFormat('Y-m-d', $this->nascimento)->format('d/m/Y');
+        if ($this->alojamento == "LAR")
+            $this->refeicao = "LAR";
+    }
+    
+    public function toUI($evento){
 
         if ($this->conjuge)
             $this->dependentes->prepend($this->conjuge);
 
+        $this->ajustarDados();
         $this->valores = $this->getMeusValores($evento);
         
         foreach ($this->dependentes as $dependente) {
+            $dependente->ajustarDados();
             $dependente->valores = $dependente->getMeusValores($evento);
-            if ($dependente->nascimento)
-                $dependente->nascimento = DateTime::createFromFormat('Y-m-d', $dependente->nascimento)->format('d/m/Y');
         }
 
         $inscricao = Inscricao::where("pessoa_id", $this->id)
