@@ -106,7 +106,7 @@
             <div class="col-md-2">
                 <div :class="{'form-group': true, 'has-error': errors.has('nroend') }">
                     <label for="nroend">Número</label>
-                    <input type="text" v-validate="'required|numeric'" v-model="pessoa.nroend" class="form-control" id="nroend" name="nroend">
+                    <input type="text" v-validate="'required'" v-model="pessoa.nroend" class="form-control" id="nroend" name="nroend">
                     <span v-show="errors.has('nroend')" class="help-block">Campo obrigatório</span>                        
                 </div>
             </div>

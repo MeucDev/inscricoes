@@ -61,7 +61,7 @@ class EventosController extends Controller
             'cidade' => 'required',
             'bairro' => 'required',
             'endereco' => 'required',
-            'nroend' => 'required|numeric',
+            'nroend' => 'required',
             'alojamento' => 'required',
             'refeicao' => 'required',
 

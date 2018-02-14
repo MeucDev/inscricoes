@@ -27,11 +27,11 @@ class PagSeguroNotificacao
 
         //3) Paga: a transação foi paga pelo comprador e o PagSeguro já recebeu uma confirmação da instituição financeira responsável pelo processamento.
         //4) Disponível: a transação foi paga e chegou ao final de seu prazo de liberação sem ter sido retornada e sem que haja nenhuma disputa aberta.
-        if ($info->getStatus()->getCode() == 3 || $info->getStatus()->getCode() == 4){
+        if ($info->getStatus()->getCode() == 3){
             print_r("Inscrição paga: " . $numero);
             $inscricao->inscricaoPaga = 1;
             $inscricao->valorInscricaoPago = $info->getAmounts()->getGrossAmount();
-            $inscricao->valorTotalPago += $inscricao->valorInscricaoPago;
+            $inscricao->valorTotalPago = $inscricao->valorInscricaoPago;
             $inscricao->pagseguroCode = $info->getCode();
             $inscricao->save();
 
