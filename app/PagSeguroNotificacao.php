@@ -36,7 +36,7 @@ class PagSeguroNotificacao
             $inscricao->save();
 
             PagSeguroNotificacao::enviarEmail($inscricao, "confirmacao");
-        }else{
+        }else if ($info->getStatus()->getCode() == 7){
             print_r("Inscrição não está paga: " . $numero);
 
             PagSeguroIntegracao::gerarPagamento($inscricao);
