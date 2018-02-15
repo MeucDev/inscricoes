@@ -61,10 +61,10 @@ class Inscricao extends Model
                 throw new Exception("Já existe uma inscrição para o evento no seu nome. Entre em contato com a organização do evento");
 
             Inscricao::where('numero_inscricao_responsavel', $inscricao->numero)->delete();
-            $inscricao->delete();
+        }else{
+            $inscricao = new Inscricao;
         }
 
-        $inscricao = new Inscricao;
         $inscricao->populate($pessoa, $evento);
         $inscricao->save();
 
