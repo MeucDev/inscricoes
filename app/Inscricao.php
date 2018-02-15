@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Valor;
 use Exception;
 
 class Inscricao extends Model
@@ -44,6 +45,13 @@ class Inscricao extends Model
         $this->valorAlojamento = Pessoa::getValorAlojamento($pessoa, $evento);
         $this->valorTotal = $this->getValorTotal();
         $this->valorTotalPago = 0;
+    }
+
+    public function calcularValores(){
+        $this->valorInscricao = Pessoa::getValorInscricao($this->pessoa, $this->evento_id);
+        $this->valorRefeicao = Valor::getValor($this->refeicao, $this->evento_id, $this->pessoa);
+        $this->valorAlojamento = Valor::getValor($this->alojamento, $this->evento_id, $this->pessoa);;
+        $this->valorTotal = $this->getValorTotal();
     }
 
     public function getValorTotal(){

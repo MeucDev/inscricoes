@@ -6,7 +6,8 @@
 	use CRUDBooster;
 	use App\Valor;
 	use App\Variacao;
- use App\Inscricao;
+	use App\Inscricao;
+	use App\Pessoa; 
 	
 	class AdminInscricoesController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -21,10 +22,10 @@
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;
 			$this->button_action_style = "button_icon";
-			$this->button_add = true;
+			$this->button_add = false;
 			$this->button_edit = true;
 			$this->button_delete = true;
-			$this->button_detail = false;
+			$this->button_detail = true;
 			$this->button_show = false;
 			$this->button_filter = true;
 			$this->button_import = false;
@@ -50,31 +51,22 @@
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
+			$this->form[] = ['label'=>'Evento','name'=>'evento_id','type'=>'hidden', 'value'=>$this->evento];
 			$this->form[] = ['label'=>'Número','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','readonly' =>true,'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Data','name'=>'dataInscricao','type'=>'datetime','validation'=>'required','readonly' =>true,'width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Pessoa','name'=>'pessoa_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
-
-			$valores = \App\Valor::getValoresAgrupadosPorCategoria($this->evento);
-
-			foreach($valores as $key => $value) 
-			{
-				$categoria = collect($valores[$key]);
-				$items = $categoria->map(function ($item, $key) {
-					return $item->codigo . "|" . $item->nome;
-				});
-				$dataenum = implode(";", $items->toArray());
-				$this->form[] = ['label'=>$key,'name'=>$categoria->first()->categoriaCodigo,'type'=>'select','validation'=>'required','width'=>'col-sm-10', 'dataenum'=>$dataenum];
-			}
-			
+			$this->form[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar Filadélfia'];
+			$this->form[] = ['label'=>'Refeição','name'=>'refeicao','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'QUIOSQUE_COM_CAFE|Quiosque com café;QUIOSQUE_SEM_CAFE|Quiosque sem café'];
+			$this->form[] = ['label'=>'Equipe refeição','name'=>'equipeRefeicao','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'LAR_A|Lar A;LAR_B|Lar B;QUIOSQUE_A|Quiosque A;QUIOSQUE_B|Quiosque B'];
 			$this->form[] = ['label'=>'Pagou?','name'=>'inscricaoPaga','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			$this->form[] = ['label'=>'Presença confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-			$this->form[] = ['label'=>'Valor inscricão','name'=>'valorInscricao','type'=>'number','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Valor inscricão pago','name'=>'valorInscricaoPago','type'=>'number','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Valor alojamento','name'=>'valorAlojamento','type'=>'number','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Valor refeição','name'=>'valorRefeicao','type'=>'number','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Valor total','name'=>'valorTotal','type'=>'number','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Valor inscricão','name'=>'valorInscricao','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
+			$this->form[] = ['label'=>'Valor inscricão pago','name'=>'valorInscricaoPago','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
+			$this->form[] = ['label'=>'Valor alojamento','name'=>'valorAlojamento','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
+			$this->form[] = ['label'=>'Valor refeição','name'=>'valorRefeicao','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
+			$this->form[] = ['label'=>'Valor total','name'=>'valorTotal','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
 			$this->form[] = ['label'=>'Valor total pago','name'=>'valorTotalPago','type'=>'number','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'PagSeguro code','name'=>'pagseguroCode','type'=>'text','validation'=>'','readonly' => true, 'width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Evento','name'=>'evento_id','type'=>'hidden', 'value'=>$this->evento];
 			
 			//$this->form[] = ['label'=>'Observação','name'=>'observacao','type'=>'wysiwyg','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
@@ -310,18 +302,8 @@
 	    |
 	    */
 	    public function hook_before_add(&$postdata) {        
-			$postdata['ano'] = date("Y");
-			$postdata['dataInscricao'] = date("Y-m-d h:i:s");
 
-			$pessoa = \App\Pessoa::find($postdata['pessoa_id']);
-
-			$valorInscricao = \App\Valor::getValor($postdata['tipoInscricao'], $this->evento, $pessoa);
-			$postdata['valorInscricao'] = $valorInscricao;
-
-			$valorAlojamento = \App\Valor::getValor($postdata['alojamento'], $this->evento, $pessoa);
-			$valorRefeicao = \App\Valor::getValor($postdata['refeicao'], $this->evento, $pessoa);
-			$postdata['valorTotal'] = $valorAlojamento + $valorRefeicao;
-	    }
+		}
 
 	    /* 
 	    | ---------------------------------------------------------------------- 
@@ -332,7 +314,7 @@
 	    */
 	    public function hook_after_add($id) {        
 	        //Your code here
-
+			$this->calcularTotais($id);
 	    }
 
 	    /* 
@@ -345,8 +327,6 @@
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
 	        //Your code here
-
-			
 	    }
 
 	    /* 
@@ -358,8 +338,14 @@
 	    */
 	    public function hook_after_edit($id) {
 	        //Your code here 
-
-	    }
+			$this->calcularTotais($id);
+		}
+		
+		public function calcularTotais($id){
+			$inscricao = Inscricao::findOrFail($id);
+			$inscricao->calcularValores();
+			$inscricao->calcularTotais();
+		}
 
 	    /* 
 	    | ---------------------------------------------------------------------- 
