@@ -43,7 +43,8 @@
 			$this->form[] = ['label'=>'Link detalhes','name'=>'linkDetalhes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Link mapa','name'=>'linkMapa','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Local','name'=>'local','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Limite de inscrições','name'=>'limite','type'=>'number', 'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Limite de inscrições','name'=>'limite_inscricoes','type'=>'number', 'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Limite de refeições','name'=>'limite_refeicoes','type'=>'number', 'width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM

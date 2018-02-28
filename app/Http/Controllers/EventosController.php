@@ -36,17 +36,19 @@ class EventosController extends Controller
 
     public function viewEvento($evento){
         if (!$evento)
-            return view('evento_invalido', ['evento' => $evento, 'mensagem' => 'Evento não encontrado']);
+            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Evento não encontrado']);
 
-        if (!$evento->encerrado())
-            return view('evento_invalido', ['evento' => $evento, 'mensagem' => 'Inscrições encerradas!']);
-        
+        if ($evento->encerrado())
+            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Inscrições encerradas!']);
+
+        if ($evento->limite())
+            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!']);
+            
          $evento->toUI();
         return view('evento', ['evento' => $evento]);
     }
 
-
-    public function validar(Request $request){
+    public function validar(Request $request, $dados, $evento){
         $this->validate($request, [
             'TIPO' => 'required',
             'cpf' => 'required|digits:11',
@@ -72,23 +74,30 @@ class EventosController extends Controller
             'dependentes.*.sexo' => 'required',
             'dependentes.*.alojamento' => 'required',
             'dependentes.*.refeicao' => 'required',
-        ]);        
-    }
-   public function inscricao(Request $request, $id){
-        $evento = Evento::findOrFail($id);
-
-        $this->validar($request);
-
-        $dados = (object) json_decode($request->getContent(), true);
+        ]); 
 
         if (!strrpos($dados->nome, ' '))
             throw new Exception("O nome do responsável deve ser completo");
 
+        $refeicoesLar = Inscricao::where("evento_id", $evento->id)->where("refeicao", "like", "LAR%")->count();
+
+        $refeicoesQuiosque = Inscricao::where("evento_id", $evento->id)->where("refeicao", "like", "QUIOSQUE%")->count();
+
+        if ($evento->limite_refeicoes && $refeicoesLar >= $evento->limite_refeicoes)
+            throw new Exception("O limite para refeições no Lar Filadélfia foi atingido.");
+    }
+
+    public function inscricao(Request $request, $id){
+        $evento = Evento::findOrFail($id);
+        $dados = (object) json_decode($request->getContent(), true);
+
+        $this->validar($request, $dados, $evento);
+        
         $pessoa = Pessoa::atualizarCadastros($dados);
 
         $result = DB::transaction(function() use ($dados, $pessoa, $id) {
             $inscricao = Inscricao::criarInscricao($pessoa, $id);
-            $result = PagSeguroIntegracao::gerarPagamento($inscricao);
+            //$result = PagSeguroIntegracao::gerarPagamento($inscricao);
             return $result;
         });        
 

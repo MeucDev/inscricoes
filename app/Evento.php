@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Inscricao;
 
 class Evento extends Model
 {
@@ -15,9 +16,23 @@ class Evento extends Model
     public function encerrado(){
         $dateNow = date("Y-m-d");
         
-        if (dateNow >= $this->data_inicio)
+        if ($dateNow >= $this->data_inicio)
             return true;
 
+        return false;
+    }
+
+    public function limite(){
+        if ($this->limite_inscricoes == 0)
+            return false;
+
+        $numero = Inscricao::whereNull("numero_inscricao_responsavel")
+            ->where("evento_id", $this->id)
+            ->count();
+
+        if ($numero >= $this->limite_inscricoes)
+            return true;
+            
         return false;
     }
 
