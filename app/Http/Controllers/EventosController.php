@@ -97,7 +97,7 @@ class EventosController extends Controller
 
         $result = DB::transaction(function() use ($dados, $pessoa, $id) {
             $inscricao = Inscricao::criarInscricao($pessoa, $id);
-            //$result = PagSeguroIntegracao::gerarPagamento($inscricao);
+            $result = PagSeguroIntegracao::gerarPagamento($inscricao);
             return $result;
         });        
 
