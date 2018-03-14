@@ -31,9 +31,12 @@
         .swal2-popup {
           font-size: 1.6rem !important;
         }
+        
         @if($style_css)
             {!! $style_css !!}
         @endif
+
+        
     </style>
     @if($load_css)
         @foreach($load_css as $css)

@@ -13,7 +13,7 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-import inscricao from './components/inscricao.vue'
+import inscricao from './components/inscricao.vue';
 
 const app = new Vue({
     el: '#app',

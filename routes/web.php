@@ -12,18 +12,23 @@
 */
 setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
 
+//Pessoas
 Route::get('/pessoas/{cpf}/{evento}', 'PessoasController@show');
 
+//Valores
 Route::post('/valores/{evento}', 'ValoresController@valor');
 
-
+//Eventos
 Route::get('/', 'EventosController@first');
 Route::get('/eventos/{id}', 'EventosController@show');
 Route::post('/eventos/{id}/inscricao', 'EventosController@inscricao');
-Route::get('/eventos', function () {
-    return view('eventos');
-});
+Route::get('/eventos', function () { return view('eventos');});
 
+//Inscrições
+Route::get('admin/inscricoes/{id}', 'InscricoesController@show');
+Route::post('admin/inscricoes/{id}/confirmar', 'InscricoesController@confirmar');
+
+//Pagseguro
 Route::post('/pagseguro/notification', [
     'uses' => '\laravel\pagseguro\Platform\Laravel5\NotificationController@notification',
     'as' => 'pagseguro.notification',

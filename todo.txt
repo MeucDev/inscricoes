@@ -1,4 +1,1 @@
-*bloquear inscrições por quantidade (1600)
 *atribuir a equipe de refeição deve ser feita na confirmação da presença
-*Limite refeições serão 280 refeições/turno. Totalizando assim 560 refeições... do quiosque preciso confirmar se vamos limitar ou não...
-*além disso, temos que limitar a quantidade total de pessoas para 1600

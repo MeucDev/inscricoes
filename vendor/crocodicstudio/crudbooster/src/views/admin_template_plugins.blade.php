@@ -42,10 +42,15 @@
 	<script src="{{ asset ('vendor/crudbooster/assets/adminlte/plugins/datatables/jquery.dataTables.min.js')}}"></script>
 	<script src="{{ asset ('vendor/crudbooster/assets/adminlte/plugins/datatables/dataTables.bootstrap.min.js')}}"></script>
 
-	<!--EMODAL-->	
-	<script src="{{asset('vendor/crudbooster/assets/emodal/dist/eModal.min.js')}}"></script>	
-
+	<!--APP VUE-->	
 	<script src="{{ asset('js/app.cb.js') }}"></script>
+
+	<!--TOKEN CSRF LARAVEL-->	
+	<script>
+		window.Laravel = <?php echo json_encode([
+			'csrfToken' => csrf_token(),
+		]); ?>
+	</script>
 
 	<script>			
 		var ASSET_URL           = "{{asset('/')}}";
