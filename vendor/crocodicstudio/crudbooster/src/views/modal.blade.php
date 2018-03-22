@@ -9,7 +9,7 @@
         <h4 class="modal-title">@{{ title }}</h4>
         </div>
         <div class="modal-body">
-            <div :is="componentName" :id="id"></div>
+            <div :is="componentName" v-bind="props"></div>
         </div>
       </div>
     </div>

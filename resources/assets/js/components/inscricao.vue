@@ -9,7 +9,7 @@
                 <div class="col-md-3">
                     <div :class="{'form-group': true, 'has-error': errors.has('cpf') }">
                         <label for="cpf">CPF</label>
-                        <input type="text" v-validate="'required|digits:11'" v-model="pessoa.cpf" @change="getPessoa" class="form-control" id="cpf" name="cpf">
+                        <input type="text" v-bind:readonly="inscricao" v-validate="'required|digits:11'" v-model="pessoa.cpf" @change="getPessoa" class="form-control" id="cpf" name="cpf">
                         <span v-show="errors.has('cpf')" class="help-block">O CPF deve ter 11 dígitos</span>                        
                     </div>
                 </div>
@@ -229,7 +229,7 @@
     Vue.use(VueTheMask);
     
     export default {
-        props: ['evento'],
+        props: ['evento', 'inscricao', 'interno'],
         mixins: [helpers],
         components: {dependente},
         data (){
@@ -244,7 +244,24 @@
                 }
             }
         },
+        mounted: function(){
+            if (this.inscricao){
+                this.getInscricao(this.inscricao);
+            }
+        },
+        watch: { 
+      	    inscricao: function(newVal, oldVal) {
+                this.getInscricao(newVal);
+            }
+        },
         methods: {
+            getInscricao : function(id){
+                this.$http.get('/inscricoes/' + id + '/pessoa').then(response => {
+                    this.pessoa = response.body;
+                }, (error) => {
+                    this.showError(error);
+                }); 
+            },            
             addDependente: function(){
                 if (this.pessoa.dependentes.length == 6)
                 {
@@ -303,7 +320,7 @@
                     console.log(error.body);
                 });            
             },
-            postIncricao: function(){
+            criarIncricao: function(){
                 swal({
                     title: 'Processando!',
                     allowOutsideClick: false,
@@ -313,21 +330,46 @@
                     }
                 });
 
-                this.$http.post('/eventos/' + this.evento + '/inscricao' , this.pessoa).then(response => {
+                this.pessoa.interno = this.interno;
+
+                var self = this;
+                this.$http.post('/inscricoes/criar/' + this.evento , this.pessoa).then(response => {
                     var pagseguro = response.body;
                     swal.close();
-                    swal({
-                        allowOutsideClick: false,
-                        title: 'Estamos quase lá!',
-                        text: 'Ao clicar em OK você será redirecionado para o pagamento da inscrição ('+this.formatPrice(this.pessoa.valores.inscricao)+ '). O restante acertamos no dia do evento, até lá!',
-                        type: 'success'
-                    }).then((result) => {
-                        window.location.replace(pagseguro.link);
-                    });
+                    if (self.interno)
+                        window.location.reload();
+                    else{
+                        swal({
+                            allowOutsideClick: false,
+                            title: 'Estamos quase lá!',
+                            text: 'Ao clicar em OK você será redirecionado para o pagamento da inscrição ('+this.formatPrice(this.pessoa.valores.inscricao)+ '). O restante acertamos no dia do evento, até lá!',
+                            type: 'success'
+                        }).then((result) => {
+                            if (pagseguro.link)
+                                window.location.replace(pagseguro.link);
+                        });
+                    }
                 }, (error) => {
                     this.showError(error);
                 });            
             },
+            alterarIncricao: function(){
+                swal({
+                    title: 'Processando!',
+                    allowOutsideClick: false,
+                    text: 'Atualizando dados.',
+                    onOpen: () => {
+                        swal.showLoading()
+                    }
+                });
+
+                this.$http.put('/inscricoes/' + this.inscricao, this.pessoa).then(response => {
+                    swal.close();
+                    $("#modal").modal("hide");
+                }, (error) => {
+                    this.showError(error);
+                });            
+            },            
             fazerIncricao: function(){               
                 var promises = [];
                 if (this.$refs.dependentes){
@@ -355,7 +397,10 @@
                             return;
                         }
 
-                        self.postIncricao();
+                        if (self.inscricao)
+                            self.alterarIncricao();
+                        else
+                            self.criarIncricao();
                     });
                 });
             },

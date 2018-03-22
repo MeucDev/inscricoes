@@ -21,16 +21,24 @@ window.modalApp = new Vue({
     data () {
         return {
             title:'',
-            id:'',
+            props: {},
             componentName:''
         }
     },
+    mounted: function(){
+        $('#modal').on('hidden.bs.modal', this.clear);
+    },
     components: { inscricao, presenca },
     methods:{
-        show: function(title, componentName, id){
+        clear: function(){
+            this.title = '';
+            this.componentName = '';
+            this.props = {};
+        },
+        show: function(title, componentName, props){
             this.title = title;
             this.componentName = componentName;
-            this.id = id;
+            this.props = props;
             $("#modal").modal();
         },
     }

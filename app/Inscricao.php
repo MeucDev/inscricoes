@@ -58,8 +58,16 @@ class Inscricao extends Model
         return $this->valorInscricao + $this->valorRefeicao + $this->valorAlojamento;
     }
 
-    public static function criarInscricao($pessoa, $evento){
+    public function getValores(){
+        $valores = (object)[];
+        $valores->inscricao = floatval($this->valorInscricao);
+        $valores->alojamento = floatval($this->valorAlojamento);
+        $valores->refeicao = floatval($this->valorRefeicao);
+        $valores->total = $valores->inscricao + $valores->alojamento + $valores->refeicao;    
+        return $valores;
+    }
 
+    public static function criarInscricao($pessoa, $evento){
         $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
             ->where("evento_id", $evento)
             ->first();
@@ -95,6 +103,46 @@ class Inscricao extends Model
 
         return $inscricao;
     }  
+
+    public static function alterarInscricao($id, $pessoa){
+        $inscricao = Inscricao::findOrFail($id);
+
+        $inscricao->populate($pessoa, $inscricao->evento_id);
+        $inscricao->save();
+    
+        if ($pessoa->conjuge){
+            $inscricaoConjuge = $inscricao->dependentes->first(function($item) use ($dependente) {
+                return ($item->pessoa_id == $dependente->id);
+            });
+            if (!$inscricaoConjuge){
+                $inscricaoConjuge = new Inscricao;
+                $inscricaoConjuge->numero_inscricao_responsavel = $inscricao->id;
+            }
+            $inscricaoConjuge->populate($pessoa->conjuge, $evento);
+            $inscricaoConjuge->save();
+        }
+
+        foreach ($pessoa->dependentes as $key => $dependente) {
+            if ($dependente->inativo == 1)
+                continue;
+
+            $inscricaoDependente = $inscricao->dependentes->first(function($item) use ($dependente) {
+                return ($item->pessoa_id == $dependente->id);
+            });
+
+            if (!$inscricaoDependente){
+                $inscricaoDependente = new Inscricao;
+                $inscricaoDependente->numero_inscricao_responsavel = $inscricao->id;
+            }
+                    
+            $inscricaoDependente->populate($dependente, $evento);
+            $inscricaoDependente->save();
+        }
+
+        $inscricao->calcularTotais();
+
+        return $inscricao;
+    }      
     
     public function calcularTotais(){
         $totalDependentes = 0;

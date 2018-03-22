@@ -22,7 +22,7 @@
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;
 			$this->button_action_style = "button_icon";
-			$this->button_add = false;
+			$this->button_add = true;
 			$this->button_edit = false;
 			$this->button_delete = true;
 			$this->button_detail = false;
@@ -113,9 +113,11 @@
 	        | 
 			*/
 
-			$modal = 'javascript:modalApp.show("Confirmar presença", "presenca", [numero])';
+			$presenca = 'javascript:modalApp.show("Confirmar presença", "presenca", {id: [numero]})';
+			$editar = 'javascript:modalApp.show("Edição", "inscricao", {inscricao: [numero], evento:'. $this->evento .'})';
 
-			$this->addaction[] = ['label'=>'Presença','url'=>$modal,'icon'=>'fa fa-check','color'=>'success'];			
+			$this->addaction[] = ['label'=>'Presença','url'=>$presenca,'icon'=>'fa fa-check','color'=>'success'];			
+			$this->addaction[] = ['label'=>'Editar','url'=>$editar,'icon'=>'fa fa-pencil','color'=>'primary'];			
 
 
 	        /* 
@@ -195,9 +197,15 @@
 	        | javascript code in the variable 
 	        | $this->script_js = "function() { ... }";
 	        |
-	        */
-	        $this->script_js = NULL;
-
+			*/
+			
+			$novo = 'javascript:modalApp.show("Nova inscrição", "inscricao", {interno: true, evento:'. $this->evento .'})';
+			
+			$this->script_js = "
+				$(function() {
+					$('#btn_add_new_data').attr('href', '". $novo ."');
+				});
+			";
 
             /*
 	        | ---------------------------------------------------------------------- 
@@ -316,8 +324,6 @@
 	    | 
 	    */
 	    public function hook_after_add($id) {        
-	        //Your code here
-			$this->calcularTotais($id);
 	    }
 
 	    /* 
@@ -340,16 +346,8 @@
 	    | 
 	    */
 	    public function hook_after_edit($id) {
-	        //Your code here 
-			$this->calcularTotais($id);
 		}
 		
-		public function calcularTotais($id){
-			$inscricao = Inscricao::findOrFail($id);
-			$inscricao->calcularValores();
-			$inscricao->calcularTotais();
-		}
-
 	    /* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command before delete public static function called

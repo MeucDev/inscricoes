@@ -21,12 +21,14 @@ Route::post('/valores/{evento}', 'ValoresController@valor');
 //Eventos
 Route::get('/', 'EventosController@first');
 Route::get('/eventos/{id}', 'EventosController@show');
-Route::post('/eventos/{id}/inscricao', 'EventosController@inscricao');
 Route::get('/eventos', function () { return view('eventos');});
 
 //Inscrições
-Route::get('admin/inscricoes/{id}', 'InscricoesController@show');
-Route::post('admin/inscricoes/{id}/confirmar', 'InscricoesController@confirmar');
+Route::get('/inscricoes/{id}', 'InscricoesController@show');
+Route::get('/inscricoes/{id}/pessoa', 'InscricoesController@pessoa');
+Route::post('/inscricoes/{id}/presenca', 'InscricoesController@presenca');
+Route::post('/inscricoes/criar/{evento}', 'InscricoesController@criar');
+Route::put('/inscricoes/{id}', 'InscricoesController@alterar');
 
 //Pagseguro
 Route::post('/pagseguro/notification', [

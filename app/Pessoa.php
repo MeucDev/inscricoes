@@ -52,18 +52,6 @@ class Pessoa extends Model
             $dependente->valores = $dependente->getMeusValores($evento);
         }
 
-        $inscricao = Inscricao::where("pessoa_id", $this->id)
-            ->where("evento_id", $evento)
-            ->first();
-            
-        if ($inscricao){
-            $this->inscricaoPaga = $inscricao->inscricaoPaga == 1;
-            if (!$inscricao->inscricaoPaga){
-                PagSeguroIntegracao::gerarPagamento($inscricao);
-                $this->pagseguroLink = $inscricao->pagseguroLink;
-            }
-        }
-
         $result = (object) $this->toArray();
 
         $result->dependentes = array_values($this->dependentes->reject(function($item) {

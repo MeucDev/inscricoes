@@ -63,6 +63,7 @@
 
 <script>
     import Vue from 'vue';
+    import swal from 'sweetalert2';
 
     export default {
         props: ['id'],
@@ -85,7 +86,7 @@
         methods:{
             getInscricao : function(id){
                 this.inscricao = {pessoa: {nome: '', idade:''} };
-                this.$http.get('/admin/inscricoes/' + id).then(response => {
+                this.$http.get('/inscricoes/' + id).then(response => {
                     this.inscricao = response.body;
                     this.calculaTotal();
                     setTimeout(function(){
@@ -95,14 +96,14 @@
                         $("#pago").focus();
                     }, 100);
                 }, (error) => {
-                    console.log(error);
+                    this.showError(error);
                 }); 
             },
             confirmar : function(){
-                this.$http.post('/admin/inscricoes/' + this.id + "/confirmar", this.inscricao).then(response => {
-                    
+                this.$http.post('/inscricoes/' + this.id + "/presenca", this.inscricao).then(response => {
+                    window.location.reload();
                 }, (error) => {
-                    console.log(error);
+                    this.showError(error);
                 });            
 
             },
@@ -110,7 +111,6 @@
                 this.total = this.inscricao.valorTotal - this.inscricao.valorTotalPago;
                 var desconto = 0.0;
 
-                debugger;
                 if (!this.inscricao.presenca)
                     desconto = Number(this.inscricao.valorRefeicao) + Number(this.inscricao.valorAlojamento);
 
@@ -119,7 +119,19 @@
                         desconto += Number(item.valorTotal);
                 });
                 this.total = this.total - desconto;
-            }
+            },
+            showError: function(error){
+                var message;
+                if (typeof error == "string")
+                    message = error;
+                else
+                {
+                    message = error.body.message;
+                    console.log(error.body);
+                }
+
+                swal('Oops...', message, 'error');
+            }            
         }
     }
 </script>
