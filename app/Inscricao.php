@@ -35,11 +35,11 @@ class Inscricao extends Model
         $this->alojamento = $pessoa->alojamento;
         $this->equipeRefeicao = $pessoa->equipeRefeicao;
         $this->refeicao = $pessoa->refeicao;
-        $this->inscricaoPaga = 0;
-        $this->presencaConfirmada = 0;
         $this->evento_id = $evento;
 
         if ($inicial){
+            $this->inscricaoPaga = 0;
+            $this->presencaConfirmada = 0;
             $this->valorInscricao = Pessoa::getValorInscricao($pessoa, $evento);
             $this->valorInscricaoPago = 0;
         }
@@ -119,10 +119,10 @@ class Inscricao extends Model
             });
             if (!$inscricaoConjuge){
                 $inscricaoConjuge = new Inscricao;
-                $inscricaoConjuge->numero_inscricao_responsavel = $inscricao->id;
             }
+
             $inscricaoConjuge->populate($pessoa->conjuge, $evento, false);
-            $inscricaoConjuge->save();
+            $inscricao->dependentes()->save($inscricaoConjuge);
         }
 
         foreach ($pessoa->dependentes as $key => $dependente) {
@@ -139,7 +139,7 @@ class Inscricao extends Model
             }
                     
             $inscricaoDependente->populate($dependente, $evento, false);
-            $inscricaoDependente->save();
+            $inscricao->dependentes()->save($inscricaoDependente);
         }
 
         $inscricao->calcularTotais();

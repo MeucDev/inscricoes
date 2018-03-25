@@ -23,12 +23,13 @@ class PessoasController extends Controller
 
         $result = $pessoa->toUI($evento);
 
-        $inscricao = Inscricao::where("pessoa_id", $this->id)
+        $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
             ->where("evento_id", $evento)
             ->first();
             
         if ($inscricao){
             $result->inscricaoPaga = $inscricao->inscricaoPaga == 1;
+            $result->inscricao = $inscricao->numero;
             if (!$inscricao->inscricaoPaga){
                 PagSeguroIntegracao::gerarPagamento($inscricao);
                 $result->pagseguroLink = $inscricao->pagseguroLink;

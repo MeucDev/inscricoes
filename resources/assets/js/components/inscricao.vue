@@ -286,6 +286,9 @@
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
                     this.pessoa = response.body;
                     
+                    if (this.pessoa.inscricao)
+                        this.inscricao = this.pessoa.inscricao;
+
                     this.ajustarTodasRefeicoes(this.pessoa);
 
                     $("#confirmar").show();
@@ -296,7 +299,7 @@
                             'Identificamos em nosso sistema que sua inscrição já foi feita e está paga. Nos encontramos no dia do evento!',
                             'success'
                         ).then((result) =>{
-                            $("#confirmar").hide();
+                            //$("#confirmar").hide();
                         });                   
                     }else if(this.pessoa.pagseguroLink){
                         swal({
