@@ -132,8 +132,9 @@ class InscricoesController extends Controller
         $inscricao->presencaConfirmada = $dados->presenca;
 
         foreach ($inscricao->dependentes as $key => $value) {
-            $value->presencaConfirmada = $dados->dependentes[$key]->presenca;
+            $value->presencaConfirmada = $dados->dependentes[$key]["presenca"];
             $value->equipeRefeicao = $dados->equipeRefeicao;
+            $value->save();
         }
         
         $inscricao->valorTotalPago = $dados->valorTotalPago + $dados->recebido;

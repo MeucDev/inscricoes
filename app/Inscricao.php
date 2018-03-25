@@ -110,7 +110,9 @@ class Inscricao extends Model
     public static function alterarInscricao($id, $pessoa){
         $inscricao = Inscricao::findOrFail($id);
 
-        $inscricao->populate($pessoa, $inscricao->evento_id, false);
+        $evento = $inscricao->evento_id;
+
+        $inscricao->populate($pessoa, $evento, false);
         $inscricao->save();
     
         $conjuge = $pessoa->conjuge;
