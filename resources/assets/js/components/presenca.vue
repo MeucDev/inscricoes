@@ -152,7 +152,7 @@
             confirmar : function(){
                 this.$http.post('/inscricoes/' + this.id + "/presenca", this.inscricao).then(response => {
                     this.imprimir(this.inscricao.pessoa, function(){
-                        window.location.reload();
+                        $('#modal').modal('hide');
                     });
                 }, (error) => {
                     this.showError(error);

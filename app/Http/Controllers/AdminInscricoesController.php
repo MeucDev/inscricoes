@@ -112,7 +112,7 @@
 			*/
 
 			$presenca = 'javascript:modalApp.show("Confirmar presença", "presenca", {id: [numero]})';
-			$editar = 'javascript:modalApp.show("Edição", "inscricao", {inscricao: [numero], evento:'. $this->evento .'})';
+			$editar = 'javascript:modalApp.show("Edição", "inscricao", {interno: true, inscricao: [numero], evento:'. $this->evento .'})';
 
 			$this->addaction[] = ['label'=>'Presença','url'=>$presenca,'icon'=>'fa fa-check','color'=>'success'];			
 			$this->addaction[] = ['label'=>'Editar','url'=>$editar,'icon'=>'fa fa-pencil','color'=>'primary'];			

@@ -33,7 +33,7 @@ export default {
                     eatGroup: 'A'
                 };
 
-                var config = qz.configs.create(printer);       // Create a default config for the found printer
+                var config = qz.configs.create(printer, {orientation: "portrait"});       // Create a default config for the found printer
 
                 var pdf = self.generatePdf64(pessoa);
                 var data = [{ 
@@ -44,8 +44,8 @@ export default {
                 
                 var result = qz.print(config, data);
 
-                // if (callback)
-                //     callback();
+                if (callback)
+                    callback();
 
                 return result;
             }).catch(function(e) 
@@ -72,6 +72,7 @@ export default {
 
             var doc = new jsPDF({
                 unit: 'mm',
+                orientation: 'landscape',
                 format: [50, 84]
             });
             doc.setProperties({

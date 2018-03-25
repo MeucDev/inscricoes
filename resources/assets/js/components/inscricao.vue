@@ -258,7 +258,7 @@
                 }); 
             },            
             addDependente: function(){
-                if (this.pessoa.dependentes.length == 6)
+                if (!this.interno && this.pessoa.dependentes.length == 6)
                 {
                     swal(
                         'Opa, sua família é bem grande',
@@ -336,7 +336,6 @@
                     swal.close();
                     if (self.interno){
                         $('#modal').modal('hide');
-                        window.location.reload();
                     }
                     else{
                         swal({
