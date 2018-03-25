@@ -249,11 +249,6 @@
                 this.getInscricao(this.inscricao);
             }
         },
-        watch: { 
-      	    inscricao: function(newVal, oldVal) {
-                this.getInscricao(newVal);
-            }
-        },
         methods: {
             getInscricao : function(id){
                 this.$http.get('/inscricoes/' + id + '/pessoa').then(response => {
@@ -336,8 +331,10 @@
                 this.$http.post('/inscricoes/criar/' + this.evento , this.pessoa).then(response => {
                     var pagseguro = response.body;
                     swal.close();
-                    if (self.interno)
+                    if (self.interno){
+                        $('#modal').modal('hide');
                         window.location.reload();
+                    }
                     else{
                         swal({
                             allowOutsideClick: false,

@@ -133,12 +133,12 @@ class InscricoesController extends Controller
 
         foreach ($inscricao->dependentes as $key => $value) {
             $value->presencaConfirmada = $dados->dependentes[$key]->presenca;
+            $value->equipeRefeicao = $dados->equipeRefeicao;
         }
         
-        if ($inscricao->valorTotalPago > $dados->valorTotalPago)
-            throw new Exception("O valor pago deve ser maior que o valor que já foi pago anteriormente.");
-
-        $inscricao->valorTotalPago = $dados->valorTotalPago;
+        $inscricao->valorTotalPago = $dados->valorTotalPago + $dados->recebido;
+        $inscricao->equipeRefeicao = $dados->equipeRefeicao;
+        $inscricao->inscricaoPaga = 1;
         $inscricao->save();
     }    
 }

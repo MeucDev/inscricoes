@@ -5,7 +5,7 @@
             <div class="table-responsive">
                 <table class="table">
                     <tr>
-                        <th>Presença</th>
+                        <th></th>
                         <th>Nome</th>
                         <th>Idade</th>
                         <th>Alojamento</th>
@@ -18,18 +18,18 @@
                         <td>{{inscricao.pessoa.nome}}</td>
                         <td>{{inscricao.pessoa.idade}}</td>
                         <td>{{inscricao.alojamento}}</td>
-                        <td>{{inscricao.valorAlojamento}}</td>
+                        <td>{{formatPrice(inscricao.valorAlojamento)}}</td>
                         <td>{{inscricao.refeicao}}</td>
-                        <td>{{inscricao.valorRefeicao}}</td>
+                        <td>{{formatPrice(inscricao.valorRefeicao)}}</td>
                     </tr>
                     <tr v-for="dependente in inscricao.dependentes">
                         <td><input type="checkbox" @change="calculaTotal" v-model="dependente.presenca"></td>
                         <td>{{dependente.pessoa.nome}}</td>
                         <td>{{dependente.pessoa.idade}}</td>
                         <td>{{dependente.alojamento}}</td>
-                        <td>{{dependente.valorAlojamento}}</td>
+                        <td>{{formatPrice(dependente.valorAlojamento)}}</td>
                         <td>{{dependente.refeicao}}</td>
-                        <td>{{dependente.valorRefeicao}}</td>
+                        <td>{{formatPrice(dependente.valorRefeicao)}}</td>
                     </tr>
                 </table>
             </div>
@@ -38,16 +38,36 @@
             <div class="table-responsive">
                 <table class="table">
                     <tr>
-                        <th><h4>Total<small> (valor total da inscrição)</small></h4></th>
-                        <td class="text-right"><h4><nobr>{{inscricao.valorTotal}}</nobr></h4></td>
+                        <th><h4>Inscrição<small></small></h4></th>
+                        <td class="text-right"><h4><nobr>{{formatPrice(inscricao.valorInscricao)}}</nobr></h4></td>
                     </tr>
                     <tr>
-                        <th><h4>Restante</h4></th>
-                        <td class="text-right"><h4><nobr>R$ {{total}}</nobr></h4></td>
+                        <th><h4>Total<small></small></h4></th>
+                        <td class="text-right"><h4><nobr>{{formatPrice(inscricao.valorTotal)}}</nobr></h4></td>
                     </tr>
                     <tr>
                         <th><h4>Pago<small></small></h4></th>
-                        <td class="text-right"><input id="pago" class="form-control input-lg text-right" v-model="inscricao.valorTotalPago"/></td>
+                        <td class="text-right"><h4><nobr>{{formatPrice(inscricao.valorTotalPago)}}</nobr></h4></td>
+                    </tr>
+                    <tr>
+                        <th><h4>Restante</h4></th>
+                        <td class="text-right"><h4><nobr>{{formatPrice(total)}}</nobr></h4></td>
+                    </tr>
+                    <tr>
+                        <th><h4>Recebido<small></small></h4></th>
+                        <td class="text-right">
+                            <div class="col-md-6">
+                                <select v-model="inscricao.pessoa.equipeRefeicao" id="equipe" class="form-control input-lg">
+                                    <option v-if="!equipeEhQuiosque" value="LAR_A">Lar A</option>
+                                    <option v-if="!equipeEhQuiosque" value="LAR_B">Lar B</option>
+                                    <option v-if="equipeEhQuiosque" value="QUIOSQUE_A">Quiosque A</option>
+                                    <option v-if="equipeEhQuiosque" value="QUIOSQUE_B">Quiosque B</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <input id="pago" class="form-control input-lg text-right" v-model="inscricao.recebido"/>
+                            </div>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -64,16 +84,15 @@
 <script>
     import Vue from 'vue';
     import swal from 'sweetalert2';
+    import price from './price'; 
+    import cracha from './cracha';   
 
     export default {
         props: ['id'],
+        mixins: [price, cracha],
         mounted: function(){
             this.getInscricao(this.id);
-        },
-        watch: { 
-      	    id: function(newVal, oldVal) {
-                this.getInscricao(newVal);
-            }
+            this.initQz();
         },
         data (){
             return{
@@ -84,6 +103,9 @@
             }
         },
         methods:{
+            equipeEhQuiosque: function(){
+                return this.inscricao.equipeRefeicao.includes("QUIOSQUE");
+            },
             getInscricao : function(id){
                 this.inscricao = {pessoa: {nome: '', idade:''} };
                 this.$http.get('/inscricoes/' + id).then(response => {
@@ -99,14 +121,6 @@
                     this.showError(error);
                 }); 
             },
-            confirmar : function(){
-                this.$http.post('/inscricoes/' + this.id + "/presenca", this.inscricao).then(response => {
-                    window.location.reload();
-                }, (error) => {
-                    this.showError(error);
-                });            
-
-            },
             calculaTotal : function(){
                 this.total = this.inscricao.valorTotal - this.inscricao.valorTotalPago;
                 var desconto = 0.0;
@@ -119,6 +133,9 @@
                         desconto += Number(item.valorTotal);
                 });
                 this.total = this.total - desconto;
+
+                if (this.total < 0)
+                    this.total = 0;
             },
             showError: function(error){
                 var message;
@@ -131,7 +148,16 @@
                 }
 
                 swal('Oops...', message, 'error');
-            }            
+            },
+            confirmar : function(){
+                this.$http.post('/inscricoes/' + this.id + "/presenca", this.inscricao).then(response => {
+                    this.imprimir(this.inscricao.pessoa, function(){
+                        window.location.reload();
+                    });
+                }, (error) => {
+                    this.showError(error);
+                });    
+            },
         }
     }
 </script>

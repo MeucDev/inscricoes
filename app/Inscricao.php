@@ -27,7 +27,7 @@ class Inscricao extends Model
         return $this->belongsTo('App\Evento', 'evento_id');
     }
 
-    public function populate($pessoa, $evento){
+    public function populate($pessoa, $evento, $inicial){
         $this->dataInscricao = date("Y-m-d h:i:s");
         $this->ano = date("Y");
         $this->tipoInscricao = "NORMAL";
@@ -39,8 +39,11 @@ class Inscricao extends Model
         $this->presencaConfirmada = 0;
         $this->evento_id = $evento;
 
-        $this->valorInscricao = Pessoa::getValorInscricao($pessoa, $evento);
-        $this->valorInscricaoPago = 0;
+        if ($inicial){
+            $this->valorInscricao = Pessoa::getValorInscricao($pessoa, $evento);
+            $this->valorInscricaoPago = 0;
+        }
+
         $this->valorRefeicao = Pessoa::getValorRefeicao($pessoa, $evento);
         $this->valorAlojamento = Pessoa::getValorAlojamento($pessoa, $evento);
         $this->valorTotal = $this->getValorTotal();
@@ -81,12 +84,12 @@ class Inscricao extends Model
             $inscricao = new Inscricao;
         }
 
-        $inscricao->populate($pessoa, $evento);
+        $inscricao->populate($pessoa, $evento, true);
         $inscricao->save();
 
         if ($pessoa->conjuge){
             $inscricaoConjuge = new Inscricao;
-            $inscricaoConjuge->populate($pessoa->conjuge, $evento);
+            $inscricaoConjuge->populate($pessoa->conjuge, $evento, true);
             $inscricao->dependentes()->save($inscricaoConjuge);
         }
 
@@ -95,7 +98,7 @@ class Inscricao extends Model
                 continue;
 
             $inscricaoDependente = new Inscricao;
-            $inscricaoDependente->populate($dependente, $evento);
+            $inscricaoDependente->populate($dependente, $evento, true);
             $inscricao->dependentes()->save($inscricaoDependente);
         }
 
@@ -107,7 +110,7 @@ class Inscricao extends Model
     public static function alterarInscricao($id, $pessoa){
         $inscricao = Inscricao::findOrFail($id);
 
-        $inscricao->populate($pessoa, $inscricao->evento_id);
+        $inscricao->populate($pessoa, $inscricao->evento_id, false);
         $inscricao->save();
     
         if ($pessoa->conjuge){
@@ -118,7 +121,7 @@ class Inscricao extends Model
                 $inscricaoConjuge = new Inscricao;
                 $inscricaoConjuge->numero_inscricao_responsavel = $inscricao->id;
             }
-            $inscricaoConjuge->populate($pessoa->conjuge, $evento);
+            $inscricaoConjuge->populate($pessoa->conjuge, $evento, false);
             $inscricaoConjuge->save();
         }
 
@@ -135,7 +138,7 @@ class Inscricao extends Model
                 $inscricaoDependente->numero_inscricao_responsavel = $inscricao->id;
             }
                     
-            $inscricaoDependente->populate($dependente, $evento);
+            $inscricaoDependente->populate($dependente, $evento, false);
             $inscricaoDependente->save();
         }
 
