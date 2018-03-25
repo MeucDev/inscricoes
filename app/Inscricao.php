@@ -113,9 +113,10 @@ class Inscricao extends Model
         $inscricao->populate($pessoa, $inscricao->evento_id, false);
         $inscricao->save();
     
-        if ($pessoa->conjuge){
-            $inscricaoConjuge = $inscricao->dependentes->first(function($item) use ($dependente) {
-                return ($item->pessoa_id == $dependente->id);
+        $conjuge = $pessoa->conjuge;
+        if ($conjuge){
+            $inscricaoConjuge = $inscricao->dependentes->first(function($item) use ($conjuge) {
+                return ($item->pessoa_id == $conjuge->id);
             });
             if (!$inscricaoConjuge){
                 $inscricaoConjuge = new Inscricao;
