@@ -41,11 +41,9 @@
 			$this->col = [];
 			$this->col[] = ["label"=>"Número","name"=>"numero"];
 			$this->col[] = ["label"=>"Pessoa","name"=>"pessoa_id","join"=>"pessoas,nome"];
-			$this->col[] = ["label"=>"Tipo","name"=>"tipoInscricao"];
 			$this->col[] = ["label"=>"Total","name"=>"valorTotal"];
-			$this->col[] = ["label"=>"Pago","name"=>"valorTotalPago"];
-			$this->col[] = ["label"=>"Incrição","name"=>"valorInscricao"];
-			$this->col[] = ["label"=>"Incrição pago","name"=>"valorInscricaoPago"];
+			$this->col[] = ["label"=>"Pagou?","name"=>"inscricaoPaga"];
+			$this->col[] = ["label"=>"Presente?","name"=>"presencaConfirmada"];
 			$this->col[] = ["label"=>"Dependentes","name"=>"(select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero) as total_inscritos"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 

@@ -404,18 +404,22 @@
             getTotalAlojamentoRefeicao: function(){
                 var total = this.pessoa.valores.alojamento + this.pessoa.valores.refeicao;
 
-                this.pessoa.dependentes.forEach(dependente => {
-                    total += dependente.valores.total;
-                });
+                if (this.pessoa.dependentes){
+                    this.pessoa.dependentes.forEach(dependente => {
+                        total += dependente.valores.total;
+                    });
+                }
 
                 return this.formatPrice(total);
             },
             getTotalGeral: function(){
                 var total = this.pessoa.valores.total;
 
-                this.pessoa.dependentes.forEach(dependente => {
-                    total += dependente.valores.total;
-                });
+                if (this.pessoa.dependentes){
+                    this.pessoa.dependentes.forEach(dependente => {
+                        total += dependente.valores.total;
+                    });
+                }
 
                 return this.formatPrice(total);
             },

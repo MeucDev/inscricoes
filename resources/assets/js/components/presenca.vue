@@ -38,15 +38,15 @@
             <div class="table-responsive">
                 <table class="table">
                     <tr>
-                        <th><h4>Inscrição<small></small></h4></th>
+                        <th><h4>Inscrição<small>permitir edição do valor da inscrição</small></h4></th>
                         <td class="text-right"><h4><nobr>{{formatPrice(inscricao.valorInscricao)}}</nobr></h4></td>
                     </tr>
                     <tr>
-                        <th><h4>Total<small></small></h4></th>
+                        <th><h4>Total<small>total a pagar inscricção + camping</small></h4></th>
                         <td class="text-right"><h4><nobr>{{formatPrice(inscricao.valorTotal)}}</nobr></h4></td>
                     </tr>
                     <tr>
-                        <th><h4>Pago<small></small></h4></th>
+                        <th><h4>Pago<small>Valor que já foi pago</small></h4></th>
                         <td class="text-right"><h4><nobr>{{formatPrice(inscricao.valorTotalPago)}}</nobr></h4></td>
                     </tr>
                     <tr>

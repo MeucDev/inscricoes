@@ -44,13 +44,13 @@ export default {
                 
                 var result = qz.print(config, data);
 
-                if (callback)
-                    callback();
+                // if (callback)
+                //     callback();
 
                 return result;
             }).catch(function(e) 
             { 
-                swal('Oops...', error, 'error');
+                console.error(e);
             });            
         },
         generatePdf64 : function (data) {
@@ -72,7 +72,7 @@ export default {
 
             var doc = new jsPDF({
                 unit: 'mm',
-                format: [84, 84]
+                format: [50, 84]
             });
             doc.setProperties({
                 title: data.id

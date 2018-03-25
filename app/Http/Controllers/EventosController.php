@@ -19,7 +19,7 @@ class EventosController extends Controller
     public function first()
     {
         $evento = Evento::whereYear("data_fim", date("Y"))->first();
-        return $this->viewEvento($evento);
+        return $this->viewEvento($evento, true);
     }    
 
     /**
@@ -31,17 +31,17 @@ class EventosController extends Controller
     public function show($id)
     {
         $evento = Evento::find($id);
-        return $this->viewEvento($evento);
+        return $this->viewEvento($evento, false);
     }
 
-    public function viewEvento($evento){
+    public function viewEvento($evento, $validar){
         if (!$evento)
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Evento não encontrado']);
 
-        if ($evento->encerrado())
+        if ($validar && $evento->encerrado())
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Inscrições encerradas!']);
 
-        if ($evento->limite())
+        if ($validar && $evento->limite())
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!']);
             
          $evento->toUI();
