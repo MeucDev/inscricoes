@@ -253,6 +253,8 @@
             getInscricao : function(id){
                 this.$http.get('/inscricoes/' + id + '/pessoa').then(response => {
                     this.pessoa = response.body;
+                    if (!this.pessoa.dependentes)
+                        this.pessoa.dependentes = [];
                 }, (error) => {
                     this.showError(error);
                 }); 
@@ -285,7 +287,9 @@
                     
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
                     this.pessoa = response.body;
-                    
+                    if (!this.pessoa.dependentes)
+                        this.pessoa.dependentes = [];
+
                     if (this.pessoa.inscricao)
                         this.inscricao = this.pessoa.inscricao;
 
