@@ -8,28 +8,28 @@
                         <th></th>
                         <th>Nome</th>
                         <th>Idade</th>
-                        <th>Alojamento</th>
-                        <th>Valor</th>
                         <th>Refeição</th>
+                        <th>Valor</th>
+                        <th>Hospedagem</th>
                         <th>Valor</th>
                     </tr>
                     <tr>
                         <td><input type="checkbox" @change="calculaTotal" v-model="inscricao.presenca"></td>
                         <td>{{inscricao.pessoa.nome}}</td>
                         <td>{{inscricao.pessoa.idade}}</td>
-                        <td>{{inscricao.alojamento}}</td>
-                        <td>{{formatPrice(inscricao.valorAlojamento)}}</td>
                         <td>{{inscricao.refeicao}}</td>
                         <td>{{formatPrice(inscricao.valorRefeicao)}}</td>
+                        <td>{{inscricao.alojamento}}</td>
+                        <td>{{formatPrice(inscricao.valorAlojamento)}}</td>
                     </tr>
                     <tr v-for="dependente in inscricao.dependentes">
                         <td><input type="checkbox" @change="calculaTotal" v-model="dependente.presenca"></td>
                         <td>{{dependente.pessoa.nome}}</td>
                         <td>{{dependente.pessoa.idade}}</td>
-                        <td>{{dependente.alojamento}}</td>
-                        <td>{{formatPrice(dependente.valorAlojamento)}}</td>
                         <td>{{dependente.refeicao}}</td>
                         <td>{{formatPrice(dependente.valorRefeicao)}}</td>
+                        <td>{{dependente.alojamento}}</td>
+                        <td>{{formatPrice(dependente.valorAlojamento)}}</td>
                     </tr>
                 </table>
             </div>
@@ -60,7 +60,7 @@
                     <tr>
                         <th><h4>Equipe <small>para as refeições</small></h4></th>
                         <td class="text-right">
-                            <select v-model="inscricao.pessoa.equipeRefeicao" id="equipe" class="form-control input-lg">
+                            <select v-model="inscricao.equipeRefeicao" id="equipe" class="form-control input-lg">
                                 <option v-if="!equipeEhQuiosque()" value="LAR_A">Lar A</option>
                                 <option v-if="!equipeEhQuiosque()" value="LAR_B">Lar B</option>
                                 <option v-if="equipeEhQuiosque()" value="QUIOSQUE_A">Quiosque A</option>
@@ -95,7 +95,6 @@
         mixins: [price, cracha],
         mounted: function(){
             this.getInscricao(this.id);
-            this.initQz();
         },
         data (){
             return{
@@ -127,7 +126,7 @@
                     return valor;
                 
                 valor = valor + Number(inscricao.valorAlojamento);
-                
+
                 return valor;
             },
             calculaTotal : function(){
@@ -152,9 +151,8 @@
             },
             confirmar : function(){
                 this.$http.post('/inscricoes/' + this.id + "/presenca", this.inscricao).then(response => {
-                    this.imprimir(this.inscricao.pessoa, function(){
-                        $('#modal').modal('hide');
-                    });
+                    this.imprimir(this.inscricao);
+                    $('#modal').modal('hide');
                 }, (error) => {
                     this.showError(error);
                 });    

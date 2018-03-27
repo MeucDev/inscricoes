@@ -19,7 +19,7 @@ class PessoasController extends Controller
      */
     public function show($cpf, $evento)
     {
-        $pessoa = Pessoa::where("cpf", $cpf)->firstOrFail();
+        $pessoa = Pessoa::with("dependentes")->where("cpf", $cpf)->firstOrFail();
 
         $result = $pessoa->toUI($evento);
 

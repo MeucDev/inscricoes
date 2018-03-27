@@ -18,12 +18,15 @@ class InscricoesController extends Controller
 {
     public function show($id)
     {
-        $inscricao = Inscricao::findOrFail($id);
-        $inscricao->pessoa;
+        $inscricao = Inscricao::with('pessoa')
+        ->with('evento')
+        ->with('dependentes')
+        ->with('dependentes.pessoa')
+        ->findOrFail($id);
+
         $inscricao->presenca = true;
 
         foreach ($inscricao->dependentes as $dependente) {
-            $dependente->pessoa;
             $dependente->presenca = true;
         }
 
@@ -32,7 +35,7 @@ class InscricoesController extends Controller
     
     public function pessoa($id)
     {
-        $inscricao = Inscricao::findOrFail($id);
+        $inscricao = Inscricao::with("pessoa")->findOrFail($id);
 
         $inscricao->pessoa->ajustarDados();
 
@@ -127,22 +130,24 @@ class InscricoesController extends Controller
     {
         $dados = (object) json_decode($request->getContent(), true);
 
-        $inscricao = Inscricao::findOrFail($id);
+        $inscricao = Inscricao::with('dependentes')->findOrFail($id);
 
-        $inscricao->presencaConfirmada = $dados->presenca;
+        DB::transaction(function() use ($inscricao, $dados, $id) {
+            $inscricao->presencaConfirmada = $dados->presenca;
 
-        foreach ($inscricao->dependentes as $key => $value) {
-            $value->presencaConfirmada = $dados->dependentes[$key]["presenca"];
-            $value->equipeRefeicao = $dados->equipeRefeicao;
-            $value->save();
-        }
-        
-        $inscricao->valorInscricaoPago = $dados->valorInscricao;
-        $inscricao->valorTotalPago = $dados->valorInscricao;
-        $inscricao->equipeRefeicao = $dados->equipeRefeicao;
-        $inscricao->inscricaoPaga = 1;
-        $inscricao->calcularTotais();
-        $inscricao->valorTotalPago = $inscricao->valorTotal;
-        $inscricao->save();
+            foreach ($inscricao->dependentes as $key => $value) {
+                $value->presencaConfirmada = $dados->dependentes[$key]["presenca"];
+                $value->equipeRefeicao = $dados->equipeRefeicao;
+                $value->save();
+            }
+            
+            $inscricao->valorInscricaoPago = $dados->valorInscricao;
+            $inscricao->valorTotalPago = $dados->valorInscricao;
+            $inscricao->equipeRefeicao = $dados->equipeRefeicao;
+            $inscricao->inscricaoPaga = 1;
+            $inscricao->calcularTotais();
+            $inscricao->valorTotalPago = $inscricao->valorTotal;
+            $inscricao->save();
+        });
     }    
 }
