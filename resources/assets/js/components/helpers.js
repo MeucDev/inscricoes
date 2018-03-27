@@ -18,7 +18,6 @@ export default {
 
             setTimeout(function(){
                 $('select[id=refeicao]').each(function(index){
-                    console.log($(this).val());
                     if ($(this).val() == "LAR")
                         $(this).prop("disabled", true);
                 });
