@@ -48,6 +48,9 @@ class InscricoesController extends Controller
             $dep->valores = $dependente->getValores();
             $result->dependentes[] = $dep;
         }
+
+        if (!$result->dependentes)
+            $result->dependentes = array();
         
         return response()->json($result);
     } 
