@@ -15,7 +15,7 @@ export default {
             });
 
             doc.setProperties({
-                title: "Crachas"
+                title: "Crachas - " + inscricao.pessoa.nome
             });
 
             this.generatePdfInscricao(doc, inscricao);
@@ -31,6 +31,11 @@ export default {
             var blobUrl = URL.createObjectURL(blob);
 
             var w = window.open(blobUrl);
+
+            w.onafterprint = function(){
+                this.close();
+            };
+
             w.print();
         },
         generatePdfInscricao(doc, inscricao){
