@@ -137,9 +137,12 @@ class InscricoesController extends Controller
             $value->save();
         }
         
-        $inscricao->valorTotalPago = $dados->valorTotalPago + $dados->recebido;
+        $inscricao->valorInscricaoPago = $dados->valorInscricao;
+        $inscricao->valorTotalPago = $dados->valorInscricao;
         $inscricao->equipeRefeicao = $dados->equipeRefeicao;
         $inscricao->inscricaoPaga = 1;
+        $inscricao->calcularTotais();
+        $inscricao->valorTotalPago = $inscricao->valorTotal;
         $inscricao->save();
     }    
 }

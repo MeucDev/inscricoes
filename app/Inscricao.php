@@ -42,12 +42,12 @@ class Inscricao extends Model
             $this->presencaConfirmada = 0;
             $this->valorInscricao = Pessoa::getValorInscricao($pessoa, $evento);
             $this->valorInscricaoPago = 0;
+            $this->valorTotalPago = 0;
         }
 
         $this->valorRefeicao = Pessoa::getValorRefeicao($pessoa, $evento);
         $this->valorAlojamento = Pessoa::getValorAlojamento($pessoa, $evento);
         $this->valorTotal = $this->getValorTotal();
-        $this->valorTotalPago = 0;
     }
 
     public function calcularValores(){
@@ -103,6 +103,7 @@ class Inscricao extends Model
         }
 
         $inscricao->calcularTotais();
+        $inscricao->save();
 
         return $inscricao;
     }  
@@ -146,6 +147,7 @@ class Inscricao extends Model
         }
 
         $inscricao->calcularTotais();
+        $inscricao->save();
 
         return $inscricao;
     }      
@@ -157,7 +159,6 @@ class Inscricao extends Model
         }
 
         $this->valorTotal = $this->getValorTotal() + $totalDependentes;
-        $this->save();
     }
 }
 

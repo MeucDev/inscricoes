@@ -37,37 +37,40 @@
         <div class="col-md-12">
             <div class="table-responsive">
                 <table class="table">
-                    <tr>
-                        <th><h4>Inscrição<small>permitir edição do valor da inscrição</small></h4></th>
-                        <td class="text-right"><h4><nobr>{{formatPrice(inscricao.valorInscricao)}}</nobr></h4></td>
-                    </tr>
-                    <tr>
-                        <th><h4>Total<small>total a pagar inscricção + camping</small></h4></th>
-                        <td class="text-right"><h4><nobr>{{formatPrice(inscricao.valorTotal)}}</nobr></h4></td>
-                    </tr>
-                    <tr>
-                        <th><h4>Pago<small>Valor que já foi pago</small></h4></th>
-                        <td class="text-right"><h4><nobr>{{formatPrice(inscricao.valorTotalPago)}}</nobr></h4></td>
-                    </tr>
-                    <tr>
-                        <th><h4>Restante</h4></th>
-                        <td class="text-right"><h4><nobr>{{formatPrice(total)}}</nobr></h4></td>
-                    </tr>
-                    <tr>
-                        <th><h4>Recebido<small></small></h4></th>
-                        <td class="text-right">
-                            <div class="col-md-6">
-                                <select v-model="inscricao.pessoa.equipeRefeicao" id="equipe" class="form-control input-lg">
-                                    <option v-if="!equipeEhQuiosque" value="LAR_A">Lar A</option>
-                                    <option v-if="!equipeEhQuiosque" value="LAR_B">Lar B</option>
-                                    <option v-if="equipeEhQuiosque" value="QUIOSQUE_A">Quiosque A</option>
-                                    <option v-if="equipeEhQuiosque" value="QUIOSQUE_B">Quiosque B</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <input id="pago" class="form-control input-lg text-right" v-model="inscricao.recebido"/>
+                    <tr v-if="inscricao.inscricaoPaga == 0">
+                        <td colspan="2">
+                            <div class="callout callout-danger">
+                                <h4>A inscrição não está paga</h4>
                             </div>
                         </td>
+                    </tr>
+                    <tr v-if="inscricao.inscricaoPaga == 0">
+                        <th><h4>Inscrição <small>valor da inscrição</small></h4></th>
+                        <td class="text-right">
+                            <input class="form-control input-lg text-right" @change="calculaTotal" v-model="inscricao.valorInscricao"/>
+                        </td>
+                    </tr>
+                    <tr v-if="inscricao.inscricaoPaga == 1">
+                        <td colspan="2">
+                            <div class="callout callout-success">
+                                <h4>A inscrição já está paga</h4>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><h4>Equipe <small>para as refeições</small></h4></th>
+                        <td class="text-right">
+                            <select v-model="inscricao.pessoa.equipeRefeicao" id="equipe" class="form-control input-lg">
+                                <option v-if="!equipeEhQuiosque()" value="LAR_A">Lar A</option>
+                                <option v-if="!equipeEhQuiosque()" value="LAR_B">Lar B</option>
+                                <option v-if="equipeEhQuiosque()" value="QUIOSQUE_A">Quiosque A</option>
+                                <option v-if="equipeEhQuiosque()" value="QUIOSQUE_B">Quiosque B</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr v-if="inscricao.presencaConfirmada == 0">
+                        <th><h1 class="red">Total a pagar<small> inscrição + camping</small></h1></th>
+                        <td class="text-right"><h1><nobr>{{formatPrice(total)}}</nobr></h1></td>
                     </tr>
                 </table>
             </div>
@@ -99,43 +102,41 @@
                 inscricao : { 
                     pessoa: {nome: '', idade:''} 
                 },
-                total: 0.0
+                total: 0
             }
         },
         methods:{
             equipeEhQuiosque: function(){
-                return this.inscricao.equipeRefeicao.includes("QUIOSQUE");
+                var refeicao = this.inscricao.refeicao;
+                if (refeicao)
+                    return refeicao.startsWith("QUIOSQUE");
             },
             getInscricao : function(id){
                 this.inscricao = {pessoa: {nome: '', idade:''} };
                 this.$http.get('/inscricoes/' + id).then(response => {
                     this.inscricao = response.body;
                     this.calculaTotal();
-                    setTimeout(function(){
-                        $("#pago").focus(function(){
-                            $(this).select();
-                        });
-                        $("#pago").focus();
-                    }, 100);
                 }, (error) => {
                     this.showError(error);
                 }); 
             },
+            calculaTotalInscricao(inscricao){
+                var valor = Number(inscricao.valorInscricao) + Number(inscricao.valorInscricaoPago);
+
+                if (!inscricao.presenca)
+                    return valor;
+                
+                valor = valor + Number(inscricao.valorAlojamento);
+
+                return valor;
+            },
             calculaTotal : function(){
-                this.total = this.inscricao.valorTotal - this.inscricao.valorTotalPago;
-                var desconto = 0.0;
+                this.total = this.calculaTotalInscricao(this.inscricao);
 
-                if (!this.inscricao.presenca)
-                    desconto = Number(this.inscricao.valorRefeicao) + Number(this.inscricao.valorAlojamento);
-
+                var self = this;
                 this.inscricao.dependentes.forEach(function(item) {
-                    if (!item.presenca)
-                        desconto += Number(item.valorTotal);
+                    self.total += self.calculaTotalInscricao(item);
                 });
-                this.total = this.total - desconto;
-
-                if (this.total < 0)
-                    this.total = 0;
             },
             showError: function(error){
                 var message;
