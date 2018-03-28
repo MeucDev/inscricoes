@@ -95,7 +95,27 @@ class Meuc_modulsSeeder extends Seeder {
             'controller'=>'AdminDescontosController',
             'is_protected'=>0,                                
             'is_active'=>1
-        ],        
+        ],
+        [
+            'created_at'=>date('Y-m-d H:i:s'),
+            'name'=>trans('Quiosque'),
+            'icon'=>'fa fa-tree',
+            'path'=>'quiosque',
+            'table_name'=>'inscricoes',
+            'controller'=>'AdminQuiosqueController',
+            'is_protected'=>0,                                
+            'is_active'=>1
+        ],
+        [
+            'created_at'=>date('Y-m-d H:i:s'),
+            'name'=>trans('Lar'),
+            'icon'=>'fa fa-home',
+            'path'=>'lar',
+            'table_name'=>'inscricoes',
+            'controller'=>'AdminLarController',
+            'is_protected'=>0,                                
+            'is_active'=>1
+        ],                  
         ];
 
         foreach($data as $k=>$d) {
