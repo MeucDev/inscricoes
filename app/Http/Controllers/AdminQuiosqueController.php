@@ -5,53 +5,70 @@
 	use DB;
 	use CRUDBooster;
 
-	class AdminEventosController extends \crocodicstudio\crudbooster\controllers\CBController {
+	class AdminQuiosqueController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
-			$this->title_field = "nome";
+			$this->title_field = "numero";
 			$this->limit = "20";
-			$this->orderby = "nome,desc";
+			$this->orderby = "numero,desc";
 			$this->global_privilege = false;
-			$this->button_table_action = true;
-			$this->button_bulk_action = true;
+			$this->button_table_action = false;
+			$this->button_bulk_action = false;
 			$this->button_action_style = "button_icon";
-			$this->button_add = true;
-			$this->button_edit = true;
-			$this->button_delete = true;
-			$this->button_detail = true;
-			$this->button_show = true;
-			$this->button_filter = true;
+			$this->button_add = false;
+			$this->button_edit = false;
+			$this->button_delete = false;
+			$this->button_detail = false;
+			$this->button_show = false;
+			$this->button_filter = false;
 			$this->button_import = false;
 			$this->button_export = false;
-			$this->table = "eventos";
+			$this->table = "inscricoes";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
+			$this->evento = (int)Request::get('parent_id');
+			if ($this->evento == 0)
+				$this->evento = (int)Request::get('evento_id');
+			
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Nome","name"=>"nome"];
-			$this->col[] = ["label"=>"Data Inicio","name"=>"data_inicio"];
-			$this->col[] = ["label"=>"Data Fim","name"=>"data_fim"];
+			$this->col[] = ["label"=>"Numero","name"=>"numero"];
+			$this->col[] = ["label"=>"Pessoa","name"=>"pessoa_id","join"=>"pessoas,nome"];
+			$this->col[] = ["label"=>"Com café","name"=>"((case when inscricoes.refeicao = 'QUIOSQUE_COM_CAFE' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and ins.refeicao = 'QUIOSQUE_COM_CAFE')) as comcafe_total"];
+			$this->col[] = ["label"=>"Sem café","name"=>"((case when inscricoes.refeicao = 'QUIOSQUE_SEM_CAFE' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and ins.refeicao = 'QUIOSQUE_SEM_CAFE')) as semcafe_total"];
+			$this->col[] = ["label"=>"Total","name"=>"(inscricoes.valorRefeicao + (select SUM(ins.valorRefeicao) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero)) as valor_total"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Data Início','name'=>'data_inicio','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Data Fim','name'=>'data_fim','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Link detalhes','name'=>'linkDetalhes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Link mapa','name'=>'linkMapa','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Local','name'=>'local','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Limite de inscrições','name'=>'limite_inscricoes','type'=>'number', 'width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Limite de refeições','name'=>'limite_refeicoes','type'=>'number', 'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Numero','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ["label"=>"Nome","name"=>"nome","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
-			//$this->form[] = ["label"=>"Data Inicio","name"=>"data_inicio","type"=>"date","required"=>TRUE,"validation"=>"required|date"];
-			//$this->form[] = ["label"=>"Data Fim","name"=>"data_fim","type"=>"date","required"=>TRUE,"validation"=>"required|date"];
+			//$this->form[] = ["label"=>"Numero","name"=>"numero","type"=>"number","required"=>TRUE,"validation"=>"required|integer|min:0"];
+			//$this->form[] = ["label"=>"DataInscricao","name"=>"dataInscricao","type"=>"datetime","required"=>TRUE,"validation"=>"required|date_format:Y-m-d H:i:s"];
+			//$this->form[] = ["label"=>"InscricaoPaga","name"=>"inscricaoPaga","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"Observacao","name"=>"observacao","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"TipoInscricao","name"=>"tipoInscricao","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"ValorInscricao","name"=>"valorInscricao","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"ValorInscricaoPago","name"=>"valorInscricaoPago","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"ValorTotal","name"=>"valorTotal","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"ValorTotalPago","name"=>"valorTotalPago","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"Pessoa Id","name"=>"pessoa_id","type"=>"select2","required"=>TRUE,"validation"=>"required|integer|min:0","datatable"=>"pessoa,id"];
+			//$this->form[] = ["label"=>"Ano","name"=>"ano","type"=>"number","required"=>TRUE,"validation"=>"required|integer|min:0"];
+			//$this->form[] = ["label"=>"Alojamento","name"=>"alojamento","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"EquipeRefeicao","name"=>"equipeRefeicao","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"Refeicao","name"=>"refeicao","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"PresencaConfirmada","name"=>"presencaConfirmada","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"Numero Inscricao Responsavel","name"=>"numero_inscricao_responsavel","type"=>"number","required"=>TRUE,"validation"=>"required|integer|min:0"];
+			//$this->form[] = ["label"=>"Evento Id","name"=>"evento_id","type"=>"select2","required"=>TRUE,"validation"=>"required|integer|min:0","datatable"=>"evento,id"];
+			//$this->form[] = ["label"=>"ValorAlojamento","name"=>"valorAlojamento","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"ValorRefeicao","name"=>"valorRefeicao","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"PagseguroCode","name"=>"pagseguroCode","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"PagseguroLink","name"=>"pagseguroLink","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
 			# OLD END FORM
 
 			/* 
@@ -66,11 +83,9 @@
 			| @parent_columns = Sparate with comma, e.g : name,created_at
 	        | 
 	        */
-			$this->sub_module[] = ['label'=>'Inscrições','path'=>'inscricoes','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'primary','button_icon'=>'fa fa-list'];
-			$this->sub_module[] = ['label'=>'Lar','path'=>'lar','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'warning','button_icon'=>'fa fa-home'];
-			$this->sub_module[] = ['label'=>'Quiosque','path'=>'quiosque','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'warning','button_icon'=>'fa fa-tree'];
-			$this->sub_module[] = ['label'=>'Valores','path'=>'valores','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'success','button_icon'=>'fa fa-dollar'];
-			
+	        $this->sub_module = array();
+
+
 	        /* 
 	        | ---------------------------------------------------------------------- 
 	        | Add More Action Button / Menu
@@ -82,7 +97,7 @@
 	        | @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
 	        | 
 	        */
-			$this->addaction = array();
+	        $this->addaction = array();
 
 
 	        /* 
@@ -240,8 +255,12 @@
 	    |
 	    */
 	    public function hook_query_index(&$query) {
-	        //Your code here
-	            
+			$query
+				->whereNull('inscricoes.numero_inscricao_responsavel')
+				->where('inscricoes.evento_id', $this->evento)
+				->where('inscricoes.refeicao', 'like', 'QUIOSQUE%')
+				->where('inscricoes.valorRefeicao', '>', 0)
+				->where('inscricoes.presencaConfirmada', 1);
 	    }
 
 	    /*
