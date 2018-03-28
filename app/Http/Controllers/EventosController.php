@@ -38,13 +38,17 @@ class EventosController extends Controller
         if (!$evento)
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Evento não encontrado']);
 
-        if ($validar && $evento->encerrado())
+        if ($evento->encerrado()){
+            $evento->toUI();
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Inscrições encerradas!']);
+        }
 
-        if ($validar && $evento->limite())
+        if ($validar && $evento->limite()){
+            $evento->toUI();
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!']);
+        }
             
-         $evento->toUI();
+        $evento->toUI();
         return view('evento', ['evento' => $evento]);
     }
 }
