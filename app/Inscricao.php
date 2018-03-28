@@ -184,6 +184,22 @@ class Inscricao extends Model
 
         $this->valorTotal = $this->getValorTotal() + $totalDependentes;
     }
+
+    public function calcularTotalPago(){
+        $totalDependentes = 0;
+        foreach ($this->dependentes as $dependente) {
+            if ($dependente->presencaConfirmada)
+                $totalDependentes += $dependente->getValorTotal();
+        }
+
+        $totalResponsavel = $this->valorInscricao;
+
+        if ($this->presencaConfirmada)
+            $totalResponsavel = $this->getValorTotal();
+
+        $this->valorTotalPago = $totalResponsavel + $totalDependentes;
+    }
+    
 }
 
 

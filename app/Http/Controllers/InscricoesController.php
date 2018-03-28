@@ -138,20 +138,17 @@ class InscricoesController extends Controller
         $inscricao = Inscricao::with('dependentes')->findOrFail($id);
 
         DB::transaction(function() use ($inscricao, $dados, $id) {
-            $inscricao->presencaConfirmada = $dados->presenca;
-
             foreach ($inscricao->dependentes as $key => $value) {
                 $value->presencaConfirmada = $dados->dependentes[$key]["presenca"];
                 $value->equipeRefeicao = $dados->equipeRefeicao;
                 $value->save();
             }
             
+            $inscricao->presencaConfirmada = $dados->presenca;
             $inscricao->valorInscricaoPago = $dados->valorInscricao;
-            $inscricao->valorTotalPago = $dados->valorInscricao;
             $inscricao->equipeRefeicao = $dados->equipeRefeicao;
             $inscricao->inscricaoPaga = 1;
-            $inscricao->calcularTotais();
-            $inscricao->valorTotalPago = $inscricao->valorTotal;
+            $inscricao->calcularTotalPago();
             $inscricao->save();
         });
     }    
