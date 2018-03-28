@@ -30,6 +30,8 @@ class InscricoesController extends Controller
             $dependente->presenca = true;
         }
 
+        $inscricao->equipeRefeicao = Inscricao::escolherEquipe($inscricao);
+        
         return $inscricao;
     }
     

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Valor;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class Inscricao extends Model
 {
@@ -108,6 +109,29 @@ class Inscricao extends Model
         return $inscricao;
     }  
 
+    public static function escolherEquipe($inscricao){
+        $equipes = DB::table('inscricoes')
+            ->select(
+                DB::raw("SUM(case when equipeRefeicao = 'QUIOSQUE_A' then 1 else 0 end) as QUIOSQUE_A"),
+                DB::raw("SUM(case when equipeRefeicao = 'QUIOSQUE_B' then 1 else 0 end) as QUIOSQUE_B"),
+                DB::raw("SUM(case when equipeRefeicao = 'LAR_A' then 1 else 0 end) as LAR_A"),
+                DB::raw("SUM(case when equipeRefeicao = 'LAR_B' then 1 else 0 end) as LAR_B"))
+            ->where("evento_id", $inscricao->evento_id)->first();
+    
+        if (substr( $inscricao->refeicao, 0, 8 ) == "QUIOSQUE"){
+            if ($equipes->QUIOSQUE_A > $equipes->QUIOSQUE_B)
+                return "QUIOSQUE_B";
+            else
+                return  "QUIOSQUE_A";
+        }
+        else if (substr( $inscricao->refeicao, 0, 3 ) == "LAR"){
+            if ($equipes->LAR_A > $equipes->LAR_B)
+                return "LAR_B";
+            else
+                return "LAR_A";
+        }        
+        return "";
+    }
     public static function alterarInscricao($id, $pessoa){
         $inscricao = Inscricao::findOrFail($id);
 

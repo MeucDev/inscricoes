@@ -34,7 +34,7 @@ export default {
 
             w.onafterprint = function(){
                 this.close();
-            };
+            }
 
             w.print();
         },

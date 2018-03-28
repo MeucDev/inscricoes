@@ -57,7 +57,14 @@
                             </div>
                         </td>
                     </tr>
-                    <tr>
+                    <tr v-if="inscricao.presencaConfirmada == 1">
+                        <td colspan="2">
+                            <div class="callout callout-success">
+                                <h4>A presença já foi confirmada</h4>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-if="inscricao.equipeRefeicao">
                         <th><h4>Equipe <small>para as refeições</small></h4></th>
                         <td class="text-right">
                             <select v-model="inscricao.equipeRefeicao" id="equipe" class="form-control input-lg">
