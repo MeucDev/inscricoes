@@ -164,7 +164,7 @@
 			$this->index_statistic[] = ['label'=>'Sem café','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)
 				->where('refeicao', 'QUIOSQUE_SEM_CAFE')
-				->count(),'icon'=>'fa fa-apple','color'=>'yellow'];
+				->count(),'icon'=>'fa fa-cutlery','color'=>'yellow'];
 
 			$this->index_statistic[] = ['label'=>'Total de pessoas','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)

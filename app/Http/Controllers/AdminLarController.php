@@ -158,28 +158,25 @@
 	        | @label, @count, @icon, @color 
 	        |
 	        */
-			$this->index_statistic[] = ['label'=>'Com café','count'=>DB::table('inscricoes')
+			$this->index_statistic[] = ['label'=>'Hospedados','count'=>DB::table('inscricoes')
+				->where('evento_id', $this->evento)
+				->where('alojamento', 'LAR')
+				->count(),'icon'=>'fa fa-home','color'=>'purple'];
+
+			$this->index_statistic[] = ['label'=>'Visitantes com café','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)
 				->where('refeicao', 'LAR_COM_CAFE')
-				->orWhere('refeicao', 'LAR')
 				->count(),'icon'=>'fa fa-coffee','color'=>'red'];
 
-			$this->index_statistic[] = ['label'=>'Sem café','count'=>DB::table('inscricoes')
+			$this->index_statistic[] = ['label'=>'Visitantes sem café','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)
 				->where('refeicao', 'LAR_SEM_CAFE')
-				->count(),'icon'=>'fa fa-apple','color'=>'yellow'];
+				->count(),'icon'=>'fa fa-cutlery','color'=>'yellow'];
 
 			$this->index_statistic[] = ['label'=>'Total de pessoas','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)
 				->where('refeicao', 'like', 'LAR%')
 				->count(),'icon'=>'fa fa-users','color'=>'blue'];				
-				
-			$this->index_statistic[] = ['label'=>'Valor total','count'=>DB::table('inscricoes')
-				->where('evento_id', $this->evento)
-				->where('refeicao', 'like', 'LAR%')
-				->sum('valorRefeicao'),'icon'=>'fa fa-dollar','color'=>'green'];
-
-
 	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Add javascript at body 
