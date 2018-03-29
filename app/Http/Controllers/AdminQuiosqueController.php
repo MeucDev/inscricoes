@@ -156,10 +156,25 @@
 	        | @label, @count, @icon, @color 
 	        |
 	        */
-	        $this->index_statistic = array();
+			$this->index_statistic[] = ['label'=>'Com café','count'=>DB::table('inscricoes')
+				->where('evento_id', $this->evento)
+				->where('refeicao', 'QUIOSQUE_COM_CAFE')
+				->count(),'icon'=>'fa fa-coffee','color'=>'red'];
 
+			$this->index_statistic[] = ['label'=>'Sem café','count'=>DB::table('inscricoes')
+				->where('evento_id', $this->evento)
+				->where('refeicao', 'QUIOSQUE_SEM_CAFE')
+				->count(),'icon'=>'fa fa-apple','color'=>'yellow'];
 
-
+			$this->index_statistic[] = ['label'=>'Total de pessoas','count'=>DB::table('inscricoes')
+				->where('evento_id', $this->evento)
+				->where('refeicao', 'like', 'QUIOSQUE%')
+				->count(),'icon'=>'fa fa-users','color'=>'blue'];				
+				
+			$this->index_statistic[] = ['label'=>'Valor total','count'=>DB::table('inscricoes')
+				->where('evento_id', $this->evento)
+				->where('refeicao', 'like', 'QUIOSQUE%')
+				->sum('valorRefeicao'),'icon'=>'fa fa-dollar','color'=>'green'];				
 	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Add javascript at body 
