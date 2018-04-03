@@ -163,7 +163,6 @@ class Inscricao extends Model
 
             if (!$inscricaoDependente){
                 $inscricaoDependente = new Inscricao;
-                $inscricaoDependente->numero_inscricao_responsavel = $inscricao->id;
             }
                     
             $inscricaoDependente->populate($dependente, $evento, false);

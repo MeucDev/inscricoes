@@ -31,12 +31,14 @@
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			$this->col[] = ["label"=>"Nome","name"=>"nome"];
+			$this->col[] = ["label"=>"CPF","name"=>"cpf"];
 			$this->col[] = ["label"=>"E-mail","name"=>"email"];
 			$this->col[] = ["label"=>"Telefone","name"=>"telefone"];
 			$this->col[] = ["label"=>"Idade","name"=>"idade"];
 			$this->col[] = ["label"=>"Cidade","name"=>"cidade"];
 			$this->col[] = ["label"=>"Tipo","name"=>"TIPO","callback_php"=>'$this->getTipo($row->TIPO)'];
 			$this->col[] = ["label"=>"Responsável","name"=>"responsavel_id","join"=>"pessoas,nome"];
+			$this->col[] = ["label"=>"Inativo","name"=>"inativo"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -288,7 +290,6 @@
 			//Your code here
 			
 			// if (!Request::has('parent_table')){
-			// 	$query->where('tipo','R');
 			// }
 	    }
 

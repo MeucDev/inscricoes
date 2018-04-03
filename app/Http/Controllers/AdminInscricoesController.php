@@ -41,6 +41,7 @@
 			$this->col = [];
 			$this->col[] = ["label"=>"Número","name"=>"numero"];
 			$this->col[] = ["label"=>"Pessoa","name"=>"pessoa_id","join"=>"pessoas,nome"];
+			$this->col[] = ["label"=>"CPF","name"=>"pessoa_id","join"=>"pessoas,cpf"];
 			$this->col[] = ["label"=>"Total","name"=>"valorTotal"];
 			$this->col[] = ["label"=>"Total pago","name"=>"valorTotalPago"];
 			$this->col[] = ["label"=>"Pagou?","name"=>"inscricaoPaga"];

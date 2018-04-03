@@ -164,6 +164,8 @@ class Pessoa extends Model
 
         Pessoa::atualizaDependentes($pessoa, $dadosDependentes);
 
+        $pessoa = Pessoa::find($pessoa->id);
+        
         return $pessoa;
     }
     public static function atualizaConjuge($pessoa, $dadosConjuge){
@@ -199,7 +201,7 @@ class Pessoa extends Model
 
             if (!$dependente){
                 $dependente = $pessoa->dependentes->first(function($item) use ($dadosDependente) {
-                    return ($item->nome == $dadosDependente->nome);
+                    return (strcasecmp(trim($item->nome), trim($dadosDependente->nome)) == 0);
                 });
             }
 
