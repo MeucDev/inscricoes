@@ -32,11 +32,11 @@ export default {
 
             var w = window.open(blobUrl);
 
-            w.onafterprint = function(){
-                this.close();
+            if (!w){
+                swal('Oops...', 'Para a impressão dos crachas, você deve aceitar abrir popup no browser!', 'warning');
+            }else{
+                w.print();
             }
-
-            w.print();
         },
         generatePdfInscricao(doc, inscricao){
             var pessoa = {
