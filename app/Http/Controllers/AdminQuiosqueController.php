@@ -36,8 +36,8 @@
 			$this->col = [];
 			$this->col[] = ["label"=>"Numero","name"=>"numero"];
 			$this->col[] = ["label"=>"Pessoa","name"=>"pessoa_id","join"=>"pessoas,nome"];
-			$this->col[] = ["label"=>"Com café","name"=>"((case when inscricoes.refeicao = 'QUIOSQUE_COM_CAFE' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and ins.refeicao = 'QUIOSQUE_COM_CAFE')) as comcafe_total"];
-			$this->col[] = ["label"=>"Sem café","name"=>"((case when inscricoes.refeicao = 'QUIOSQUE_SEM_CAFE' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and ins.refeicao = 'QUIOSQUE_SEM_CAFE')) as semcafe_total"];
+			$this->col[] = ["label"=>"Com café","name"=>"((case when inscricoes.refeicao = 'QUIOSQUE_COM_CAFE' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and ins.refeicao = 'QUIOSQUE_COM_CAFE' and ins.presencaConfirmada = 1)) as comcafe_total"];
+			$this->col[] = ["label"=>"Sem café","name"=>"((case when inscricoes.refeicao = 'QUIOSQUE_SEM_CAFE' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and ins.refeicao = 'QUIOSQUE_SEM_CAFE' and ins.presencaConfirmada = 1)) as semcafe_total"];
 			$this->col[] = ["label"=>"Total","name"=>"(inscricoes.valorRefeicao + (select SUM(ins.valorRefeicao) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero)) as valor_total"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
