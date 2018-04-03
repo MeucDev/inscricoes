@@ -116,7 +116,9 @@ class Inscricao extends Model
                 DB::raw("SUM(case when equipeRefeicao = 'QUIOSQUE_B' then 1 else 0 end) as QUIOSQUE_B"),
                 DB::raw("SUM(case when equipeRefeicao = 'LAR_A' then 1 else 0 end) as LAR_A"),
                 DB::raw("SUM(case when equipeRefeicao = 'LAR_B' then 1 else 0 end) as LAR_B"))
-            ->where("evento_id", $inscricao->evento_id)->first();
+            ->where("presencaConfirmada", 1)
+            ->where("evento_id", $inscricao->evento_id)
+            ->first();
     
         if (substr( $inscricao->refeicao, 0, 8 ) == "QUIOSQUE"){
             if ($equipes->QUIOSQUE_A > $equipes->QUIOSQUE_B)
