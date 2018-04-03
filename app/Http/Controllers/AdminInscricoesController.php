@@ -179,18 +179,36 @@
 			
 			$this->index_statistic[] = ['label'=>'Total de pessoas','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)
-				->count(),'icon'=>'fa fa-users','color'=>'primary'];
+				->count(),'icon'=>'ion ion-person-stalker','color'=>'aqua'];
 			$this->index_statistic[] = ['label'=>'Total de presentes','count'=>DB::table('inscricoes')
 				->where([['presencaConfirmada', '1'] , ['evento_id', $this->evento]])
 				->count(),'icon'=>'fa fa-check','color'=>'green'];
-				$this->index_statistic[] = ['label'=>'Total de inscrições','count'=>DB::table('inscricoes')
-				->where('evento_id', $this->evento)
-				->where('numero_inscricao_responsavel', null)
-				->count(),'icon'=>'fa fa-list','color'=>'primary'];
-			$this->index_statistic[] = ['label'=>'Total de inscrições pagas','count'=>DB::table('inscricoes')
-				->where([['inscricaoPaga', '1'] , ['evento_id', $this->evento]])
-				->count(),'icon'=>'fa fa-dollar','color'=>'green'];				
-	        /*
+			$this->index_statistic[] = ['label'=> 'Equipes quiosque'
+				,'count'=> 
+				DB::table('inscricoes')
+					->select(
+						DB::raw("CONCAT(
+							'A: ', SUM(case when equipeRefeicao = 'QUIOSQUE_A' then 1 else 0 end),
+							' B: ', SUM(case when equipeRefeicao = 'QUIOSQUE_B' then 1 else 0 end)
+						) as equipes"))
+					->where('presencaConfirmada', '1')
+					->where('evento_id', $this->evento)
+					->first()->equipes
+				,'icon'=>'fa fa-cutlery','color'=>'red'];	
+			$this->index_statistic[] = ['label'=> 'Equipes lar'
+				,'count'=> 
+				DB::table('inscricoes')
+					->select(
+						DB::raw("CONCAT(
+							'A: ', SUM(case when equipeRefeicao = 'LAR_A' then 1 else 0 end),
+							' B: ', SUM(case when equipeRefeicao = 'LAR_B' then 1 else 0 end)
+						) as equipes"))
+					->where('presencaConfirmada', '1')
+					->where('evento_id', $this->evento)
+					->first()->equipes
+				,'icon'=>'fa fa-cutlery','color'=>'yellow'];							
+
+			/*
 	        | ---------------------------------------------------------------------- 
 	        | Add javascript at body 
 	        | ---------------------------------------------------------------------- 
