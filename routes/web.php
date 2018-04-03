@@ -12,6 +12,9 @@
 */
 setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
 
+//Crachas
+Route::get('/admin/cracha', function () { return view('cracha'); });
+
 //Pessoas
 Route::get('/pessoas/{cpf}/{evento}', 'PessoasController@show');
 
