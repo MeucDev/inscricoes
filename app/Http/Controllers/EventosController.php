@@ -31,7 +31,7 @@ class EventosController extends Controller
     public function show($id)
     {
         $evento = Evento::find($id);
-        return $this->viewEvento($evento, false);
+        return $this->viewEvento($evento, true);
     }
 
     public function viewEvento($evento, $validar){
