@@ -43,7 +43,7 @@
 	<script src="{{ asset ('vendor/crudbooster/assets/adminlte/plugins/datatables/dataTables.bootstrap.min.js')}}"></script>
 
 	<!--APP VUE-->	
-	<script src="{{ asset('js/app.cb.js') }}"></script>
+	<script src="{{ asset('js/app.cb.js?v=5') }}"></script>
 
 	<!--TOKEN CSRF LARAVEL-->	
 	<script>

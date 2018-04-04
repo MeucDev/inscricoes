@@ -171,10 +171,11 @@
 				->where('refeicao', 'like', 'QUIOSQUE%')
 				->count(),'icon'=>'fa fa-users','color'=>'blue'];				
 				
-			$this->index_statistic[] = ['label'=>'Valor total','count'=>DB::table('inscricoes')
+			$this->index_statistic[] = ['label'=>'Total confirmados','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)
 				->where('refeicao', 'like', 'QUIOSQUE%')
-				->sum('valorRefeicao'),'icon'=>'fa fa-dollar','color'=>'green'];				
+				->where('presencaConfirmada', 1)
+				->count('valorRefeicao'),'icon'=>'fa fa-check','color'=>'green'];				
 	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Add javascript at body 

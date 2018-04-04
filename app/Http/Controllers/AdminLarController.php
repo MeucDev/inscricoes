@@ -37,7 +37,14 @@
 			$this->col = [];
 			$this->col[] = ["label"=>"Numero","name"=>"numero"];
 			$this->col[] = ["label"=>"Pessoa","name"=>"pessoa_id","join"=>"pessoas,nome"];
-			$this->col[] = ["label"=>"Com café","name"=>"((case when inscricoes.refeicao = 'LAR_COM_CAFE' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and ins.refeicao = 'LAR_COM_CAFE' and ins.presencaConfirmada = 1)) as comcafe_total"];
+			$this->col[] = ["label"=>"Tipo","name"=>"alojamento","callback"=>function($row) {
+				if ($row->alojamento == 'LAR')
+					return '<span class="label label-danger">hóspede</span>';
+				else
+				return '<span class="label label-success">visitante</span>';
+			}];
+
+			$this->col[] = ["label"=>"Com café","name"=>"((case when inscricoes.refeicao = 'LAR_COM_CAFE' or inscricoes.refeicao = 'LAR' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and (ins.refeicao = 'LAR_COM_CAFE' or ins.refeicao = 'LAR') and ins.presencaConfirmada = 1)) as comcafe_total"];
 			$this->col[] = ["label"=>"Sem café","name"=>"((case when inscricoes.refeicao = 'LAR_SEM_CAFE' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and ins.refeicao = 'LAR_SEM_CAFE' and ins.presencaConfirmada = 1)) as semcafe_total"];
 			$this->col[] = ["label"=>"Total","name"=>"(inscricoes.valorRefeicao + (select SUM(ins.valorRefeicao) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero)) as valor_total"];
 			
@@ -161,7 +168,7 @@
 			$this->index_statistic[] = ['label'=>'Hospedados','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)
 				->where('alojamento', 'LAR')
-				->count(),'icon'=>'fa fa-home','color'=>'purple'];
+				->count(),'icon'=>'fa fa-home','color'=>'blue'];
 
 			$this->index_statistic[] = ['label'=>'Visitantes com café','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)
@@ -173,10 +180,11 @@
 				->where('refeicao', 'LAR_SEM_CAFE')
 				->count(),'icon'=>'fa fa-cutlery','color'=>'yellow'];
 
-			$this->index_statistic[] = ['label'=>'Total de pessoas','count'=>DB::table('inscricoes')
+			$this->index_statistic[] = ['label'=>'Total confirmados','count'=>DB::table('inscricoes')
 				->where('evento_id', $this->evento)
 				->where('refeicao', 'like', 'LAR%')
-				->count(),'icon'=>'fa fa-users','color'=>'blue'];				
+				->where('presencaConfirmada', 1)
+				->count(),'icon'=>'fa fa-check','color'=>'green'];				
 	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Add javascript at body 

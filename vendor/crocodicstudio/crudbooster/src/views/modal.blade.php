@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div id="app">
+<div id="modalApp">
   <div id="modal" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg">
       <!-- Modal content-->

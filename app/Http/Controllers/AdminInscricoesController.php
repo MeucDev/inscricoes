@@ -153,10 +153,11 @@
 	        | @url   = URL Target
 	        | @icon  = Icon from Awesome.
 	        | 
-	        */
-	        $this->index_button = array();
+			*/
+			
+			$cracha = 'javascript:modalApp.show("Cracha", "cracha", {})';
 
-
+			$this->index_button[] = ["label"=>"Imprimir cracha customizado","icon"=>"fa fa-print","url"=>$cracha];			
 
 	        /* 
 	        | ---------------------------------------------------------------------- 

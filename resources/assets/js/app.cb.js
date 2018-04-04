@@ -15,9 +15,10 @@ require('./bootstrap.cb');
 
 import inscricao from './components/inscricao.vue';
 import presenca from './components/presenca.vue';
+import cracha from './components/cracha.vue';
 
 window.modalApp = new Vue({
-    el: '#app',
+    el: '#modalApp',
     data () {
         return {
             title:'',
@@ -28,7 +29,7 @@ window.modalApp = new Vue({
     mounted: function(){
         $('#modal').on('hidden.bs.modal', this.clear);
     },
-    components: { inscricao, presenca },
+    components: { inscricao, presenca, cracha },
     methods:{
         clear: function(){
             this.title = '';
