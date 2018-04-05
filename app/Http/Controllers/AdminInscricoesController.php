@@ -43,10 +43,16 @@
 			$this->col[] = ["label"=>"Pessoa","name"=>"pessoa_id","join"=>"pessoas,nome"];
 			$this->col[] = ["label"=>"CPF","name"=>"pessoa_id","join"=>"pessoas,cpf"];
 			$this->col[] = ["label"=>"Total","name"=>"valorTotal"];
-			$this->col[] = ["label"=>"Total pago","name"=>"valorTotalPago"];
-			$this->col[] = ["label"=>"Pagou?","name"=>"inscricaoPaga"];
-			$this->col[] = ["label"=>"Presente?","name"=>"presencaConfirmada"];
-			$this->col[] = ["label"=>"Dependentes","name"=>"(select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero) as total_inscritos"];
+			$this->col[] = ["label"=>"Pago","name"=>"valorTotalPago"];
+			$this->col[] = ["label"=>"Pagou?","name"=>"inscricaoPaga","callback"=>function($row) {
+				return ($row->inscricaoPaga == 1) ? '<span class="label label-success">sim</span>' : '<span class="label label-danger">não</span>';
+			}];
+			$this->col[] = ["label"=>"Presente?","name"=>"presencaConfirmada","callback"=>function($row) {
+				return ($row->presencaConfirmada == 1) ? '<span class="label label-success">sim</span>' : '<span class="label label-danger">não</span>';
+			}];
+			$this->col[] = ["label"=>"Dependentes","name"=>"(select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero) as total_inscritos","callback"=>function($row) {
+				return '<span class="badge bg-yellow">'. $row->total_inscritos .'</span>';
+			}];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
