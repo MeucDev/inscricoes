@@ -44,8 +44,16 @@
 				return '<span class="label label-success">visitante</span>';
 			}];
 
-			$this->col[] = ["label"=>"Com café","name"=>"((case when inscricoes.refeicao = 'LAR_COM_CAFE' or inscricoes.refeicao = 'LAR' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and (ins.refeicao = 'LAR_COM_CAFE' or ins.refeicao = 'LAR') and ins.presencaConfirmada = 1)) as comcafe_total"];
-			$this->col[] = ["label"=>"Sem café","name"=>"((case when inscricoes.refeicao = 'LAR_SEM_CAFE' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and ins.refeicao = 'LAR_SEM_CAFE' and ins.presencaConfirmada = 1)) as semcafe_total"];
+			$this->col[] = ["label"=>"Com café","name"=>"((case when inscricoes.refeicao = 'LAR_COM_CAFE' or inscricoes.refeicao = 'LAR' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and (ins.refeicao = 'LAR_COM_CAFE' or ins.refeicao = 'LAR') and ins.presencaConfirmada = 1)) as comcafe_total","callback"=>function($row) {
+				if ($row->comcafe_total == 0)
+					return '';
+				return '<span class="badge bg-red">'. $row->comcafe_total .'</span>';
+			}];
+			$this->col[] = ["label"=>"Sem café","name"=>"((case when inscricoes.refeicao = 'LAR_SEM_CAFE' then 1 else 0 end) + (select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero and ins.refeicao = 'LAR_SEM_CAFE' and ins.presencaConfirmada = 1)) as semcafe_total","callback"=>function($row) {
+				if ($row->semcafe_total == 0)
+					return '';
+				return '<span class="badge bg-yellow">'. $row->semcafe_total .'</span>';
+			}];
 			$this->col[] = ["label"=>"Total","name"=>"(inscricoes.valorRefeicao + (select SUM(ins.valorRefeicao) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero)) as valor_total"];
 			
 			# END COLUMNS DO NOT REMOVE THIS LINE
