@@ -5,7 +5,8 @@
             <div class="table-responsive">
                 <table class="table">
                     <tr>
-                        <th></th>
+                        <th>Presença</th>
+                        <th>Imprimir</th>
                         <th>Nome</th>
                         <th>Idade</th>
                         <th>Refeição</th>
@@ -15,6 +16,7 @@
                     </tr>
                     <tr>
                         <td><input type="checkbox" @change="calculaTotal" v-model="inscricao.presenca"></td>
+                        <td><input type="checkbox" v-model="inscricao.imprimir"></td>
                         <td>{{inscricao.pessoa.nome}}</td>
                         <td>{{inscricao.pessoa.idade}}</td>
                         <td>{{inscricao.refeicao}}</td>
@@ -24,6 +26,7 @@
                     </tr>
                     <tr v-for="dependente in inscricao.dependentes">
                         <td><input type="checkbox" @change="calculaTotal" v-model="dependente.presenca"></td>
+                        <td><input type="checkbox" v-model="dependente.imprimir"></td>
                         <td>{{dependente.pessoa.nome}}</td>
                         <td>{{dependente.pessoa.idade}}</td>
                         <td>{{dependente.refeicao}}</td>

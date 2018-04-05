@@ -22,8 +22,10 @@ export default {
 
             var self = this;
             inscricao.dependentes.forEach(function(item) {
-                doc.addPage();
-                self.generatePdfInscricao(doc, item);
+                if (item.imprimir){
+                    doc.addPage();
+                    self.generatePdfInscricao(doc, item);
+                }
             });
 
             var pdf64 = btoa(doc.output());

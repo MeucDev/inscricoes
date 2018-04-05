@@ -25,9 +25,11 @@ class InscricoesController extends Controller
         ->findOrFail($id);
 
         $inscricao->presenca = true;
+        $inscricao->imprimir = true;
 
         foreach ($inscricao->dependentes as $dependente) {
             $dependente->presenca = true;
+            $dependente->imprimir = ($dependente->pessoa->idade > 6);
         }
 
         $inscricao->equipeRefeicao = Inscricao::escolherEquipe($inscricao);
@@ -141,6 +143,7 @@ class InscricoesController extends Controller
             foreach ($inscricao->dependentes as $key => $value) {
                 $value->presencaConfirmada = $dados->dependentes[$key]["presenca"];
                 $value->equipeRefeicao = $dados->equipeRefeicao;
+                $value->inscricaoPaga = 1;
                 $value->save();
             }
             

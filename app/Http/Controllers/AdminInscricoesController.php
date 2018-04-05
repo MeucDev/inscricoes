@@ -60,7 +60,7 @@
 			$this->form[] = ['label'=>'Equipe refeição','name'=>'equipeRefeicao','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'LAR_A|Lar A;LAR_B|Lar B;QUIOSQUE_A|Quiosque A;QUIOSQUE_B|Quiosque B','readonly' =>true];
 			$this->form[] = ['label'=>'Pagou?','name'=>'inscricaoPaga','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			$this->form[] = ['label'=>'Presença confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-			$this->form[] = ['label'=>'Valor inscricão','name'=>'valorInscricao','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
+			$this->form[] = ['label'=>'Valor inscricão','name'=>'valorInscricao','type'=>'number','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor inscricão pago','name'=>'valorInscricaoPago','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
 			$this->form[] = ['label'=>'Valor alojamento','name'=>'valorAlojamento','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
 			$this->form[] = ['label'=>'Valor refeição','name'=>'valorRefeicao','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
@@ -365,6 +365,10 @@
 	    | 
 	    */
 	    public function hook_after_edit($id) {
+			$inscricao = Inscricao::find($id);
+
+			$inscricao->calcularTotais();
+			$inscricao->save();
 		}
 		
 	    /* 
