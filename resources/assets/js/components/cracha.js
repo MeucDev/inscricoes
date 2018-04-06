@@ -45,10 +45,13 @@ export default {
                 event: this.inscricao.evento.nome,
                 city: this.inscricao.pessoa.cidade + " - " + this.inscricao.pessoa.uf,
                 nickname: inscricao.pessoa.nomecracha,
-                fullname: inscricao.pessoa.nome,
-                eatPlace: (this.inscricao.refeicao.startsWith("LAR"))? 'L': 'Q',
-                eatGroup: (this.inscricao.equipeRefeicao.endsWith("A"))? 'A': 'B'
+                fullname: inscricao.pessoa.nome
             };
+
+            if (this.inscricao.equipeRefeicao){
+                pessoa.eatPlace = (this.inscricao.refeicao.startsWith("LAR"))? 'L': 'Q';
+                pessoa.eatGroup = (this.inscricao.equipeRefeicao.endsWith("A"))? 'A': 'B';
+            }
 
             this.generatePdf64(doc, pessoa);
         },
@@ -62,16 +65,18 @@ export default {
             doc.setFont('helvetica');
             doc.text(4, 7.5, data.event);
 
-            // Image
-            doc.addImage(data.eatPlace == 'Q' ? imgQuiosque : imgLar, 'PNG', 67, 2.5, 7, 7);
+            if (data.eatPlace){
+                // Image
+                doc.addImage(data.eatPlace == 'Q' ? imgQuiosque : imgLar, 'PNG', 67, 2.5, 7, 7);
 
-            // Square
-            doc.setLineWidth(0.5);
-            doc.rect(74.25, 2.75, 6.5, 6.5);
+                // Square
+                doc.setLineWidth(0.5);
+                doc.rect(74.25, 2.75, 6.5, 6.5);
 
-            // Group
-            doc.setFont('helvetica');
-            doc.text(77.5, 7.5, data.eatGroup, 'center');
+                // Group
+                doc.setFont('helvetica');
+                doc.text(77.5, 7.5, data.eatGroup, 'center');
+            }
 
             // Line
             doc.setLineWidth(0.5);

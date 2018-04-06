@@ -32,8 +32,10 @@ class InscricoesController extends Controller
             $dependente->imprimir = ($dependente->pessoa->idade > 6);
         }
 
-        $inscricao->equipeRefeicao = Inscricao::escolherEquipe($inscricao);
-        
+        if ($inscricao->refeicao != 'NENHUMA') 
+            $inscricao->equipeRefeicao = Inscricao::escolherEquipe($inscricao);
+        else
+            $inscricao->equipeRefeicao = null;        
         return $inscricao;
     }
     
