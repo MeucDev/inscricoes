@@ -35,6 +35,10 @@ $ php artisan vendor:publish
 ```php
 $ php artisan key:generate
 ```
+- Em ambiente de produção carregar a configuração para o cache
+```php
+$ php artisan config:cache
+```
 
 ## Run
 ```php
