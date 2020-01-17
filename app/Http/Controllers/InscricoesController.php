@@ -84,6 +84,7 @@ class InscricoesController extends Controller
             'dependentes.*.nome' => 'required',
             'dependentes.*.nomecracha' => 'required',
             'dependentes.*.nascimento' => 'required|date_format:d/m/Y|after:01/01/1900',
+            'dependentes.*.casamento' => 'date_format:d/m/Y|after:01/01/1900|before:' . date("d/m/Y"),
             'dependentes.*.sexo' => 'required',
             'dependentes.*.alojamento' => 'required',
             'dependentes.*.refeicao' => 'required',

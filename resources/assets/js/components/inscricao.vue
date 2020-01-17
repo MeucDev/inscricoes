@@ -39,7 +39,7 @@
                 <div class="col-md-4">
                     <div :class="{'form-group': true, 'has-error': errors.has('nascimento') }">
                         <label for="nascimento">Data de Nascimento</label>
-                        <input type="text" v-mask="'##/##/####'" v-validate="'required|date_format:DD/MM/YYYY'" class="form-control" @change="getValor(pessoa, evento, $event)" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
+                        <input type="text" v-mask="'##/##/####'" v-validate="'required|date_format:dd/MM/yyyy'" class="form-control" @change="getValor(pessoa, evento, $event)" v-model="pessoa.nascimento" id="nascimento" name="nascimento" placeholder="dd/mm/aaaa">
                         <span v-show="errors.has('nascimento')" class="help-block">A data deve estar no formato dd/mm/aaaa</span>                        
                     </div>
                 </div>

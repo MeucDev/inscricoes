@@ -46,6 +46,8 @@
 			$this->form[] = ['label'=>'Cpf','name'=>'cpf','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-4'];
 			$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-4'];
 			$this->form[] = ['label'=>'Nome cracha','name'=>'nomecracha','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Nascimento','name'=>'nascimento','type'=>'datetime','validation'=>'required','readonly' =>true,'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Casamento','name'=>'casamento','type'=>'datetime','validation'=>'required','readonly' =>true,'width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Email','name'=>'email','type'=>'email','validation'=>'required|min:1|max:255|email','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Idade','name'=>'idade','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Tipo','name'=>'TIPO','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'R|Responsável;C|Conjuge;F|Filho / Dependente'];

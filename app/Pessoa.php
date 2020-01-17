@@ -35,6 +35,8 @@ class Pessoa extends Model
     public function ajustarDados(){
         if ($this->nascimento)
             $this->nascimento = DateTime::createFromFormat('Y-m-d', $this->nascimento)->format('d/m/Y');
+        if ($this->casamento)
+            $this->casamento = DateTime::createFromFormat('Y-m-d', $this->casamento)->format('d/m/Y');
         if ($this->alojamento == "LAR")
             $this->refeicao = "LAR";
     }
@@ -118,6 +120,7 @@ class Pessoa extends Model
 
     public function populate($dados){
         $nascimento = str_replace('/', '-', $dados->nascimento);
+        $casamento = str_replace('/', '-', $dados->casamento);
         
         $this->TIPO = $dados->TIPO;
         $this->alojamento = $dados->alojamento;
@@ -125,6 +128,7 @@ class Pessoa extends Model
         //todo: a equipe deve ser atribuida conforme
         $this->equipeRefeicao = $dados->equipeRefeicao;
         $this->nascimento = date('Y-m-d', strtotime($nascimento));
+        $this->casamento = date('Y-m-d', strtotime($casamento));
         $this->idade = Pessoa::getIdade($dados->nascimento);
         $this->nome = $dados->nome;
         $this->nomecracha = $dados->nomecracha;
@@ -182,6 +186,7 @@ class Pessoa extends Model
                 $conjuge->save();
                 $pessoa->conjuge()->associate($conjuge);
             }
+            $pessoa->casamento = $conjuge->casamento;
         }else{
             $pessoa->conjuge()->associate(null);
         }
