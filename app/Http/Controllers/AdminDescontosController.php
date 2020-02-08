@@ -37,8 +37,8 @@
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Cpf','name'=>'cpf','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Nome / Cidade','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Cpf','name'=>'cpf','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Perc','name'=>'perc','type'=>'number','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 

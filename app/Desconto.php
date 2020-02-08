@@ -9,7 +9,8 @@ class Desconto extends Model
     public $timestamps = false;
 
     public static function getDesconto($pessoa){
-        $desconto = Desconto::where('cpf', $pessoa->cpf)->first();
+        $desconto = Desconto::where('cpf', $pessoa->cpf)
+            ->orWhere('nome', $pessoa->cidade)->first();
 
         if ($desconto)
             return $desconto->perc;
