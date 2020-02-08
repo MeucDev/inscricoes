@@ -128,7 +128,8 @@ class Pessoa extends Model
         //todo: a equipe deve ser atribuida conforme
         $this->equipeRefeicao = $dados->equipeRefeicao;
         $this->nascimento = date('Y-m-d', strtotime($nascimento));
-        $this->casamento = date('Y-m-d', strtotime($casamento));
+        if ($dados->casamento)
+            $this->casamento = date('Y-m-d', strtotime($casamento));
         $this->idade = Pessoa::getIdade($dados->nascimento);
         $this->nome = $dados->nome;
         $this->nomecracha = $dados->nomecracha;
