@@ -132,11 +132,6 @@
             calculaTotalInscricao(inscricao){
                 var valor = Number(inscricao.valorInscricao) - Number(inscricao.valorInscricaoPago);
 
-                if (!inscricao.presenca)
-                    return valor;
-                
-                valor = valor + Number(inscricao.valorAlojamento);
-
                 return valor;
             },
             calculaTotal : function(){

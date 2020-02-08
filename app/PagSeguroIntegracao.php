@@ -7,16 +7,37 @@ use laravel\pagseguro\Platform\Laravel5\PagSeguro;
 class PagSeguroIntegracao
 {
     public static function gerarPagamento($inscricao){
+        $items = [];
+        array_push($items, [
+            'id' => $inscricao->numero,
+            'description' => $inscricao->evento->nome,
+            'amount' => $inscricao->valorInscricao,
+            'quantity' => '1'
+        ]);
+
+        if ($inscricao->valorAlojamento){
+            array_push($items, [
+                'id' => $inscricao->numero. '_camping',
+                'description' => 'Camping ' . $inscricao->pessoa->nomecracha,
+                'amount' => $inscricao->valorAlojamento,
+                'quantity' => '1'
+            ]);
+        }
+
+        foreach ($inscricao->dependentes as &$dependente){
+            if($dependente->valorAlojamento > 0){
+                array_push($items, [
+                    'id' => $dependente->numero. '_camping',
+                    'description' => 'Camping ' . $dependente->pessoa->nomecracha,
+                    'amount' => $dependente->valorAlojamento,
+                    'quantity' => '1'
+                ]);
+            }
+        }
+
         $data = [
             'reference' => $inscricao->numero,
-            'items' => [
-                [
-                    'id' => $inscricao->numero,
-                    'description' => $inscricao->evento->nome,
-                    'amount' => $inscricao->valorInscricao,
-                    'quantity' => '1'
-                ]
-            ],
+            'items' => $items,
             'shipping' => [
                 'address' => [
                     'postalCode' => $inscricao->pessoa->cep,

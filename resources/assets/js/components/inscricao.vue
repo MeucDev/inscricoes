@@ -167,15 +167,11 @@
                 <div class="table-responsive">
                     <table class="table">
                         <tr>
-                            <th><h4>Total inscrição<small> (pago no ato da inscrição)</small></h4></th>
-                            <td class="text-right"><h4><nobr>{{formatPrice(pessoa.valores.inscricao)}}</nobr></h4></td>
-                        </tr>
-                        <tr>
                             <th>{{pessoa.nome}}</th>
                             <td></td>
                         </tr>
                         <tr>
-                            <td>Alojamento</td>
+                            <td>Camping</td>
                             <td class="text-right">{{formatPrice(pessoa.valores.alojamento)}}</td>
                         </tr>
                         <tr>
@@ -188,7 +184,7 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>Alojamento</td>
+                                <td>camping</td>
                                 <td class="text-right">{{formatPrice(dependente.valores.alojamento)}}</td>
                             </tr>
                             <tr>
@@ -197,12 +193,20 @@
                             </tr>
                         </template>  
                         <tr>
-                            <th><h4>Total alojamento/refeição<small> (pago no dia do evento)</small></h4></th>
-                            <td class="text-right"><h4><nobr>{{getTotalAlojamentoRefeicao()}}</nobr></h4></td>
+                            <th><h4>Total inscrição</h4></th>
+                            <td class="text-right"><h4><nobr>{{formatPrice(pessoa.valores.inscricao)}}</nobr></h4></td>
                         </tr>
                         <tr>
-                            <th>Total geral</th>
-                            <td class="text-right"><nobr>{{getTotalGeral()}}</nobr></td>
+                            <th><h4>Total camping</h4></th>
+                            <td class="text-right"><h4><nobr>{{formatPrice(getTotalAlojamento())}}</nobr></h4></td>
+                        </tr>
+                        <tr>
+                            <th><h4>Total refeição<small> (pago no dia do evento)</small></h4></th>
+                            <td class="text-right"><h4><nobr>{{formatPrice(getTotalRefeicao())}}</nobr></h4></td>
+                        </tr>
+                        <tr>
+                            <th><h4>Total geral</h4></th>
+                            <td class="text-right"><nobr>{{formatPrice(getTotalGeral())}}</nobr></td>
                         </tr>
                     </table>
                 </div>
@@ -331,7 +335,7 @@
                 this.pessoa.interno = this.interno;
 
                 var self = this;
-                this.$http.post('/inscricoes/criar/' + this.evento , this.pessoa).then(response => {
+                this.$http.post('/inscricoes/criar/' + this.evento , self.pessoa).then(response => {
                     var pagseguro = response.body;
                     swal.close();
                     if (self.interno){
@@ -341,7 +345,7 @@
                         swal({
                             allowOutsideClick: false,
                             title: 'Estamos quase lá!',
-                            text: 'Ao clicar em OK você será redirecionado para o pagamento da inscrição ('+this.formatPrice(this.pessoa.valores.inscricao)+ '). O restante acertamos no dia do evento, até lá!',
+                            text: 'Ao clicar em OK você será redirecionado para o pagamento da inscrição ('+this.formatPrice(this.getTotalPagar())+ '). O restante acertamos no dia do evento, até lá!',
                             type: 'success'
                         }).then((result) => {
                             if (pagseguro.link)
@@ -403,16 +407,31 @@
                     });
                 });
             },
-            getTotalAlojamentoRefeicao: function(){
-                var total = this.pessoa.valores.alojamento + this.pessoa.valores.refeicao;
+
+            getTotalPagar: function(){
+                return this.pessoa.valores.inscricao + this.getTotalAlojamento();
+            },
+            getTotalRefeicao: function(){
+                var total = this.pessoa.valores.refeicao;
 
                 if (this.pessoa.dependentes){
                     this.pessoa.dependentes.forEach(dependente => {
-                        total += dependente.valores.total;
+                        total += dependente.valores.refeicao;
                     });
                 }
 
-                return this.formatPrice(total);
+                return total;
+            },
+            getTotalAlojamento: function(){
+                var total = this.pessoa.valores.alojamento;
+
+                if (this.pessoa.dependentes){
+                    this.pessoa.dependentes.forEach(dependente => {
+                        total += dependente.valores.alojamento;
+                    });
+                }
+
+                return total;
             },
             getTotalGeral: function(){
                 var total = this.pessoa.valores.total;
@@ -423,7 +442,7 @@
                     });
                 }
 
-                return this.formatPrice(total);
+                return total;
             },
             showError: function(error){
                 var message;

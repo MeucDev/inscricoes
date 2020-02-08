@@ -129,8 +129,7 @@ class InscricoesController extends Controller
         $pessoa = Pessoa::atualizarCadastros($dados);
 
         $result = DB::transaction(function() use ($dados, $pessoa, $id) {
-            $inscricao = Inscricao::alterarInscricao($id, $pessoa);
-            return $result;
+            Inscricao::alterarInscricao($id, $pessoa);
         });        
 
         return response()->json($result);
