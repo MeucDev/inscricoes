@@ -31,7 +31,7 @@
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			$this->col[] = ["label"=>"Cpf","name"=>"cpf"];
-			$this->col[] = ["label"=>"Nome","name"=>"nome"];
+			$this->col[] = ["label"=>"Nome / Cidade","name"=>"nome"];
 			$this->col[] = ["label"=>"Percentual","name"=>"perc"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
