@@ -1,4 +1,4 @@
-<script src="{{ asset('js/app.js?4') }}"></script>
+<script src="{{ asset('js/app.js?2020') }}"></script>
 
 <!-- AdminLTE App -->
 <script src="{{ asset ('vendor/crudbooster/assets/adminlte/dist/js/app.js') }}" type="text/javascript"></script>
