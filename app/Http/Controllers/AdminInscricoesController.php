@@ -184,12 +184,27 @@
 	        |
 			*/
 			
-			$this->index_statistic[] = ['label'=>'Total de pessoas','count'=>DB::table('inscricoes')
-				->where('evento_id', $this->evento)
-				->count(),'icon'=>'ion ion-person-stalker','color'=>'aqua'];
-			$this->index_statistic[] = ['label'=>'Total de presentes','count'=>DB::table('inscricoes')
-				->where([['presencaConfirmada', '1'] , ['evento_id', $this->evento]])
-				->count(),'icon'=>'fa fa-check','color'=>'green'];
+			$this->index_statistic[] = ['label'=>'Total de famílias / pessoas',
+				'count'=>
+					DB::table('inscricoes')
+					->select(
+						DB::raw("CONCAT(
+							SUM(case when numero_inscricao_responsavel is null then 1 else 0 end),
+							' / ', COUNT(*)
+						) as resultado"))
+					->where('evento_id', $this->evento)->first()->resultado,
+				'icon'=>'ion ion-person-stalker','color'=>'aqua'];
+
+			$this->index_statistic[] = ['label'=>'Total de presentes famílias / pessoas ',
+				'count'=>DB::table('inscricoes')
+				->select(
+					DB::raw("CONCAT(
+						SUM(case when numero_inscricao_responsavel is null then 1 else 0 end),
+						' / ', COUNT(*)
+					) as resultado"))
+				->where([['presencaConfirmada', '1'] , ['evento_id', $this->evento]])->first()->resultado,
+				'icon'=>'fa fa-check','color'=>'green'];
+
 			$this->index_statistic[] = ['label'=> 'Equipes quiosque'
 				,'count'=> 
 				DB::table('inscricoes')
