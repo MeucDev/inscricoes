@@ -193,7 +193,7 @@
                             </tr>
                         </template>  
                         <tr>
-                            <th><h4>Total inscrição <small v-if="pessoa.valores.inscricao > 0"> (inscrição com desconto, será pago {{pessoa.valores.desconto|number}}% do valor da inscrição)</small></h4></th>
+                            <th><h4>Total inscrição <small v-if="pessoa.valores.desconto > 0"> (inscrição com desconto, será pago {{pessoa.valores.desconto|number}}% do valor da inscrição)</small></h4></th>
                             <td class="text-right"><h4><nobr>{{formatPrice(pessoa.valores.inscricao)}}</nobr></h4></td>
                         </tr>
                         <tr>
