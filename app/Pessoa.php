@@ -83,9 +83,20 @@ class Pessoa extends Model
         $valores->inscricao = Pessoa::getValorInscricao($pessoa, $evento);
         $valores->alojamento = Pessoa::getValorAlojamento($pessoa, $evento);
         $valores->refeicao = Pessoa::getValorRefeicao($pessoa, $evento);
+        $valores->desconto = intval(Desconto::getDesconto($pessoa));
         $valores->total = $valores->inscricao + $valores->alojamento + $valores->refeicao;
         
         return $valores;
+    }
+
+    public static function getValorInscricaoComDesconto($pessoa, $valorInscricao){
+        $percDesconto = Desconto::getDesconto($pessoa);
+        $result = $valorInscricao;
+        if ($percDesconto > 0){
+            $result = ($percDesconto * $valorInscricao) / 100;
+        }
+
+        return $result;
     }
 
     public static function getValorInscricao($pessoa, $evento){
@@ -94,12 +105,8 @@ class Pessoa extends Model
         
         $valorInscricao = $pessoa->TIPO == 'R' ? Valor::getValor("NORMAL", $evento, $pessoa) : 0;
 
-        $desconto = Desconto::getDesconto($pessoa);
-        if ($desconto > 0){
-            $valorInscricao = ($desconto * $valorInscricao) / 100;
-        }
-
-        return $valorInscricao;
+        $result = Pessoa::getValorInscricaoComDesconto($pessoa, $valorInscricao);
+        return $result;
     }
 
     public static function getValorRefeicao($pessoa, $evento){
