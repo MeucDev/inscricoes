@@ -27,6 +27,7 @@ class PessoasController extends Controller
             ->where("evento_id", $evento)
             ->first();
             
+        $inscricao->calcularValores();
         if ($inscricao){
             $result->inscricaoPaga = $inscricao->inscricaoPaga == 1;
             $result->inscricao = $inscricao->numero;
