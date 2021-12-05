@@ -13,7 +13,9 @@ class AdjustValoresFlagCobrar extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('valores', function (Blueprint $table) {
+            $table->tinyInteger('cobrar_boleto')->nullable();
+        });
     }
 
     /**
