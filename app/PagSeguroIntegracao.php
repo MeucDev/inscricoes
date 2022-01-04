@@ -15,6 +15,9 @@ class PagSeguroIntegracao
             'quantity' => '1'
         ]);
 
+        // chamar $inscricao->getValoresCobrarBoleto
+        // obter nome da categoria do valor para descrição do item no array do pagseguro
+
         if ($inscricao->valorAlojamento){
             array_push($items, [
                 'id' => $inscricao->numero. '_camping',

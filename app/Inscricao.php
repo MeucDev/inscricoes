@@ -71,6 +71,16 @@ class Inscricao extends Model
         return $valores;
     }
 
+    public function getValoresCobrarBoleto() {
+        $result = Valor::where("evento_id", $this->evento_id)
+            ->where("cobrar_boleto", 1)
+            ->get();
+
+        // ver forma de não considerar valor da inscrição normal, já que este poderá estar com cobrança no boleto ativa
+        
+        return $result;
+    }
+
     public static function criarInscricao($pessoa, $evento){
         $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
             ->where("evento_id", $evento)
