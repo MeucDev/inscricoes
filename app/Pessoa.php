@@ -82,7 +82,7 @@ class Pessoa extends Model
         $codigos = [];
         array_push($codigos, $pessoa->alojamento);
         array_push($codigos, $pessoa->refeicao);
-        $valoresBoleto = Pessoa::getValoresCobrarBoleto($codigos, $evento);
+        $valoresBoleto = Valor::getValoresCobrarBoleto($codigos, $evento);
         $boleto = 0;
         foreach($valoresBoleto as &$valorBoleto) {
             $boleto += floatval(Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $pessoa));
@@ -97,17 +97,6 @@ class Pessoa extends Model
         $valores->total = $valores->inscricao + $valores->alojamento + $valores->refeicao;
         
         return $valores;
-    }
-
-    public static function getValoresCobrarBoleto($codigos, $evento) {
-        $result = Valor::where("evento_id", $evento)
-            ->where("cobrar_boleto", 1)
-            ->whereIn("codigo", $codigos)
-            ->get();
-
-        // ver forma de não considerar valor da inscrição normal, já que este poderá estar com cobrança no boleto ativa
-
-        return $result;
     }
 
     public static function getValorInscricaoComDesconto($pessoa, $valorInscricao){

@@ -65,4 +65,15 @@ class Valor extends Model
             ->get();
 		return $valores->groupBy('categoria')->toArray();
     }
+
+    public static function getValoresCobrarBoleto($codigos, $evento) {
+        $result = Valor::where("evento_id", $evento)
+            ->where("cobrar_boleto", 1)
+            ->whereIn("codigo", $codigos)
+            ->get();
+
+        // ver forma de não considerar valor da inscrição normal, já que este poderá estar com cobrança no boleto ativa
+
+        return $result;
+    }
 }
