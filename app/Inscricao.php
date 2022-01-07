@@ -63,6 +63,7 @@ class Inscricao extends Model
     }
 
     public function getValores(){
+        
         $valores = (object)[];
         $valores->inscricao = floatval($this->valorInscricao);
         $valores->alojamento = floatval($this->valorAlojamento);
@@ -71,13 +72,14 @@ class Inscricao extends Model
         return $valores;
     }
 
-    public function getValoresCobrarBoleto() {
+    public function getValoresCobrarBoleto($codigos) {
         $result = Valor::where("evento_id", $this->evento_id)
             ->where("cobrar_boleto", 1)
+            ->whereIn("codigo", $codigos)
             ->get();
 
         // ver forma de não considerar valor da inscrição normal, já que este poderá estar com cobrança no boleto ativa
-        
+
         return $result;
     }
 

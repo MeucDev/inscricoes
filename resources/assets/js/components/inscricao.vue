@@ -342,10 +342,14 @@
                         $('#modal').modal('hide');
                     }
                     else{
+                        var mensagemAdicional = '';
+                        if(this.getTotalPagar() < this.getTotalGeral()) {
+                            mensagemAdicional = 'O restante acertaremos no dia do evento. '
+                        }
                         swal({
                             allowOutsideClick: false,
                             title: 'Estamos quase lá!',
-                            text: 'Ao clicar em OK você será redirecionado para o pagamento da inscrição ('+this.formatPrice(this.getTotalPagar())+ '). O restante acertamos no dia do evento, até lá!',
+                            text: `Ao clicar em OK você será redirecionado para o pagamento da inscrição (${this.formatPrice(this.getTotalPagar())}). ${mensagemAdicional}Até lá!`,
                             type: 'success'
                         }).then((result) => {
                             if (pagseguro.link)
@@ -409,7 +413,15 @@
             },
 
             getTotalPagar: function(){
-                return this.pessoa.valores.inscricao + this.getTotalAlojamento();
+                var total = this.pessoa.valores.boleto;
+
+                if (this.pessoa.dependentes){
+                    this.pessoa.dependentes.forEach(dependente => {
+                        total += dependente.valores.boleto;
+                    });
+                }
+                
+                return total;
             },
             getTotalRefeicao: function(){
                 var total = this.pessoa.valores.refeicao;
