@@ -63,12 +63,19 @@ class Inscricao extends Model
     }
 
     public function getValores(){
+        
         $valores = (object)[];
         $valores->inscricao = floatval($this->valorInscricao);
         $valores->alojamento = floatval($this->valorAlojamento);
         $valores->refeicao = floatval($this->valorRefeicao);
         $valores->total = $valores->inscricao + $valores->alojamento + $valores->refeicao;    
         return $valores;
+    }
+
+    public function getValoresCobrarBoleto($codigos) {
+        $result = Valor::getValoresCobrarBoleto($codigos, $this->evento_id);
+
+        return $result;
     }
 
     public static function criarInscricao($pessoa, $evento){

@@ -79,11 +79,21 @@ class Pessoa extends Model
     }
 
     public static function getValores($pessoa, $evento){
+        $codigos = [];
+        array_push($codigos, $pessoa->alojamento);
+        array_push($codigos, $pessoa->refeicao);
+        $valoresBoleto = Valor::getValoresCobrarBoleto($codigos, $evento);
+        $boleto = 0;
+        foreach($valoresBoleto as &$valorBoleto) {
+            $boleto += floatval(Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $pessoa));
+        }
+
         $valores = (object)[];
         $valores->inscricao = Pessoa::getValorInscricao($pessoa, $evento);
         $valores->alojamento = Pessoa::getValorAlojamento($pessoa, $evento);
         $valores->refeicao = Pessoa::getValorRefeicao($pessoa, $evento);
         $valores->desconto = intval(Desconto::getDesconto($pessoa));
+        $valores->boleto = $valores->inscricao + $boleto;
         $valores->total = $valores->inscricao + $valores->alojamento + $valores->refeicao;
         
         return $valores;

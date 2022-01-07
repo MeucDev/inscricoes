@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a6ac0a0a610c6174838f2b7496493335",
+    "content-hash": "6c7791eea0656c73abdd1821465697db",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -1352,16 +1352,16 @@
         },
         {
             "name": "michael/laravelpagseguro",
-            "version": "dev-master",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/michaeldouglas/laravel-pagseguro.git",
-                "reference": "713e9aae507b906f8ed813b8c3b30db288d9d59e"
+                "reference": "fa8dffae23837643f7122f0ae82087060e1cd777"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/michaeldouglas/laravel-pagseguro/zipball/713e9aae507b906f8ed813b8c3b30db288d9d59e",
-                "reference": "713e9aae507b906f8ed813b8c3b30db288d9d59e",
+                "url": "https://api.github.com/repos/michaeldouglas/laravel-pagseguro/zipball/fa8dffae23837643f7122f0ae82087060e1cd777",
+                "reference": "fa8dffae23837643f7122f0ae82087060e1cd777",
                 "shasum": ""
             },
             "require": {
@@ -1373,19 +1373,9 @@
                 "php": ">=5.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35"
+                "phpunit/phpunit": "4.*.*"
             },
             "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "laravel\\pagseguro\\Platform\\Laravel5\\ServiceProvider"
-                    ],
-                    "aliases": {
-                        "PagSeguro": "laravel\\pagseguro\\Platform\\Laravel5\\ServiceProvider"
-                    }
-                }
-            },
             "autoload": {
                 "psr-0": {
                     "laravel\\pagseguro\\": "src/"
@@ -1412,7 +1402,11 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2018-01-23T00:55:58+00:00"
+            "support": {
+                "issues": "https://github.com/michaeldouglas/laravel-pagseguro/issues",
+                "source": "https://github.com/michaeldouglas/laravel-pagseguro/tree/master"
+            },
+            "time": "2017-07-17T15:30:56+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -4706,13 +4700,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "michael/laravelpagseguro": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.6.4"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.1.0"
 }

@@ -15,23 +15,30 @@ class PagSeguroIntegracao
             'quantity' => '1'
         ]);
 
-        if ($inscricao->valorAlojamento){
+        $codigos = [];
+        array_push($codigos, $inscricao->alojamento);
+        array_push($codigos, $inscricao->refeicao);
+        $valoresBoleto = $inscricao->getValoresCobrarBoleto($codigos);
+
+        foreach($valoresBoleto as &$valorBoleto) {
+            $valor = Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $inscricao->pessoa);
             array_push($items, [
-                'id' => $inscricao->numero. '_camping',
-                'description' => 'Camping ' . $inscricao->pessoa->nomecracha,
-                'amount' => $inscricao->valorAlojamento,
+                'id' => $inscricao->numero . '_' . $valorBoleto->codigo,
+                'description' => $valorBoleto->nome . ' ' . $inscricao->pessoa->nomecracha,
+                'amount' => $valor,
                 'quantity' => '1'
             ]);
-        }
 
-        foreach ($inscricao->dependentes as &$dependente){
-            if($dependente->valorAlojamento > 0){
-                array_push($items, [
-                    'id' => $dependente->numero. '_camping',
-                    'description' => 'Camping ' . $dependente->pessoa->nomecracha,
-                    'amount' => $dependente->valorAlojamento,
-                    'quantity' => '1'
-                ]);
+            foreach ($inscricao->dependentes as &$dependente){
+                $valor = Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $dependente);
+                if($valor > 0){
+                    array_push($items, [
+                        'id' => $dependente->numero . '_' . $valorBoleto->codigo,
+                        'description' => $valorBoleto->nome . ' ' . $dependente->pessoa->nomecracha,
+                        'amount' => $valor,
+                        'quantity' => '1'
+                    ]);
+                }
             }
         }
 

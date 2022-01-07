@@ -34,6 +34,9 @@
 			$this->col[] = ["label"=>"Código","name"=>"codigo"];
 			$this->col[] = ["label"=>"Categoria","name"=>"categoria_id","join"=>"categorias,nome"];
 			$this->col[] = ["label"=>"Valor","name"=>"valor"];
+			$this->col[] = ["label"=>"Incluir boleto?","name"=>"cobrar_boleto","callback"=>function($row) {
+				return ($row->cobrar_boleto == 1) ? '<span class="label label-success">sim</span>' : '<span class="label label-danger">não</span>';
+			}];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -43,6 +46,7 @@
 			$this->form[] = ['label'=>'Codigo','name'=>'codigo','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor','name'=>'valor','type'=>'money','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Incluir boleto?','name'=>'cobrar_boleto','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
