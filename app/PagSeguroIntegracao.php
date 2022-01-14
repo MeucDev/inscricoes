@@ -45,6 +45,7 @@ class PagSeguroIntegracao
         $data = [
             'reference' => $inscricao->numero,
             'items' => $items,
+            'extraAmount' => '-10.00',
             'shipping' => [
                 'address' => [
                     'postalCode' => $inscricao->pessoa->cep,
