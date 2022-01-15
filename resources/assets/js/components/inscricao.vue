@@ -352,8 +352,11 @@
                             text: `Ao clicar em OK você será redirecionado para o pagamento da inscrição (${this.formatPrice(this.getTotalPagar())}). ${mensagemAdicional}Até lá!`,
                             type: 'success'
                         }).then((result) => {
-                            if (pagseguro.link)
+                            if (pagseguro.link) {
                                 window.location.replace(pagseguro.link);
+                            } else {
+                                window.location.replace('www.congressodefamilias.com.br');
+                            }
                         });
                     }
                 }, (error) => {

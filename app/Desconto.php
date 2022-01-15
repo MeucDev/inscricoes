@@ -17,4 +17,25 @@ class Desconto extends Model
         else
             return 0;
     }
+
+    public static function getValorDescontoEventoAnteriorPeloEventoAtual($pessoa, $eventoAtual) {
+        $result = 0;
+        $cpf = $pessoa->cpf;
+        $nome = $pessoa->nome;
+        $itemDesconto = Desconto::where(function($query) use($cpf, $nome){
+            $query->where('cpf', '=', $cpf)
+                ->orWhere('nome', '=', $nome);
+        })->where(function($query) use ($eventoAtual){
+            $query->whereNotNull('evento_aplicar_id')
+                ->where('evento_aplicar_id', '=', $eventoAtual);
+        })->first();
+        
+        if($itemDesconto) {
+            $inscricao = Inscricao::getInscricaoByPessoaeEvento($pessoa, $itemDesconto->evento_origem_id);
+            if($inscricao && $inscricao->valorTotalPago > 0) {
+                $result = floatval($inscricao->valorTotalPago);
+            }  
+        } 
+        return $result;
+    }
 }

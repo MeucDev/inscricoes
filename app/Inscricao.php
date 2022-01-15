@@ -63,12 +63,12 @@ class Inscricao extends Model
     }
 
     public function getValores(){
-        
         $valores = (object)[];
         $valores->inscricao = floatval($this->valorInscricao);
         $valores->alojamento = floatval($this->valorAlojamento);
         $valores->refeicao = floatval($this->valorRefeicao);
-        $valores->total = $valores->inscricao + $valores->alojamento + $valores->refeicao;    
+        $valores->total = $valores->inscricao + $valores->alojamento + $valores->refeicao;
+        $valores->totalDescontos = floatval(Desconto::getValorDescontoEventoAnteriorPeloEventoAtual($this->pessoa, $this->evento_id));
         return $valores;
     }
 
@@ -206,6 +206,13 @@ class Inscricao extends Model
             $totalResponsavel = $this->getValorTotal();
 
         $this->valorTotalPago = $totalResponsavel + $totalDependentes;
+    }
+
+    public static function getInscricaoByPessoaeEvento($pessoa, $evento) {
+        $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
+            ->where("evento_id", $evento)
+            ->first();
+        return $inscricao; 
     }
     
 }
