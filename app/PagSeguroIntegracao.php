@@ -36,7 +36,7 @@ class PagSeguroIntegracao
                 ]);
 
                 foreach ($inscricao->dependentes as &$dependente){
-                    $valor = Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $dependente);
+                    $valor = Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $dependente->pessoa);
                     if($valor > 0){
                         array_push($items, [
                             'id' => $dependente->numero . '_' . $valorBoleto->codigo,
