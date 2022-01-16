@@ -141,6 +141,7 @@ class Inscricao extends Model
         }        
         return "";
     }
+
     public static function alterarInscricao($id, $pessoa){
         $inscricao = Inscricao::findOrFail($id);
 
@@ -184,6 +185,16 @@ class Inscricao extends Model
         return $inscricao;
     }      
     
+    public static function considerarInscricaoPaga($id) {
+        $inscricao = Inscricao::findOrFail($id);
+
+        $inscricao->valorInscricaoPago = $inscricao->valorTotal;
+        $inscricao->valorTotalPago = $inscricao->valorInscricaoPago;
+        $inscricao->inscricaoPaga = 1;
+
+        $inscricao->save();
+    }
+
     public function calcularTotais(){
         $totalDependentes = 0;
         foreach ($this->dependentes as $dependente) {

@@ -340,32 +340,41 @@
 
                 var self = this;
                 this.$http.post('/inscricoes/criar/' + this.evento , self.pessoa).then(response => {
-                    var pagseguro = response.body;
+                    var inscricaoCriada = response.body;
                     swal.close();
                     if (self.interno){
                         $('#modal').modal('hide');
                     }
                     else{
-                        var mensagemAdicional = '';
-                        if(this.getTotalPagar() < this.getTotalGeral()) {
-                            mensagemAdicional = 'O restante acertaremos no dia do evento. '
-                        }
-                        var valorDescontoEventoAnterior = '';
-                        if(this.getTotalDescontoEventoAnterior() > 0) {
-                            valorDescontoEventoAnterior = ` com ${this.formatPrice(this.getTotalDescontoEventoAnterior())} de desconto por crédito do Congresso anterior. `
-                        }
-                        swal({
-                            allowOutsideClick: false,
-                            title: 'Estamos quase lá!',
-                            text: `Ao clicar em OK você será redirecionado para o pagamento da inscrição (${this.formatPrice(this.getTotalPagar())}${valorDescontoEventoAnterior}). ${mensagemAdicional}Até lá!`,
-                            type: 'success'
-                        }).then((result) => {
-                            if (pagseguro.link) {
-                                window.location.replace(pagseguro.link);
-                            } else {
-                                window.location.replace('www.congressodefamilias.com.br');
+                        if(this.getTotalDescontoEventoAnterior() > this.getTotalPagar()) {
+                            swal({
+                                allowOutsideClick: false,
+                                title: 'Que boa notícia!',
+                                text: 'O valor de crédito existente em seu nome cobre todo o montante para o evento atual, portanto nada mais precisa ser pago. Nos vemos lá!',
+                                type: 'success'
+                            }).then(() => {
+                                this.setInscricaoPagaCreditosEventoAnterior(inscricaoCriada.inscricao_id);
+                            });
+                        } else {
+                            var mensagemAdicional = '';
+                            if(this.getTotalPagar() < this.getTotalGeral()) {
+                                mensagemAdicional = 'O restante acertaremos no dia do evento. '
                             }
-                        });
+                            var valorDescontoEventoAnterior = '';
+                            if(this.getTotalDescontoEventoAnterior() > 0) {
+                                valorDescontoEventoAnterior = ` com ${this.formatPrice(this.getTotalDescontoEventoAnterior())} de desconto por crédito do Congresso anterior. `
+                            }
+                            swal({
+                                allowOutsideClick: false,
+                                title: 'Estamos quase lá!',
+                                text: `Ao clicar em OK você será redirecionado para o pagamento da inscrição (${this.formatPrice(this.getTotalPagar())}${valorDescontoEventoAnterior}). ${mensagemAdicional}Até lá!`,
+                                type: 'success'
+                            }).then((result) => {
+                                if (inscricaoCriada.link) {
+                                    window.location.replace(pagsinscricaoCriadaeguro.link);
+                                }
+                            });
+                        }
                     }
                 }, (error) => {
                     this.showError(error);
@@ -469,6 +478,15 @@
             },
             getTotalDescontoEventoAnterior: function(){
                 return this.pessoa.valores.descontoEventoAnterior;
+            },
+            setInscricaoPagaCreditosEventoAnterior: function(inscricao_id){
+                this.$http.put('/inscricoes/set-pago/' + inscricao_id).then(response => {
+                    swal.close();
+                    $("#modal").modal("hide");
+                    window.location.replace('http://www.congressodefamilias.com.br');
+                }, (error) => {
+                    this.showError(error);
+                });     
             },
             showError: function(error){
                 var message;

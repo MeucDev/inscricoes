@@ -29,6 +29,7 @@ Route::get('/inscricoes/{id}/pessoa', 'InscricoesController@pessoa');
 Route::post('/inscricoes/{id}/presenca', 'InscricoesController@presenca');
 Route::post('/inscricoes/criar/{evento}', 'InscricoesController@criar');
 Route::put('/inscricoes/{id}', 'InscricoesController@alterar');
+Route::put('/inscricoes/set-pago/{id}/', 'InscricoesController@definirPago');
 
 //Pagseguro
 Route::post('/pagseguro/notification', [

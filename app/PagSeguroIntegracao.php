@@ -8,6 +8,7 @@ class PagSeguroIntegracao
 {
     public static function gerarPagamento($inscricao){
         $result = (object)[];
+        $result->inscricao_id = $inscricao->numero;
         
         $items = [];
         array_push($items, [

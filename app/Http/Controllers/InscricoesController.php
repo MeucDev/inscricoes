@@ -135,6 +135,19 @@ class InscricoesController extends Controller
         return response()->json($result);
     }
 
+    public function definirPago(Request $request, $id){
+        $inscricao = Inscricao::findOrFail($id);
+        //$dados = (object) json_decode($request->getContent(), true);
+
+        //$this->validar($request, $dados, $inscricao->evento_id);
+
+        $result = DB::transaction(function() use ($dados, $id) {
+            Inscricao::considerarInscricaoPaga($id);
+        });        
+
+        return response()->json($result);
+    }
+
     public function presenca(Request $request, $id)
     {
         $dados = (object) json_decode($request->getContent(), true);
