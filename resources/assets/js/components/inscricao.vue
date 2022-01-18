@@ -236,20 +236,21 @@
     Vue.use(VeeValidate);    
     Vue.use(VueTheMask);
     
+    const pessoaDefault = {
+        id: -1, 
+        TIPO: 'R', 
+        cpf:'', 
+        valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
+        dependentes: []
+    };
+
     export default {
         props: ['evento', 'inscricao', 'interno'],
         mixins: [helpers],
         components: {dependente},
         data (){
             return{
-                pessoa : 
-                {
-                    id: -1, 
-                    TIPO: 'R', 
-                    cpf:'', 
-                    valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
-                    dependentes: []
-                }
+                pessoa : pessoaDefault
             }
         },
         mounted: function(){
@@ -483,7 +484,6 @@
                 this.$http.put('/inscricoes/set-pago/' + inscricao_id).then(response => {
                     swal.close();
                     $("#modal").modal("hide");
-                    window.location.replace('http://www.congressodefamilias.com.br');
                 }, (error) => {
                     this.showError(error);
                 });     
