@@ -70,6 +70,7 @@
 			$this->sub_module[] = ['label'=>'Lar','path'=>'lar','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'warning','button_icon'=>'fa fa-home'];
 			$this->sub_module[] = ['label'=>'Quiosque','path'=>'quiosque','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'danger','button_icon'=>'fa fa-tree'];
 			$this->sub_module[] = ['label'=>'Valores','path'=>'valores','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'success','button_icon'=>'fa fa-dollar'];
+			$this->sub_module[] = ['label'=>'Descontos','path'=>'Descontos','parent_columns'=>'nome','foreign_key'=>'evento_aplicar_id','button_color'=>'warning','button_icon'=>'fa fa-dollar'];
 			
 	        /* 
 	        | ---------------------------------------------------------------------- 

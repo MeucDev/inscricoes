@@ -93,6 +93,7 @@ class Pessoa extends Model
         $valores->alojamento = Pessoa::getValorAlojamento($pessoa, $evento);
         $valores->refeicao = Pessoa::getValorRefeicao($pessoa, $evento);
         $valores->desconto = intval(Desconto::getDesconto($pessoa));
+        $valores->descontoEventoAnterior = floatval(Desconto::getValorDescontoEventoAnteriorPeloEventoAtual($pessoa, $evento));
         $valores->boleto = $valores->inscricao + $boleto;
         $valores->total = $valores->inscricao + $valores->alojamento + $valores->refeicao;
         

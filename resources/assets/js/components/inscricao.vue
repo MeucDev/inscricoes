@@ -184,7 +184,7 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>camping</td>
+                                <td>Camping</td>
                                 <td class="text-right">{{formatPrice(dependente.valores.alojamento)}}</td>
                             </tr>
                             <tr>
@@ -201,12 +201,16 @@
                             <td class="text-right"><h4><nobr>{{formatPrice(getTotalAlojamento())}}</nobr></h4></td>
                         </tr>
                         <tr>
-                            <th><h4>Total refeição<small> (pago no dia do evento)</small></h4></th>
+                            <th><h4>Total refeição</h4></th>
                             <td class="text-right"><h4><nobr>{{formatPrice(getTotalRefeicao())}}</nobr></h4></td>
+                        </tr>
+                        <tr v-if="getTotalDescontoEventoAnterior() > 0">
+                            <th><h4>Crédito Congresso anterior</h4></th>
+                            <td class="text-right"><h4><nobr>{{formatPrice(getTotalDescontoEventoAnterior())}}</nobr></h4></td>
                         </tr>
                         <tr>
                             <th><h4>Total geral</h4></th>
-                            <td class="text-right"><nobr>{{formatPrice(getTotalGeral())}}</nobr></td>
+                            <td class="text-right"><nobr>{{formatPrice(getTotalGeral() - getTotalDescontoEventoAnterior())}}</nobr></td>
                         </tr>
                     </table>
                 </div>
@@ -232,20 +236,21 @@
     Vue.use(VeeValidate);    
     Vue.use(VueTheMask);
     
+    const pessoaDefault = {
+        id: -1, 
+        TIPO: 'R', 
+        cpf:'', 
+        valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
+        dependentes: []
+    };
+
     export default {
         props: ['evento', 'inscricao', 'interno'],
         mixins: [helpers],
         components: {dependente},
         data (){
             return{
-                pessoa : 
-                {
-                    id: -1, 
-                    TIPO: 'R', 
-                    cpf:'', 
-                    valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
-                    dependentes: []
-                }
+                pessoa : pessoaDefault
             }
         },
         mounted: function(){
@@ -336,25 +341,41 @@
 
                 var self = this;
                 this.$http.post('/inscricoes/criar/' + this.evento , self.pessoa).then(response => {
-                    var pagseguro = response.body;
+                    var inscricaoCriada = response.body;
                     swal.close();
                     if (self.interno){
                         $('#modal').modal('hide');
                     }
                     else{
-                        var mensagemAdicional = '';
-                        if(this.getTotalPagar() < this.getTotalGeral()) {
-                            mensagemAdicional = 'O restante acertaremos no dia do evento. '
+                        if(this.getTotalDescontoEventoAnterior() > this.getTotalPagar()) {
+                            swal({
+                                allowOutsideClick: false,
+                                title: 'Que boa notícia!',
+                                text: 'O valor de crédito existente em seu nome cobre todo o montante para o evento atual, portanto nada mais precisa ser pago. Nos vemos lá!',
+                                type: 'success'
+                            }).then(() => {
+                                this.setInscricaoPagaCreditosEventoAnterior(inscricaoCriada.inscricao_id);
+                            });
+                        } else {
+                            var mensagemAdicional = '';
+                            if(this.getTotalPagar() < this.getTotalGeral()) {
+                                mensagemAdicional = 'O restante acertaremos no dia do evento. '
+                            }
+                            var valorDescontoEventoAnterior = '';
+                            if(this.getTotalDescontoEventoAnterior() > 0) {
+                                valorDescontoEventoAnterior = ` com ${this.formatPrice(this.getTotalDescontoEventoAnterior())} de desconto por crédito do Congresso anterior. `
+                            }
+                            swal({
+                                allowOutsideClick: false,
+                                title: 'Estamos quase lá!',
+                                text: `Ao clicar em OK você será redirecionado para o pagamento da inscrição (${this.formatPrice(this.getTotalPagar())}${valorDescontoEventoAnterior}). ${mensagemAdicional}Até lá!`,
+                                type: 'success'
+                            }).then((result) => {
+                                if (inscricaoCriada.link) {
+                                    window.location.replace(pagsinscricaoCriadaeguro.link);
+                                }
+                            });
                         }
-                        swal({
-                            allowOutsideClick: false,
-                            title: 'Estamos quase lá!',
-                            text: `Ao clicar em OK você será redirecionado para o pagamento da inscrição (${this.formatPrice(this.getTotalPagar())}). ${mensagemAdicional}Até lá!`,
-                            type: 'success'
-                        }).then((result) => {
-                            if (pagseguro.link)
-                                window.location.replace(pagseguro.link);
-                        });
                     }
                 }, (error) => {
                     this.showError(error);
@@ -455,6 +476,17 @@
                 }
 
                 return total;
+            },
+            getTotalDescontoEventoAnterior: function(){
+                return this.pessoa.valores.descontoEventoAnterior;
+            },
+            setInscricaoPagaCreditosEventoAnterior: function(inscricao_id){
+                this.$http.put('/inscricoes/set-pago/' + inscricao_id).then(response => {
+                    swal.close();
+                    $("#modal").modal("hide");
+                }, (error) => {
+                    this.showError(error);
+                });     
             },
             showError: function(error){
                 var message;
