@@ -36,4 +36,8 @@ class Evento extends Model
         return false;
     }
 
+    public function aberto() {
+        return $this->aberto == 1;
+    }
+
 }
