@@ -33,6 +33,9 @@
 			$this->col[] = ["label"=>"Nome","name"=>"nome"];
 			$this->col[] = ["label"=>"Data Inicio","name"=>"data_inicio"];
 			$this->col[] = ["label"=>"Data Fim","name"=>"data_fim"];
+			$this->col[] = ["label"=>"Aberto?","name"=>"aberto","callback"=>function($row) {
+				return ($row->aberto == 1) ? '<span class="label label-success">sim</span>' : '<span class="label label-danger">não</span>';
+			}];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -40,6 +43,7 @@
 			$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Data Início','name'=>'data_inicio','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Data Fim','name'=>'data_fim','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Aberto','name'=>'aberto','type'=>'radio','validation'=>'required|min:0|max:1','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			$this->form[] = ['label'=>'Link detalhes','name'=>'linkDetalhes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Link mapa','name'=>'linkMapa','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Local','name'=>'local','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
