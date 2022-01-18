@@ -65,3 +65,8 @@ $ php artisan serve
 ## Usuário e senha
 default email : admin@crudbooster.com
 default password : 123456
+
+## Ambiente UMBLER
+
+O valor de error reporting deve estar como "E_ERROR & ~E_ALL"
+
