@@ -372,7 +372,7 @@
                                 type: 'success'
                             }).then((result) => {
                                 if (inscricaoCriada.link) {
-                                    window.location.replace(pagsinscricaoCriadaeguro.link);
+                                    window.location.replace(inscricaoCriada.link);
                                 }
                             });
                         }
