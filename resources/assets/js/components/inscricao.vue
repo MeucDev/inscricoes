@@ -295,34 +295,45 @@
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
                     this.pessoa = response.body;
 
-                    if (this.pessoa.inscricao)
-                        this.inscricao = this.pessoa.inscricao;
-
-                    this.ajustarTodasRefeicoes(this.pessoa);
-
-                    $("#confirmar").show();
-                    
-                    if (this.pessoa.inscricaoPaga){
+                    if(this.pessoa.bloqueado) {
                         swal(
-                            'Já está tudo certo',
-                            'Identificamos em nosso sistema que sua inscrição já foi feita e está paga. Nos encontramos no dia do evento!',
+                            'Aguarde mais um pouco',
+                            'Neste momento as inscrições estão abertas para aqueles que solicitaram reserva de vaga para o evento de 2022 em decorrência do cancelamento do Congresso em 2020. Em breve chegará sua vez!',
                             'success'
                         ).then((result) =>{
-                            //$("#confirmar").hide();
-                        });                   
-                    }else if(this.pessoa.pagseguroLink){
-                        swal({
-                            title: 'Só falta pagar',
-                            text: "Identificamos em nosso sistema que sua inscrição não está paga. Se deseja fazer o pagamento clique em Pagar. Caso você queira fazer alguma alteração clique em cancelar e refaça a sua inscrição",
-                            type: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Pagar'
-                        }).then((result) =>{
-                            if (result.value){
-                                window.location.replace(this.pessoa.pagseguroLink);
-                            }
-                        });                         
+                            $("#confirmar").hide();
+                        }); 
+                    } else {
+                        if (this.pessoa.inscricao)
+                        this.inscricao = this.pessoa.inscricao;
+
+                        this.ajustarTodasRefeicoes(this.pessoa);
+
+                        $("#confirmar").show();
+                        
+                        if (this.pessoa.inscricaoPaga){
+                            swal(
+                                'Já está tudo certo',
+                                'Identificamos em nosso sistema que sua inscrição já foi feita e está paga. Nos encontramos no dia do evento!',
+                                'success'
+                            ).then((result) =>{
+                                //$("#confirmar").hide();
+                            });                   
+                        }else if(this.pessoa.pagseguroLink){
+                            swal({
+                                title: 'Só falta pagar',
+                                text: "Identificamos em nosso sistema que sua inscrição não está paga. Se deseja fazer o pagamento clique em Pagar. Caso você queira fazer alguma alteração clique em cancelar e refaça a sua inscrição",
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Pagar'
+                            }).then((result) =>{
+                                if (result.value){
+                                    window.location.replace(this.pessoa.pagseguroLink);
+                                }
+                            });                         
+                        }
                     }
+                    
                 }, (error) => {
                     console.log(error.body);
                 });            

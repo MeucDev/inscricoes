@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Pessoa;
 use App\Inscricao;
+use App\Desconto;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,22 +22,32 @@ class PessoasController extends Controller
     {
         $pessoa = Pessoa::with("dependentes")->where("cpf", $cpf)->firstOrFail();
 
-        $result = $pessoa->toUI($evento);
+        $possuiDesconto = Desconto::getPossuiDescontoEventoAtual($pessoa, $evento);
 
-        $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
-            ->where("evento_id", $evento)
-            ->first();
-            
-        if ($inscricao){
-            $inscricao->calcularValores();
-            $result->inscricaoPaga = $inscricao->inscricaoPaga == 1;
-            $result->inscricao = $inscricao->numero;
-            if (!$inscricao->inscricaoPaga){
-                PagSeguroIntegracao::gerarPagamento($inscricao);
-                $result->pagseguroLink = $inscricao->pagseguroLink;
+        if(!$possuiDesconto) {
+            $result = (object)[];
+            $pessoaResult = (object)[];
+            $pessoaResult->bloqueado = true;
+            $result->pessoa = $pessoaResult;
+            return response()->json($pessoaResult);
+        } else {
+            $result = $pessoa->toUI($evento);
+
+            $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
+                ->where("evento_id", $evento)
+                ->first();
+                
+            if ($inscricao){
+                $inscricao->calcularValores();
+                $result->inscricaoPaga = $inscricao->inscricaoPaga == 1;
+                $result->inscricao = $inscricao->numero;
+                if (!$inscricao->inscricaoPaga){
+                    PagSeguroIntegracao::gerarPagamento($inscricao);
+                    $result->pagseguroLink = $inscricao->pagseguroLink;
+                }
             }
-        }
 
-        return response()->json($result);
+            return response()->json($result);
+        }
     }
 }
