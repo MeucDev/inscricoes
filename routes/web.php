@@ -32,7 +32,7 @@ Route::put('/inscricoes/{id}', 'InscricoesController@alterar');
 Route::put('/inscricoes/set-pago/{id}/', 'InscricoesController@definirPago');
 
 // Teste e-mail
-Route::post('/email/testar/', 'TesteEmailController@enviar');
+Route::get('/email/testar/', 'TesteEmailController@enviar');
 
 //Pagseguro
 Route::post('/pagseguro/notification', [

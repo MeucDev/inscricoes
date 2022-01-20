@@ -13,6 +13,6 @@ class TesteEmailController extends Controller
     public function enviar(Request $request) 
     {
         // $dados = (object) json_decode($request->getContent(), true);
-        // TesteEmail::enviarEmail($dados, 'teste');
+        TesteEmail::enviarEmail($dados, 'teste');
     }
 }
