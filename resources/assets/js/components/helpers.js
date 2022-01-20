@@ -28,8 +28,8 @@ export default {
             var refeicao = box.find("#refeicao");
 
             if (pessoa.alojamento == "LAR"){
-                refeicao.prop("disabled", true);
-                pessoa.refeicao = "LAR";
+                //refeicao.prop("disabled", true);
+                pessoa.refeicao = "LAR_SEM_CAFE";
             }else{
                 if (pessoa.refeicao = "LAR")
                     pessoa.refeicao = "";
