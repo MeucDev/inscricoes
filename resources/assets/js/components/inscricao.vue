@@ -134,7 +134,6 @@
                         <option value="QUIOSQUE_SEM_CAFE">Quiosque sem café</option>
                         <option value="LAR_COM_CAFE">Lar Filadélfia com café</option>
                         <option value="LAR_SEM_CAFE">Lar Filadélfia sem café</option>
-                        <option value="LAR">Lar Filadélfia (Tratar direto)</option>
                         <option value="NENHUMA">Nenhuma</option>
                     </select>
                     <span v-show="errors.has('refeicao')" class="help-block">Campo obrigatório</span>                        
