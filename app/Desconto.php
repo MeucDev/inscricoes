@@ -18,6 +18,23 @@ class Desconto extends Model
             return 0;
     }
 
+    public static function getPossuiDescontoEventoAtual($pessoa, $eventoAtual) {
+        $cpf = $pessoa->cpf;
+        $nome = $pessoa->nome;
+        $desconto = Desconto::where(function($query) use($cpf, $nome){
+            $query->where('cpf', '=', $cpf)
+                ->orWhere('nome', '=', $nome);
+        })->where(function($query) use ($eventoAtual){
+            $query->whereNotNull('evento_aplicar_id')
+                ->where('evento_aplicar_id', '=', $eventoAtual);
+        })->first();
+        if($desconto) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static function getValorDescontoEventoAnteriorPeloEventoAtual($pessoa, $eventoAtual) {
         $result = 0;
         $cpf = $pessoa->cpf;
