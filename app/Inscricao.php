@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Valor;
+use App\Desconto;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -79,6 +80,11 @@ class Inscricao extends Model
     }
 
     public static function criarInscricao($pessoa, $evento){
+        $desconto = Desconto::getPossuiDescontoEventoAtual($pessoa, $evento);
+        if(!$desconto) {
+            throw new Exception("Nesse momento as inscrições estão abertas somente para quem fez reserva para o evento de 2022 devido ao cancelamento do Congresso de 2020. Em breve chegará sua vez!");
+        }
+        
         $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
             ->where("evento_id", $evento)
             ->first();
