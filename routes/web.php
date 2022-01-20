@@ -31,6 +31,9 @@ Route::post('/inscricoes/criar/{evento}', 'InscricoesController@criar');
 Route::put('/inscricoes/{id}', 'InscricoesController@alterar');
 Route::put('/inscricoes/set-pago/{id}/', 'InscricoesController@definirPago');
 
+// Teste e-mail
+Route::get('/email/testar/', 'TesteEmailController@enviar');
+
 //Pagseguro
 Route::post('/pagseguro/notification', [
     'uses' => '\laravel\pagseguro\Platform\Laravel5\NotificationController@notification',
