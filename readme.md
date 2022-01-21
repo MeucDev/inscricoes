@@ -70,3 +70,16 @@ default password : 123456
 
 O valor de error reporting deve estar como "E_ERROR & ~E_ALL"
 
+### E-mail no Umbler
+
+É necessário configurar as credenciais de e-mail e definir uso de tls no arquivo .env
+
+```
+MAIL_DRIVER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=usuario@gmail.com
+MAIL_PASSWORD=senhadoemail
+MAIL_ENCRYPTION=tls
+```
+
