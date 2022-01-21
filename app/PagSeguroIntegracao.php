@@ -24,35 +24,38 @@ class PagSeguroIntegracao
         $valoresBoleto = $inscricao->getValoresCobrarBoleto($codigos);
 
         $valores = $inscricao->getValores();
+        $total = $valores->total;
 
-        if($valores->total > $valores->totalDescontos || $valores->totalDescontos == 0) {
+        foreach($valoresBoleto as &$valorBoleto) {
+            $valor = Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $inscricao->pessoa);
+            $total += $valor;
+            array_push($items, [
+                'id' => $inscricao->numero . '_' . $valorBoleto->codigo,
+                'description' => $valorBoleto->nome . ' ' . $inscricao->pessoa->nomecracha,
+                'amount' => $valor,
+                'quantity' => '1'
+            ]);
 
-            foreach($valoresBoleto as &$valorBoleto) {
-                $valor = Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $inscricao->pessoa);
-                array_push($items, [
-                    'id' => $inscricao->numero . '_' . $valorBoleto->codigo,
-                    'description' => $valorBoleto->nome . ' ' . $inscricao->pessoa->nomecracha,
-                    'amount' => $valor,
-                    'quantity' => '1'
-                ]);
-
-                foreach ($inscricao->dependentes as &$dependente){
-                    $valor = Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $dependente->pessoa);
-                    if($valor > 0){
-                        array_push($items, [
-                            'id' => $dependente->numero . '_' . $valorBoleto->codigo,
-                            'description' => $valorBoleto->nome . ' ' . $dependente->pessoa->nomecracha,
-                            'amount' => $valor,
-                            'quantity' => '1'
-                        ]);
-                    }
+            foreach ($inscricao->dependentes as &$dependente){
+                $valor = Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $dependente->pessoa);
+                $total += $valor;
+                if($valor > 0){
+                    array_push($items, [
+                        'id' => $dependente->numero . '_' . $valorBoleto->codigo,
+                        'description' => $valorBoleto->nome . ' ' . $dependente->pessoa->nomecracha,
+                        'amount' => $valor,
+                        'quantity' => '1'
+                    ]);
                 }
             }
-            $desconto = '';
-            if($valores->totalDescontos > 0) {
-                $desconto = '-'.$valores->totalDescontos.'';
-            }
-            $desconto = number_format($valores->totalDescontos * -1, 2);
+        }
+        $desconto = '';
+        if($valores->totalDescontos > 0) {
+            $desconto = '-'.$valores->totalDescontos.'';
+        }
+        $desconto = number_format($valores->totalDescontos * -1, 2);
+
+        if($total > $valores->totalDescontos || $valores->totalDescontos == 0) {
             $data = [
                 'reference' => $inscricao->numero,
                 'items' => $items,
