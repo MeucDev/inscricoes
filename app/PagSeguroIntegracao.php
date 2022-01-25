@@ -35,8 +35,15 @@ class PagSeguroIntegracao
                 'amount' => $valor,
                 'quantity' => '1'
             ]);
+        }
 
-            foreach ($inscricao->dependentes as &$dependente){
+        foreach ($inscricao->dependentes as &$dependente){
+            $codigos = [];
+            array_push($codigos, $dependente->alojamento);
+            array_push($codigos, $dependente->refeicao);
+            $valoresBoleto = $dependente->getValoresCobrarBoleto($codigos);
+
+            foreach($valoresBoleto as &$valorBoleto) {
                 $valor = Valor::getValor($valorBoleto->codigo, $valorBoleto->evento_id, $dependente->pessoa);
                 $total += $valor;
                 if($valor > 0){
@@ -49,6 +56,7 @@ class PagSeguroIntegracao
                 }
             }
         }
+
         $desconto = '';
         if($valores->totalDescontos > 0) {
             $desconto = '-'.$valores->totalDescontos.'';
