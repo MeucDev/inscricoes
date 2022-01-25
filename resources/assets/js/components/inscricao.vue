@@ -357,7 +357,7 @@
                         $('#modal').modal('hide');
                     }
                     else{
-                        if(this.getTotalDescontoEventoAnterior() > this.getTotalPagar()) {
+                        if(this.getTotalDescontoEventoAnterior() >= this.getTotalPagar()) {
                             swal({
                                 allowOutsideClick: false,
                                 title: 'Que boa notícia!',
