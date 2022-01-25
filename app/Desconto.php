@@ -48,10 +48,14 @@ class Desconto extends Model
         })->first();
         
         if($itemDesconto) {
-            $inscricao = Inscricao::getInscricaoByPessoaeEvento($pessoa, $itemDesconto->evento_origem_id);
-            if($inscricao && $inscricao->valorTotalPago > 0) {
-                $result = floatval($inscricao->valorTotalPago);
-            }  
+            if($itemDesconto->valor_desconto && $itemDesconto->valor_desconto > 0) {
+                $result = floatval($itemDesconto->valor_desconto);
+            } else {
+                $inscricao = Inscricao::getInscricaoByPessoaeEvento($pessoa, $itemDesconto->evento_origem_id);
+                if($inscricao && $inscricao->valorTotalPago > 0) {
+                    $result = floatval($inscricao->valorTotalPago);
+                }
+            }
         } 
         return $result;
     }

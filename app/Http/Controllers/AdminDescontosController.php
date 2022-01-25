@@ -33,6 +33,7 @@
 			$this->col[] = ["label"=>"Cpf","name"=>"cpf"];
 			$this->col[] = ["label"=>"Nome / Cidade","name"=>"nome"];
 			$this->col[] = ["label"=>"Percentual","name"=>"perc"];
+			$this->col[] = ["label"=>"Valor desconto","name"=>"valor_Desconto"];
 			$this->col[] = ["label"=>"Evento origem","name"=>"evento_origem_id","join"=>"eventos,nome"];
 			$this->col[] = ["label"=>"Evento aplicar","name"=>"evento_aplicar_id","join"=>"eventos,nome"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
@@ -42,6 +43,7 @@
 			$this->form[] = ['label'=>'Nome / Cidade','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Cpf','name'=>'cpf','type'=>'text','validation'=>'min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Perc','name'=>'perc','type'=>'number','validation'=>'min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Valor desconto','name'=>'valor_desconto','type'=>'money','validation'=>'min:1','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Evento origem','name'=>'evento_origem_id','type'=>'select2','validation'=>'integer|min:0','width'=>'col-sm-10','datatable'=>'eventos,nome'];
 			$this->form[] = ['label'=>'Evento aplicar','name'=>'evento_aplicar_id','type'=>'select2','validation'=>'integer|min:0','width'=>'col-sm-10','datatable'=>'eventos,nome'];
 			# END FORM DO NOT REMOVE THIS LINE
