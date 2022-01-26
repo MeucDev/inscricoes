@@ -31,7 +31,7 @@ export default {
                 //refeicao.prop("disabled", true);
                 pessoa.refeicao = "LAR_SEM_CAFE";
             }else{
-                if (pessoa.refeicao = "LAR")
+                if (pessoa.refeicao == "LAR")
                     pessoa.refeicao = "";
                 refeicao.prop("disabled", false);
             }
