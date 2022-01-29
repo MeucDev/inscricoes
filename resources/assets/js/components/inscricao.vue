@@ -304,7 +304,7 @@
                         }); 
                     } else {
                         if (this.pessoa.inscricao)
-                        this.inscricao = this.pessoa.inscricao;
+                            this.inscricao = this.pessoa.inscricao;
 
                         this.ajustarTodasRefeicoes(this.pessoa);
 

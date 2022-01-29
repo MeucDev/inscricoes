@@ -9,11 +9,11 @@ export default {
     methods: {
         ajustarTodasRefeicoes: function(pessoa){
             if (pessoa.alojamento == "LAR")
-                pessoa.refeicao = "LAR";
+                pessoa.refeicao = "LAR_SEM_CAFE";
 
             pessoa.dependentes.forEach(dependente => {
                 if (dependente.alojamento == "LAR")
-                    dependente.refeicao = "LAR";
+                    dependente.refeicao = "LAR_SEM_CAFE";
             });
 
             setTimeout(function(){
