@@ -11,7 +11,10 @@ export default {
             var doc = new jsPDF({
                 unit: 'mm',
                 orientation: 'landscape',
-                format: [50, 84]
+                // https://github.com/parallax/jsPDF/blob/ddbfc0f0250ca908f8061a72fa057116b7613e78/jspdf.js#L791
+                // 72 / 25,4 * 84 = 238
+                // 72 / 25,4 * 50 = 141
+                format: [238, 141]
             });
 
             doc.setProperties({
