@@ -40,7 +40,7 @@ class EventosController extends Controller
 
         if(!$evento->aberto()) {
             $evento->toUI();
-            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Inscrições ainda não liberadas, volte mais tarde.']);
+            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Inscrições encerradas.']);
         }
             
 
