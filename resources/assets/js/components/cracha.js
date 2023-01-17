@@ -93,7 +93,7 @@ export default {
             // Full name
             doc.setFontType('normal');
             doc.setFontSize(11);
-            var text = doc.splitTextToSize(data.fullname, 74);
+            var text = doc.splitTextToSize(data.fullname, 60);
             doc.text(text, 42, 32, 'center');
 
             // City
