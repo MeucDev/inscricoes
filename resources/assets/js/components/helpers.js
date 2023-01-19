@@ -28,11 +28,11 @@ export default {
             var refeicao = box.find("#refeicao");
 
             if (pessoa.alojamento == "LAR"){
-                //refeicao.prop("disabled", true);
-                pessoa.refeicao = "LAR_SEM_CAFE";
+                refeicao.prop("disabled", true);
+                //pessoa.refeicao = "LAR_SEM_CAFE";
             }else{
-                if (pessoa.refeicao == "LAR")
-                    pessoa.refeicao = "";
+                //if (pessoa.refeicao == "LAR")
+                //     pessoa.refeicao = "";
                 refeicao.prop("disabled", false);
             }
         },

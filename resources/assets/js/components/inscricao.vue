@@ -24,7 +24,7 @@
                     <div :class="{'form-group': true, 'has-error': errors.has('nomecracha') }">
                         <label for="nomecracha">Nome cracha</label>
                         <input v-validate="'required'" type="text" :maxlength="maxCrachaLength" v-model="pessoa.nomecracha" class="form-control" name="nomecracha" id="nomecracha">
-                        <span>{{ maxCrachaLength - pessoa.nomecracha.length}} / {{ maxCrachaLength }}</span>
+                        <span v-if="pessoa && pessoa.nomecracha" class="pull-right">{{ maxCrachaLength - pessoa.nomecracha.length}} / {{ maxCrachaLength }}</span>
                         <span v-show="errors.has('nomecracha')" class="help-block">Campo obrigatório</span>                        
                     </div>
                 </div>                
