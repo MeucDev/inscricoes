@@ -24,7 +24,7 @@ class CreateHistoricoPagamentos extends Migration
 
         Schema::table('historico_pagamentos', function (Blueprint $table) {
             $table->foreign('inscricao_numero')->references('numero')->on('inscricoes');
-        }
+        });
     }
 
     /**
