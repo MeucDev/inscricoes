@@ -20,7 +20,7 @@ class HistoricoPagamentosSeeder extends Seeder
                 'icon'=>'fa fa-money',
                 'path'=>'historico_pagamentos',
                 'table_name'=>'historico_pagamentos',
-                'controller'=>'AdminHistoricoPagamentos',
+                'controller'=>'AdminHistoricoPagamentosController',
                 'is_protected'=>0,                                
                 'is_active'=>0
             ]
