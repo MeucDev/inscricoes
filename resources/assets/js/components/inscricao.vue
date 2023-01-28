@@ -56,7 +56,7 @@
                 </div>
                 <div class="col-md-4">
                     <div :class="{'form-group': true, 'has-error': errors.has('telefone') }">
-                        <label for="telefone">Telefone</label>
+                        <label for="telefone">Telefone (preferencialmente com WhatsApp)</label>
                         <input type="text" v-mask="'## #########'" v-validate="{required:true, regex:/\d{2}\s\d{8,9}/}" v-model="pessoa.telefone" class="form-control" name="telefone" id="telefone" placeholder="47 999999999">
                         <span v-show="errors.has('telefone')" class="help-block">O telefone deve estar no formato 47 999999999</span>                        
                     </div>
