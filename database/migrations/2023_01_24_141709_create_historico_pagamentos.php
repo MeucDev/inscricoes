@@ -16,7 +16,7 @@ class CreateHistoricoPagamentos extends Migration
         Schema::create('historico_pagamentos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('operacao');
-            $table->integer('inscricao_numero')->unsigned();
+            $table->integer('inscricao_numero')->nullable();
             $table->float('valor');
             $table->string('pagseguro_code')->nullable();
 			$table->timestamps();
