@@ -57,7 +57,7 @@ Se ocorrerem erros de instalação do sass, instalar
 npm run dev
 ```
 
-## Run
+## Run (dev)
 ```php
 $ php artisan serve
 ```
@@ -83,3 +83,26 @@ MAIL_PASSWORD=senhadoemail
 MAIL_ENCRYPTION=tls
 ```
 
+## Atualizações em produção
+
+- Novo módulo
+  - Criar módulo pelo gerador de módulos do CrudBooster de desenvolvimento
+  - Efetuar implementações do módulo
+  - Criar Seeder para inserir o módulo na base de produção (atenção para sufixo Controller na coluna indicando o controller a ser carregado)
+  - Executar seeder no servidor
+    ```
+    php artisan db:seed --class=NomeDaClasseDeSeeder
+    ```
+  - Limpar e regerar informações para o composer
+    ```
+    php artisan clear-compiled 
+    composer dump-autoload
+    php artisan optimize
+    ```
+  - Limpar e regerar cache do laravel
+    ```
+    php artisan config:cache
+    ```
+  
+- Alterações de front end
+  - Antes do commit, executar `npm run prod`, e commitar arquivos de front otimizados para produção
