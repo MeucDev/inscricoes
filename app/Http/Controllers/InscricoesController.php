@@ -6,6 +6,7 @@ use App\Pessoa;
 use App\Valor;
 use App\Inscricao;
 use App\Evento;
+use App\HistoricoPagamento;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -112,8 +113,10 @@ class InscricoesController extends Controller
         $result = DB::transaction(function() use ($dados, $pessoa, $evento) {
             $inscricao = Inscricao::criarInscricao($pessoa, $evento->id);
             $result = (object)[];
-            if (!$dados->interno)
+            if (!$dados->interno) {
                 $result = PagSeguroIntegracao::gerarPagamento($inscricao);
+                HistoricoPagamento::registrar($inscricao->numero, 'CRIADO', $inscricao->valorTotal, '');
+            }
             return $result;
         });        
 

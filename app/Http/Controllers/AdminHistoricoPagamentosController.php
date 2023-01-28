@@ -4,92 +4,53 @@
 	use Request;
 	use DB;
 	use CRUDBooster;
-	use App\Valor;
-	use App\Variacao;
-	use App\Inscricao;
-	use App\Pessoa; 
-	
-	class AdminInscricoesController extends \crocodicstudio\crudbooster\controllers\CBController {
+
+	class AdminHistoricoPagamentosController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
-			$this->primary_key = "numero";
-			$this->title_field = "numero";
+			$this->title_field = "id";
 			$this->limit = "20";
-			$this->orderby = "numero,desc";
+			$this->orderby = "id,desc";
 			$this->global_privilege = false;
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;
 			$this->button_action_style = "button_icon";
-			$this->button_add = true;
+			$this->button_add = false;
 			$this->button_edit = true;
 			$this->button_delete = true;
-			$this->button_detail = false;
-			$this->button_show = false;
+			$this->button_detail = true;
+			$this->button_show = true;
 			$this->button_filter = true;
 			$this->button_import = false;
 			$this->button_export = false;
-			$this->table = "inscricoes";
+			$this->table = "historico_pagamentos";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
-
-			$this->evento = (int)Request::get('parent_id');
-			if ($this->evento == 0)
-				$this->evento = (int)Request::get('evento_id');
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Número","name"=>"numero"];
-			$this->col[] = ["label"=>"Responsável","name"=>"pessoa_id","join"=>"pessoas,nome"];
-			$this->col[] = ["label"=>"Cidade","name"=>"pessoa_id","join"=>"pessoas,cidade"];
-			$this->col[] = ["label"=>"Total","name"=>"valorTotal"];
-			$this->col[] = ["label"=>"Pago","name"=>"valorTotalPago"];
-			$this->col[] = ["label"=>"Pagou?","name"=>"inscricaoPaga","callback"=>function($row) {
-				return ($row->inscricaoPaga == 1) ? '<span class="label label-success">sim</span>' : '<span class="label label-danger">não</span>';
-			}];
-			$this->col[] = ["label"=>"Presente?","name"=>"presencaConfirmada","callback"=>function($row) {
-				return ($row->presencaConfirmada == 1) ? '<span class="label label-success">sim</span>' : '<span class="label label-danger">não</span>';
-			}];
-			$this->col[] = ["label"=>"Inscritos","name"=>"(select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero) + 1 as total_inscritos","callback"=>function($row) {
-				return '<span class="badge bg-yellow">'. $row->total_inscritos .'</span>';
-			}];
+			$this->col[] = ["label"=>"Inscricão","name"=>"inscricao_numero"];
+			$this->col[] = ["label"=>"Operação","name"=>"operacao"];
+			$this->col[] = ["label"=>"Valor","name"=>"valor"];
+			$this->col[] = ["label"=>"Data","name"=>"created_at"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Evento','name'=>'evento_id','type'=>'hidden', 'value'=>$this->evento];
-			$this->form[] = ['label'=>'Número','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','readonly' =>true,'width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Data','name'=>'dataInscricao','type'=>'datetime','validation'=>'required','readonly' =>true,'width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Pessoa','name'=>'pessoa_id','type'=>'select2','validation'=>'required','width'=>'col-sm-10','datatable'=>'pessoas,nome', 'disabled' => true];
-			$this->form[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar Filadélfia','readonly' =>true];
-			$this->form[] = ['label'=>'Refeição','name'=>'refeicao','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'QUIOSQUE_COM_CAFE|Quiosque com café;QUIOSQUE_SEM_CAFE|Quiosque sem café;LAR_COM_CAFE|Lar com café;LAR_SEM_CAFE|Lar sem café;LAR|Lar Filadélfia (tratar direto);NENHUMA|Nenhuma','readonly' =>true];
-			$this->form[] = ['label'=>'Equipe refeição','name'=>'equipeRefeicao','type'=>'select','width'=>'col-sm-10','dataenum'=>'LAR_A|Lar A;LAR_B|Lar B;QUIOSQUE_A|Quiosque A;QUIOSQUE_B|Quiosque B','readonly' =>true];
-			$this->form[] = ['label'=>'Pagou?','name'=>'inscricaoPaga','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-			$this->form[] = ['label'=>'Presença confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-			$this->form[] = ['label'=>'Valor inscricão','name'=>'valorInscricao','type'=>'number','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Valor inscricão pago','name'=>'valorInscricaoPago','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
-			$this->form[] = ['label'=>'Valor alojamento','name'=>'valorAlojamento','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
-			$this->form[] = ['label'=>'Valor refeição','name'=>'valorRefeicao','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
-			$this->form[] = ['label'=>'Valor total','name'=>'valorTotal','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
-			$this->form[] = ['label'=>'Valor total pago','name'=>'valorTotalPago','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
-			$this->form[] = ['label'=>'PagSeguro code','name'=>'pagseguroCode','type'=>'text','validation'=>'','readonly' => true, 'width'=>'col-sm-10'];
-
-			//$this->form[] = ['label'=>'Observação','name'=>'observacao','type'=>'wysiwyg','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Inscricão','name'=>'inscricao_numero','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Operação','name'=>'operacao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Valor','name'=>'valor','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Código PagSeguro','name'=>'pagseguro_code','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Data','name'=>'created_at','validation'=>'required','width'=>'col-sm-9'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ['label'=>'Numero','name'=>'numero','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'DataInscricao','name'=>'dataInscricao','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'InscricaoPaga','name'=>'inscricaoPaga','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Observacao','name'=>'observacao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'TipoInscricao','name'=>'tipoInscricao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'ValorInscricao','name'=>'valorInscricao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'ValorInscricaoPago','name'=>'valorInscricaoPago','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'ValorTotal','name'=>'valorTotal','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'ValorTotalPago','name'=>'valorTotalPago','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Responsavel Id','name'=>'responsavel_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'responsavel,id'];
-			//$this->form[] = ['label'=>'Ano','name'=>'ano','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Inscricão','name'=>'inscricao_numero','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Operação','name'=>'operacao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Valor','name'=>'valor','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Código PagSeguro','name'=>'pagseguro_code','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			# OLD END FORM
 
 			/* 
@@ -104,8 +65,8 @@
 			| @parent_columns = Sparate with comma, e.g : name,created_at
 	        | 
 	        */
-			$this->sub_module[] = ['label'=>'Hist. pagamentos','path'=>'historico_pagamentos','custom_parent_id'=>'numero','parent_columns'=>'numero','foreign_key'=>'inscricao_numero','button_color'=>'info','button_icon'=>'fa fa-dollar'];
-			
+	        $this->sub_module = array();
+
 
 	        /* 
 	        | ---------------------------------------------------------------------- 
@@ -117,13 +78,8 @@
 	        | @color 	   = Default is primary. (primary, warning, succecss, info)     
 	        | @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
 	        | 
-			*/
-
-			$presenca = 'javascript:modalApp.show("Confirmar presença", "presenca", {id: [numero]})';
-			$editar = 'javascript:modalApp.show("Edição", "inscricao", {interno: true, inscricao: [numero], evento:'. $this->evento .'})';
-
-			$this->addaction[] = ['label'=>'Confirmar','url'=>$presenca,'icon'=>'fa fa-check','color'=>'success'];			
-			$this->addaction[] = ['label'=>'Editar','url'=>$editar,'icon'=>'fa fa-pencil','color'=>'primary'];			
+	        */
+	        $this->addaction = array();
 
 
 	        /* 
@@ -159,11 +115,10 @@
 	        | @url   = URL Target
 	        | @icon  = Icon from Awesome.
 	        | 
-			*/
-			
-			$cracha = 'javascript:modalApp.show("Cracha", "cracha", {})';
+	        */
+	        $this->index_button = array();
 
-			$this->index_button[] = ["label"=>"Imprimir cracha customizado","icon"=>"fa fa-print","url"=>$cracha];			
+
 
 	        /* 
 	        | ---------------------------------------------------------------------- 
@@ -182,70 +137,21 @@
 	        | ---------------------------------------------------------------------- 
 	        | @label, @count, @icon, @color 
 	        |
-			*/
-			
-			$this->index_statistic[] = ['label'=>'Total de famílias / pessoas',
-				'count'=>
-					DB::table('inscricoes')
-					->select(
-						DB::raw("CONCAT(
-							SUM(case when numero_inscricao_responsavel is null then 1 else 0 end),
-							' / ', COUNT(*)
-						) as resultado"))
-					->where('evento_id', $this->evento)->first()->resultado,
-				'icon'=>'ion ion-person-stalker','color'=>'aqua'];
+	        */
+	        $this->index_statistic = array();
 
-			$this->index_statistic[] = ['label'=>'Total de presentes famílias / pessoas ',
-				'count'=>DB::table('inscricoes')
-				->select(
-					DB::raw("CONCAT(
-						SUM(case when numero_inscricao_responsavel is null then 1 else 0 end),
-						' / ', COUNT(*)
-					) as resultado"))
-				->where([['presencaConfirmada', '1'] , ['evento_id', $this->evento]])->first()->resultado,
-				'icon'=>'fa fa-check','color'=>'green'];
 
-			$this->index_statistic[] = ['label'=> 'Equipes quiosque'
-				,'count'=> 
-				DB::table('inscricoes')
-					->select(
-						DB::raw("CONCAT(
-							'A: ', SUM(case when equipeRefeicao = 'QUIOSQUE_A' then 1 else 0 end),
-							' B: ', SUM(case when equipeRefeicao = 'QUIOSQUE_B' then 1 else 0 end)
-						) as equipes"))
-					->where('presencaConfirmada', '1')
-					->where('evento_id', $this->evento)
-					->first()->equipes
-				,'icon'=>'fa fa-cutlery','color'=>'red'];	
-			$this->index_statistic[] = ['label'=> 'Equipes lar'
-				,'count'=> 
-				DB::table('inscricoes')
-					->select(
-						DB::raw("CONCAT(
-							'A: ', SUM(case when equipeRefeicao = 'LAR_A' then 1 else 0 end),
-							' B: ', SUM(case when equipeRefeicao = 'LAR_B' then 1 else 0 end)
-						) as equipes"))
-					->where('presencaConfirmada', '1')
-					->where('evento_id', $this->evento)
-					->first()->equipes
-				,'icon'=>'fa fa-cutlery','color'=>'yellow'];							
 
-			/*
+	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Add javascript at body 
 	        | ---------------------------------------------------------------------- 
 	        | javascript code in the variable 
 	        | $this->script_js = "function() { ... }";
 	        |
-			*/
-			
-			$novo = 'javascript:modalApp.show("Nova inscrição", "inscricao", {interno: true, evento:'. $this->evento .'})';
-			
-			$this->script_js = "
-				$(function() {
-					$('#btn_add_new_data').attr('href', '". $novo ."');
-				});
-			";
+	        */
+	        $this->script_js = NULL;
+
 
             /*
 	        | ---------------------------------------------------------------------- 
@@ -332,7 +238,7 @@
 	    */
 	    public function hook_query_index(&$query) {
 	        //Your code here
-			$query->whereNull('numero_inscricao_responsavel');
+	            
 	    }
 
 	    /*
@@ -353,8 +259,9 @@
 	    |
 	    */
 	    public function hook_before_add(&$postdata) {        
+	        //Your code here
 
-		}
+	    }
 
 	    /* 
 	    | ---------------------------------------------------------------------- 
@@ -364,6 +271,8 @@
 	    | 
 	    */
 	    public function hook_after_add($id) {        
+	        //Your code here
+
 	    }
 
 	    /* 
@@ -376,6 +285,7 @@
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
 	        //Your code here
+
 	    }
 
 	    /* 
@@ -386,12 +296,10 @@
 	    | 
 	    */
 	    public function hook_after_edit($id) {
-			$inscricao = Inscricao::find($id);
+	        //Your code here 
 
-			$inscricao->calcularTotais();
-			$inscricao->save();
-		}
-		
+	    }
+
 	    /* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command before delete public static function called
@@ -400,7 +308,8 @@
 	    | 
 	    */
 	    public function hook_before_delete($id) {
-			Inscricao::where("numero_inscricao_responsavel", $id)->delete();
+	        //Your code here
+
 	    }
 
 	    /* 
