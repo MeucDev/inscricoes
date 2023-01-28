@@ -38,9 +38,14 @@ class EventosController extends Controller
         if (!$evento)
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Evento não encontrado']);
 
+        if($evento->breve()) {
+            $evento->toUI();
+            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Falta pouco! Em breve as inscrições para o próximo evento serão abertas.']);
+        }
+        
         if(!$evento->aberto()) {
             $evento->toUI();
-            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Inscrições encerradas.']);
+            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Nenhum evento aberto.']);
         }
             
 

@@ -21,6 +21,14 @@ class Evento extends Model
 
         return false;
     }
+    public function breve(){
+        $dateNow = date("Y-m-d");
+        
+        if ($this->aberto == 0 && $dateNow < $this->data_inicio)
+            return true;
+
+        return false;
+    }
 
     public function limite(){
         if ($this->limite_inscricoes == 0)
