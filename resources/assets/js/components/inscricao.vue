@@ -294,17 +294,16 @@
                     return;
                     
                 this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
-                    this.pessoa = response.body;
-
-                
-                    if (this.pessoa.inscricao)
+                    if (response.body.inscricao)
+                    {
+                        this.pessoa = response.body;
                         this.inscricao = this.pessoa.inscricao;
 
-                    this.ajustarTodasRefeicoes(this.pessoa);
+                        this.ajustarTodasRefeicoes(this.pessoa);
 
-                    $("#confirmar").show();
-                    
-                    if (this.pessoa.inscricaoPaga){
+                        $("#confirmar").show();
+
+                        if (this.pessoa.inscricaoPaga) {
                         swal(
                             'Já está tudo certo',
                             'Identificamos em nosso sistema que sua inscrição já foi feita e está paga. Nos encontramos no dia do evento!',
@@ -312,20 +311,20 @@
                         ).then((result) =>{
                             //$("#confirmar").hide();
                         });                   
-                    }else if(this.pessoa.pagseguroLink){
-                        swal({
-                            title: 'Só falta pagar',
-                            text: "Identificamos em nosso sistema que sua inscrição não está paga. Se deseja fazer o pagamento clique em Pagar. Caso você queira fazer alguma alteração clique em cancelar e refaça a sua inscrição",
-                            type: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Pagar'
-                        }).then((result) =>{
-                            if (result.value){
-                                window.location.replace(this.pessoa.pagseguroLink);
-                            }
-                        });                         
+                        } else if (this.pessoa.pagseguroLink) {
+                            swal({
+                                title: 'Só falta pagar',
+                                text: "Identificamos em nosso sistema que sua inscrição não está paga. Se deseja fazer o pagamento clique em Pagar. Caso você queira fazer alguma alteração clique em cancelar e refaça a sua inscrição",
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Pagar'
+                            }).then((result) =>{
+                                if (result.value){
+                                    window.location.replace(this.pessoa.pagseguroLink);
+                                }
+                            });                         
+                        }
                     }
-                    
                 }, (error) => {
                     console.log(error.body);
                 });            
