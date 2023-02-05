@@ -4,6 +4,9 @@
 	use Request;
 	use DB;
 	use CRUDBooster;
+	use App\Inscricao;
+	use App\HistoricoPagamento;
+	use App\PagSeguroNotificacao;
 
 	class AdminHistoricoPagamentosController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -17,7 +20,7 @@
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;
 			$this->button_action_style = "button_icon";
-			$this->button_add = false;
+			$this->button_add = true;
 			$this->button_edit = true;
 			$this->button_delete = true;
 			$this->button_detail = true;
@@ -42,7 +45,7 @@
 			$this->form[] = ['label'=>'Operação','name'=>'operacao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor','name'=>'valor','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Código PagSeguro','name'=>'pagseguro_code','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Data','name'=>'created_at','validation'=>'required','width'=>'col-sm-9'];
+			$this->form[] = ['label'=>'Data','name'=>'created_at','type'=>'text','validation'=>'required','width'=>'col-sm-9'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
@@ -51,6 +54,7 @@
 			//$this->form[] = ['label'=>'Operação','name'=>'operacao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Valor','name'=>'valor','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Código PagSeguro','name'=>'pagseguro_code','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Data','name'=>'created_at','type'=>'text','validation'=>'required','width'=>'col-sm-9'];
 			# OLD END FORM
 
 			/* 
@@ -272,7 +276,12 @@
 	    */
 	    public function hook_after_add($id) {        
 	        //Your code here
+			$historico = HistoricoPagamento::find($id);
+			if($historico->operacao == 'APROVADO') {
+				$inscricao = Inscricao::find($historico->inscricao_numero);
 
+				PagSeguroNotificacao::enviarEmail($inscricao, "confirmacao");
+			}
 	    }
 
 	    /* 
