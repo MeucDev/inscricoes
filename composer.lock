@@ -4,8 +4,84 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c7791eea0656c73abdd1821465697db",
+    "content-hash": "d07e17abdad950f80ead61d5f3ca1a2d",
     "packages": [
+        {
+            "name": "allw/laravel-pagseguro",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/allw/laravel-pagseguro.git",
+                "reference": "018055cff36a78d67bb688b810e083eb669516cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/allw/laravel-pagseguro/zipball/018055cff36a78d67bb688b810e083eb669516cb",
+                "reference": "018055cff36a78d67bb688b810e083eb669516cb",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "illuminate/validation": ">=4.2",
+                "lib-curl": "*",
+                "lib-libxml": "*",
+                "lib-openssl": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "laravel\\pagseguro\\Platform\\Laravel5\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "PagSeguro": "laravel\\pagseguro\\Platform\\Laravel5\\PagSeguro"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "laravel\\pagseguro\\": "src/"
+                }
+            },
+            "scripts": {
+                "test:unit": [
+                    "phpunit -c phpunit.xml tests/unit --coverage-html=./tests/phpunit"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Douglas Barbosa Araujo",
+                    "email": "michaeldouglas010790@gmail.com"
+                },
+                {
+                    "name": "Isaque de Souza Barbosa",
+                    "email": "isaquesb@gmail.com"
+                },
+                {
+                    "name": "Allan Wiese",
+                    "email": "allanwiese@gmail.com"
+                }
+            ],
+            "description": "Biblioteca de integração com o gateway de pagamento PagSeguro.",
+            "keywords": [
+                "Gateway Pagamento",
+                "PagSeguro",
+                "framework",
+                "laravel"
+            ],
+            "support": {
+                "source": "https://github.com/allw/laravel-pagseguro/tree/master"
+            },
+            "time": "2023-02-05T19:44:55+00:00"
+        },
         {
             "name": "barryvdh/laravel-dompdf",
             "version": "v0.8.1",
@@ -1349,64 +1425,6 @@
                 "laravel"
             ],
             "time": "2018-01-10T11:58:11+00:00"
-        },
-        {
-            "name": "michael/laravelpagseguro",
-            "version": "1.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/michaeldouglas/laravel-pagseguro.git",
-                "reference": "fa8dffae23837643f7122f0ae82087060e1cd777"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/michaeldouglas/laravel-pagseguro/zipball/fa8dffae23837643f7122f0ae82087060e1cd777",
-                "reference": "fa8dffae23837643f7122f0ae82087060e1cd777",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "illuminate/validation": ">=4.2",
-                "lib-curl": "*",
-                "lib-libxml": "*",
-                "lib-openssl": "*",
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.*.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "laravel\\pagseguro\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Douglas Barbosa Araujo",
-                    "email": "michaeldouglas010790@gmail.com"
-                },
-                {
-                    "name": "Isaque de Souza Barbosa",
-                    "email": "isaquesb@gmail.com"
-                }
-            ],
-            "description": "Biblioteca de integração com o gateway de pagamento PagSeguro.",
-            "keywords": [
-                "Gateway Pagamento",
-                "Pagseguro",
-                "framework",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/michaeldouglas/laravel-pagseguro/issues",
-                "source": "https://github.com/michaeldouglas/laravel-pagseguro/tree/master"
-            },
-            "time": "2017-07-17T15:30:56+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -4699,13 +4717,15 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "allw/laravel-pagseguro": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.6.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }
