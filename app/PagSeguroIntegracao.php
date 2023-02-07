@@ -90,7 +90,10 @@ class PagSeguroIntegracao
                             'type' => 'CPF'
                         ]
                     ],
-                    'phone' => $inscricao->pessoa->telefone,
+                    'phone' => [
+                        'number' => substr($inscricao->pessoa->telefone, 3),
+                        'areaCode' => substr($inscricao->pessoa->telefone, 0, 2)
+                    ],
                     'bornDate' => $inscricao->pessoa->nascimento,
                 ]
             ]; 
