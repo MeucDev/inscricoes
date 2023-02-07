@@ -9,7 +9,7 @@ export default {
     methods: {
         ajustarTodasRefeicoes: function(pessoa){
             if (pessoa.alojamento == "LAR")
-                pessoa.refeicao = "LAR_SEM_CAFE";
+                pessoa.refeicao = "NENHUMA";
 
             pessoa.dependentes.forEach(dependente => {
                 if (dependente.alojamento == "LAR")
@@ -28,8 +28,8 @@ export default {
             var refeicao = box.find("#refeicao");
 
             if (pessoa.alojamento == "LAR"){
+                pessoa.refeicao = "NENHUMA";
                 refeicao.prop("disabled", true);
-                //pessoa.refeicao = "LAR_SEM_CAFE";
             }else{
                 //if (pessoa.refeicao == "LAR")
                 //     pessoa.refeicao = "";
