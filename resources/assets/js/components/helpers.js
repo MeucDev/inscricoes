@@ -13,7 +13,7 @@ export default {
 
             pessoa.dependentes.forEach(dependente => {
                 if (dependente.alojamento == "LAR")
-                    dependente.refeicao = "LAR_SEM_CAFE";
+                    dependente.refeicao = "NENHUMA";
             });
 
             setTimeout(function(){

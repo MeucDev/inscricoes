@@ -38,7 +38,7 @@ class Pessoa extends Model
         if ($this->casamento)
             $this->casamento = DateTime::createFromFormat('Y-m-d', $this->casamento)->format('d/m/Y');
         if ($this->alojamento == "LAR")
-            $this->refeicao = "LAR_SEM_CAFE";
+            $this->refeicao = "NENHUMA";
     }
 
     public function toUI($evento){
