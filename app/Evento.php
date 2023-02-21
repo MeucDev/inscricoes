@@ -44,6 +44,10 @@ class Evento extends Model
         return false;
     }
 
+    public function nome() {
+        return $this->nome;
+    }
+
     public function aberto() {
         return $this->aberto == 1;
     }

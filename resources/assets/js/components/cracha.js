@@ -7,6 +7,53 @@ const imgQuiosque = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAywDLAAD/4QkgaHR0
 // define a mixin object
 export default {
     methods: {
+        imprimirEquipe(equipe) {
+            var doc = new jsPDF({
+                unit: 'mm',
+                orientation: 'landscape',
+                // https://github.com/parallax/jsPDF/blob/ddbfc0f0250ca908f8061a72fa057116b7613e78/jspdf.js#L791
+                // 72 / 25,4 * 84 = 238
+                // 72 / 25,4 * 50 = 141
+                format: [238, 141]
+            });
+
+            doc.setProperties({
+                title: "Crachas - " + equipe.nome
+            });
+
+            var self = this;
+            equipe.membros.forEach(function(item, i) {
+                if (item.imprimir){
+                    if(i > 0)
+                        doc.addPage();
+                    item.evento = equipe.evento;
+                    item.equipe = equipe.nome;
+                    self.generatePdfEquipe(doc, item);
+                }
+            });
+
+            var pdf64 = btoa(doc.output());
+            var blob = this.b64toBlob(pdf64, 'application/pdf');
+            var blobUrl = URL.createObjectURL(blob);
+
+            var w = window.open(blobUrl);
+
+            if (!w){
+                swal('Oops...', 'Para a impressão dos crachas, você deve aceitar abrir popup no browser!', 'warning');
+            }else{
+                w.print();
+            }
+        },
+        generatePdfEquipe(doc, membroEquipe) {
+            var membro = {
+                event: membroEquipe.evento,
+                city: membroEquipe.equipe,
+                nickname: membroEquipe.apelido,
+                fullname: membroEquipe.nome
+            };
+
+            this.generatePdf64(doc, membro);
+        },
         imprimir : function (inscricao){
             var doc = new jsPDF({
                 unit: 'mm',

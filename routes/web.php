@@ -31,6 +31,9 @@ Route::post('/inscricoes/criar/{evento}', 'InscricoesController@criar');
 Route::put('/inscricoes/{id}', 'InscricoesController@alterar');
 Route::put('/inscricoes/set-pago/{id}/', 'InscricoesController@definirPago');
 
+//Equipe
+Route::get('/equipes/imprimir/{id}', 'EquipesController@imprimirCrachas');
+
 // Teste e-mail
 Route::get('/email/testar/', 'TesteEmailController@enviar');
 
