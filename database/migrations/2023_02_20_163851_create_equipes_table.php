@@ -15,7 +15,7 @@ class CreateEquipesTable extends Migration
     {
         Schema::create('equipes', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('evento_id')->nullable();
+            $table->integer('evento_id')->nullable()->unsigned();
             $table->string('nome')->nullable();
         });
 
