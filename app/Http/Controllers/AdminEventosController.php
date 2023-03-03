@@ -44,18 +44,25 @@
 			$this->form[] = ['label'=>'Data Início','name'=>'data_inicio','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Data Fim','name'=>'data_fim','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Aberto','name'=>'aberto','type'=>'radio','validation'=>'required|min:0|max:1','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
+			$this->form[] = ['label'=>'Fila de espera','name'=>'fila_espera','type'=>'radio','validation'=>'required|min:0|max:1','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			$this->form[] = ['label'=>'Link detalhes','name'=>'linkDetalhes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Link mapa','name'=>'linkMapa','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Local','name'=>'local','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Limite de inscrições','name'=>'limite_inscricoes','type'=>'number', 'width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Limite de refeições','name'=>'limite_refeicoes','type'=>'number', 'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Limite de inscrições','name'=>'limite_inscricoes','type'=>'number','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Limite de refeições','name'=>'limite_refeicoes','type'=>'number','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ["label"=>"Nome","name"=>"nome","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
-			//$this->form[] = ["label"=>"Data Inicio","name"=>"data_inicio","type"=>"date","required"=>TRUE,"validation"=>"required|date"];
-			//$this->form[] = ["label"=>"Data Fim","name"=>"data_fim","type"=>"date","required"=>TRUE,"validation"=>"required|date"];
+			//$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Data Início','name'=>'data_inicio','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Data Fim','name'=>'data_fim','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Aberto','name'=>'aberto','type'=>'radio','validation'=>'required|min:0|max:1','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
+			//$this->form[] = ['label'=>'Link detalhes','name'=>'linkDetalhes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Link mapa','name'=>'linkMapa','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Local','name'=>'local','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Limite de inscrições','name'=>'limite_inscricoes','type'=>'number', 'width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Limite de refeições','name'=>'limite_refeicoes','type'=>'number', 'width'=>'col-sm-10'];
 			# OLD END FORM
 
 			/* 

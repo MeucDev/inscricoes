@@ -52,4 +52,8 @@ class Evento extends Model
         return $this->aberto == 1;
     }
 
+    public function fila_espera() {
+        return $this->fila_espera == 1;
+    }
+
 }

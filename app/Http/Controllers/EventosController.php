@@ -54,6 +54,11 @@ class EventosController extends Controller
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Inscrições encerradas!']);
         }
 
+        if ($validar && $evento->fila_espera()){
+            $evento->toUI();
+            return view('evento_fila_espera', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!', 'detalhes' => 'Se ainda tiver interesse em participar, envie um e-mail para: contato@congressodefamilias.com.br']);
+        }
+
         if ($validar && $evento->limite()){
             $evento->toUI();
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!']);
