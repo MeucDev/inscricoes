@@ -28,6 +28,8 @@
 			$this->table = "equipe_membros";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
+			$this->equipe_id = (int)Request::get('parent_id');
+
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			$this->col[] = ["label"=>"Equipe","name"=>"equipe_id","join"=>"equipes,nome"];
@@ -112,7 +114,7 @@
 	        | @icon  = Icon from Awesome.
 	        | 
 	        */
-	        $imprimir = 'javascript:modalApp.show("Imprimir crachás equipe", "equipe", {id: 1})';
+	        $imprimir = 'javascript:modalApp.show("Imprimir crachás equipe", "equipe", {id: '. $this->equipe_id .'})';
 	        
 			$this->index_button[] = ['label'=>'Imprimir crachás','url'=>$imprimir,'icon'=>'fa fa-print','color'=>'primary'];	
 
