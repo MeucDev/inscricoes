@@ -2,7 +2,7 @@
 	<div>
 		<div class="form-group">
 			<label for="event">Nome do evento</label>
-			<input type="text" id="event" class="form-control" v-model="pessoa.event" name="event" value="XXII Congresso de Famílias" />
+			<input type="text" id="event" class="form-control" v-model="pessoa.event" name="event" value="XXIII Congresso de Famílias" />
 		</div>
 		<div class="form-group">
 			<label for="nickname">Apelido</label>
