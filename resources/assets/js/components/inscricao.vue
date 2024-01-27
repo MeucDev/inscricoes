@@ -367,10 +367,11 @@
                             if(this.getTotalDescontoEventoAnterior() > 0) {
                                 valorDescontoEventoAnterior = ` com ${this.formatPrice(this.getTotalDescontoEventoAnterior())} de desconto por crédito do Congresso anterior. `
                             }
+                            var mensagemDuvidasProblemas = 'Em caso de dúvidas ou problemas com seu pagamento, entre em contato pelo número de WhatsApp (47) 99919-9514. '
                             swal({
                                 allowOutsideClick: false,
                                 title: 'Estamos quase lá!',
-                                text: `Ao clicar em OK você será redirecionado para o pagamento da inscrição (${this.formatPrice(this.getTotalPagar())}${valorDescontoEventoAnterior}). ${mensagemAdicional}Até lá!`,
+                                text: `Ao clicar em OK você será redirecionado para o pagamento da inscrição (${this.formatPrice(this.getTotalPagar())}${valorDescontoEventoAnterior}). ${mensagemAdicional}${mensagemDuvidasProblemas}Até lá!`,
                                 type: 'success'
                             }).then((result) => {
                                 if (inscricaoCriada.link) {
