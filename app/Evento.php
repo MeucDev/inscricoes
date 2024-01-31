@@ -30,6 +30,28 @@ class Evento extends Model
         return false;
     }
 
+    public function dataProximoLote() {
+        $dateNow = date("Y-m-d");
+        
+        $valor = Valor::where("evento_id", $this->id)
+            ->where("codigo", "NORMAL")
+            ->get();
+        if(count($valor) == 1) {
+            $variacoes = Variacao::where("valor_id", $valor[0]->id)
+                ->orderBy('data_ate')
+                ->get();
+                
+            foreach ($variacoes as $variacao) {
+                if ($variacao->data_ate && $dateNow <= $variacao->data_ate) {
+                    echo date("d-m-Y", strtotime($variacao->data_ate . " + 1 day"));
+                    return date("d-m-Y", strtotime($variacao->data_ate . " + 1 day"));
+                }
+                    
+            }
+        }
+        return null;
+    }
+
     public function limite(){
         if ($this->limite_inscricoes == 0)
             return false;

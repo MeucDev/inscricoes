@@ -61,7 +61,13 @@ class EventosController extends Controller
 
         if ($validar && $evento->limite()){
             $evento->toUI();
-            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!']);
+            $data = $evento->dataProximoLote();
+            if($data) {
+                return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições deste lote! O próximo lote inicia em '.$data.'.']);
+            }
+            else {
+                return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!']);
+            }
         }
             
         $evento->toUI();
