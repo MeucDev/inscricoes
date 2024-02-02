@@ -210,7 +210,7 @@
                         </tr>
                         <tr>
                             <th><h4>Total geral</h4></th>
-                            <td class="text-right"><nobr>{{formatPrice(getTotalGeral() - getTotalDescontoEventoAnterior())}}</nobr></td>
+                            <td class="text-right"><nobr>{{formatPrice(getTotalGeral())}}</nobr></td>
                         </tr>
                     </table>
                 </div>
@@ -477,11 +477,11 @@
                         total += dependente.valores.total;
                     });
                 }
-
-                return total;
+                var desc = this.getTotalDescontoEventoAnterior();
+                return total - desc;
             },
             getTotalDescontoEventoAnterior: function(){
-                return this.pessoa.valores.descontoEventoAnterior;
+                return this.pessoa.valores.descontoEventoAnterior ? this.pessoa.valores.descontoEventoAnterior : 0;
             },
             setInscricaoPagaCreditosEventoAnterior: function(inscricao_id){
                 this.$http.put('/inscricoes/set-pago/' + inscricao_id).then(response => {
