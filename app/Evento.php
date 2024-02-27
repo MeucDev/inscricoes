@@ -41,8 +41,9 @@ class Evento extends Model
                 ->orderBy('data_ate')
                 ->get();
                 
+                
             foreach ($variacoes as $variacao) {
-                if ($variacao->data_ate && $dateNow <= $variacao->data_ate) {
+                if ($variacao->data_ate && $dateNow <= date("Y-m-d", strtotime($variacao->data_ate . " + 1 day"))) {
                     return date("d-m-Y", strtotime($variacao->data_ate . " + 1 day"));
                 }
                     
