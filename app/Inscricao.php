@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Valor;
 use App\Desconto;
+use App\Evento;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -81,6 +82,10 @@ class Inscricao extends Model
 
     public static function criarInscricao($pessoa, $evento){
         
+        $eventoEmUso = Evento::findOrFail($evento);
+        if($eventoEmUso && $eventoEmUso->limite())
+            throw new Exception("O número limite de inscrições para este evento já foi atingido. Entre em contato com a organização para maiores esclarecimentos.");
+
         $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
             ->where("evento_id", $evento)
             ->first();
