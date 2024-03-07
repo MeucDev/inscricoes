@@ -80,10 +80,10 @@ class Inscricao extends Model
         return $result;
     }
 
-    public static function criarInscricao($pessoa, $evento){
+    public static function criarInscricao($pessoa, $evento, $interno){
         
         $eventoEmUso = Evento::findOrFail($evento);
-        if($eventoEmUso && $eventoEmUso->limite())
+        if(!$interno && $eventoEmUso && $eventoEmUso->limite())
             throw new Exception("O número limite de inscrições para este evento já foi atingido. Entre em contato com a organização para maiores esclarecimentos.");
 
         $inscricao = Inscricao::where("pessoa_id", $pessoa->id)

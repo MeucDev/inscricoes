@@ -111,7 +111,7 @@ class InscricoesController extends Controller
         $pessoa = Pessoa::atualizarCadastros($dados);
 
         $result = DB::transaction(function() use ($dados, $pessoa, $evento) {
-            $inscricao = Inscricao::criarInscricao($pessoa, $evento->id);
+            $inscricao = Inscricao::criarInscricao($pessoa, $evento->id, $dados->interno);
             $result = (object)[];
             if (!$dados->interno) {
                 $result = PagSeguroIntegracao::gerarPagamento($inscricao);
