@@ -12,6 +12,10 @@
                         <th style="width: 10%">Imprimir</th>
                         <th>Nome</th>
                     </tr>
+                    <tr>
+                        <td><input type="checkbox" id="check-all" v-model="all" @change="checkAll"></td>
+                        <td>Selecionar todos</td>
+                    </tr>
                     <tr v-for="membro in equipe.membros">
                         <td><input type="checkbox" v-model="membro.imprimir"></td>
                         <td>{{membro.nome}}</td>
@@ -40,11 +44,12 @@
             return{
                 equipe :  {
                     id: 1,
-                    evento: 'XXIII Congresso de Famílias',
+                    evento: 'XXIV Congresso de Famílias',
                     nome: 'Equipe',
                     membros: [
                     ]
-                }
+                },
+                all: true
             }
         },
         mounted: function(){
@@ -62,6 +67,11 @@
             },
             imprimir: function() {
                 this.imprimirEquipe(this.equipe);     
+            },
+            checkAll: function() {
+                this.equipe.membros.forEach(element => {
+                    element.imprimir = this.all
+                }); // = this.equipe.membros.map(i => {i.imprimir = this.all});
             }
         }
     }
