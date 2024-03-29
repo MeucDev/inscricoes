@@ -28,9 +28,11 @@ class InscricoesController extends Controller
         $inscricao->presenca = true;
         $inscricao->imprimir = true;
 
+        $evento = Evento::find($inscricao->evento_id);
+
         foreach ($inscricao->dependentes as $dependente) {
             $dependente->presenca = true;
-            $dependente->imprimir = ($dependente->pessoa->idade > 6);
+            $dependente->imprimir = ($dependente->pessoa->idade > $evento->idade_imprimir);
         }
 
         if ($inscricao->refeicao != 'NENHUMA') 

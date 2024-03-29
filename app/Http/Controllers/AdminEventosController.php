@@ -50,6 +50,7 @@
 			$this->form[] = ['label'=>'Local','name'=>'local','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Limite de inscrições','name'=>'limite_inscricoes','type'=>'number','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Limite de refeições','name'=>'limite_refeicoes','type'=>'number','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Idade imprimir crachá','name'=>'idade_imprimir','type'=>'number','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
