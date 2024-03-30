@@ -32,7 +32,7 @@ class InscricoesController extends Controller
 
         foreach ($inscricao->dependentes as $dependente) {
             $dependente->presenca = true;
-            $dependente->imprimir = ($dependente->pessoa->idade > $evento->idade_imprimir);
+            $dependente->imprimir = ($dependente->pessoa->idade >= $evento->idade_imprimir);
         }
 
         if ($inscricao->refeicao != 'NENHUMA') 
