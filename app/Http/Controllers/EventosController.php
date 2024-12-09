@@ -18,7 +18,7 @@ class EventosController extends Controller
 {
     public function first()
     {
-        $evento = Evento::whereYear("data_fim", date("Y"))->first();
+        $evento = Evento::where("data_fim", ">=", date("Y"))->orderBy("data_fim", "desc")->first();
         return $this->viewEvento($evento, true);
     }    
 
