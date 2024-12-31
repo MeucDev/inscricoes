@@ -64,7 +64,6 @@
                     <label for="alojamento">Hospedagem</label>
                     <select name="alojamento" v-validate="'required'" id="alojamento" @change="hospedagemChange(pessoa, $event);getValor(pessoa, evento, $event)" v-model="pessoa.alojamento" class="form-control">
                         <option value="CAMPING">Camping</option>
-                        <option value="LAR">Lar Filadélfia (Tratar direto)</option>
                         <option value="OUTROS">Outro / Hotel na cidade</option>
                     </select>
                     <span v-show="errors.has('alojamento')" class="help-block">Campo obrigatório</span>                        
