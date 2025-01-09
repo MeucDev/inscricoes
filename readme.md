@@ -83,6 +83,8 @@ MAIL_PASSWORD=senhadoemail
 MAIL_ENCRYPTION=tls
 ```
 
+As mesmas configurações precisam ser persistidas em "Configurações de E-mail".
+
 ## Atualizações em produção
 
 - Novo módulo
