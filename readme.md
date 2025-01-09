@@ -1,7 +1,7 @@
 ## Requisitos
 - node.js (10.9.0)
-- Composer https://getcomposer.org/
-- MySQL Community
+- Composer https://getcomposer.org/ (2.2)
+- MySQL Community (5.7)
 - Php 5.6.x or higher and the extensions:
   - Mcrypt
   - OpenSSL
