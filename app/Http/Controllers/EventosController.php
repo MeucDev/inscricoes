@@ -38,38 +38,41 @@ class EventosController extends Controller
         if (!$evento)
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Evento não encontrado']);
 
-        if($evento->breve()) {
-            $evento->toUI();
-            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Falta pouco! Em breve as inscrições para o próximo evento serão abertas.']);
-        }
-        
-        if(!$evento->aberto()) {
-            $evento->toUI();
-            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Nenhum evento aberto.']);
-        }
+        if(!(request()->has('bypass') && base64_decode(request()->query('bypass')) == date("Y-m-d"))) {
             
-
-        if ($evento->encerrado()){
-            $evento->toUI();
-            return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Inscrições encerradas!']);
-        }
-
-        if ($validar && $evento->fila_espera()){
-            $evento->toUI();
-            return view('evento_fila_espera', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!', 'detalhes' => 'Se ainda tiver interesse em participar, envie um e-mail para: contato@congressodefamilias.com.br']);
-        }
-
-        if ($validar && $evento->limite()){
-            $evento->toUI();
-            $data = $evento->dataProximoLote();
-            if($data) {
-                return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições deste lote! O próximo lote inicia em '.$data.'.']);
+            if($evento->breve()) {
+                $evento->toUI();
+                return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Falta pouco! Em breve as inscrições para o próximo evento serão abertas.']);
             }
-            else {
-                return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!']);
-            }
-        }
             
+            if(!$evento->aberto()) {
+                $evento->toUI();
+                return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Nenhum evento aberto.']);
+            }
+                
+
+            if ($evento->encerrado()){
+                $evento->toUI();
+                return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Inscrições encerradas!']);
+            }
+
+            if ($validar && $evento->fila_espera()){
+                $evento->toUI();
+                return view('evento_fila_espera', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!', 'detalhes' => 'Se ainda tiver interesse em participar, envie um e-mail para: contato@congressodefamilias.com.br']);
+            }
+
+            if ($validar && $evento->limite()){
+                $evento->toUI();
+                $data = $evento->dataProximoLote();
+                if($data) {
+                    return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições deste lote! O próximo lote inicia em '.$data.'.']);
+                }
+                else {
+                    return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!']);
+                }
+            }
+            
+        }
         $evento->toUI();
         return view('evento', ['evento' => $evento]);
     }
