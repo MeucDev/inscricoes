@@ -362,7 +362,7 @@
                             swal({
                                 allowOutsideClick: false,
                                 title: 'Estamos quase lá!',
-                                text: `Ao clicar em OK você será redirecionado para o pagamento da inscrição (${this.formatPrice(this.getTotalPagar())}${valorDescontoEventoAnterior}). ${mensagemDuvidasProblemas}Até lá!`,
+                                text: `Ao clicar em OK você será redirecionado para o pagamento da inscrição (${this.formatPrice(this.getTotalPagar())}). ${mensagemDuvidasProblemas}Até lá!`,
                                 type: 'success'
                             }).then((result) => {
                                 if (inscricaoCriada.link) {
