@@ -87,6 +87,25 @@ As mesmas configurações precisam ser persistidas em "Configurações de E-mail
 
 ## Atualizações em produção
 
+Atualizações em produção se dão através de acesso SSH ao servidor.
+O sistema está publicado na pasta public através de um clone do repositório neste caminho. 
+Então, para atualizá-lo, deve-se navegar para a pasta ~/public e executar `git pull`.
+Para atualizações que envolvam os assuntos abaixo, outros passos são necessários.
+- Alterações na base de dados
+  - Verificar status das migrações aplicadas
+  ```
+  php artisan migrate:status
+  ``` 
+  - Verificar alterações a serem alteradas
+  ```
+  php artisan migrate --pretend
+  ```
+  Se todos os comandos estão de acordo, o próximo passo pode ser executado.
+  - Executar migração de dados
+  ```
+  php artisan migrate
+  ```
+  Para mais informações, acesse a documentação do Laravel (versão 5.3): https://laravel.com/docs/5.3/migrations
 - Novo módulo
   - Criar módulo pelo gerador de módulos do CrudBooster de desenvolvimento
   - Efetuar implementações do módulo
