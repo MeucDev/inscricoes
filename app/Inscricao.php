@@ -15,6 +15,11 @@ class Inscricao extends Model
     public $timestamps = false;
     protected $table = 'inscricoes';
 
+    public function responsavel()
+    {
+        return $this->belongsTo('App\Inscricao', 'numero_inscricao_responsavel', 'numero');
+    }
+
     public function dependentes()
     {
         return $this->hasMany('App\Inscricao', 'numero_inscricao_responsavel', 'numero');

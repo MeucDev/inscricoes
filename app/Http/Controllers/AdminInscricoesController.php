@@ -37,13 +37,25 @@
 			if ($this->evento == 0)
 				$this->evento = (int)Request::get('evento_id');
 
+			$this->filter_column = [];
+			$this->filter_column[] = [
+				'cancelada'=>[
+					'label'=>'Cancelada',
+					'type'=>'int',
+					'default_value'=>0
+				]
+			];
+
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			$this->col[] = ["label"=>"Número","name"=>"numero"];
-			$this->col[] = ["label"=>"Responsável","name"=>"pessoa_id","join"=>"pessoas,nome"];
+			$this->col[] = ["label"=>"Resp.","name"=>"pessoa_id","join"=>"pessoas,nome"];
 			$this->col[] = ["label"=>"Cidade","name"=>"pessoa_id","join"=>"pessoas,cidade"];
 			$this->col[] = ["label"=>"Total","name"=>"valorTotal"];
 			$this->col[] = ["label"=>"Pago","name"=>"valorTotalPago"];
+			$this->col[] = ["label"=>"Canc.?","name"=>"cancelada","callback"=>function($row) {
+				return ($row->cancelada == 1) ? '<span class="label label-danger">sim</span>' : '<span class="label label-success">não</span>';
+			}];
 			$this->col[] = ["label"=>"Pagou?","name"=>"inscricaoPaga","callback"=>function($row) {
 				return ($row->inscricaoPaga == 1) ? '<span class="label label-success">sim</span>' : '<span class="label label-danger">não</span>';
 			}];
@@ -64,6 +76,7 @@
 			$this->form[] = ['label'=>'Alojamento','name'=>'alojamento','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'CAMPING|Camping;OUTROS|Outros;LAR|Lar Filadélfia','readonly' =>true];
 			$this->form[] = ['label'=>'Refeição','name'=>'refeicao','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'QUIOSQUE_COM_CAFE|Quiosque com café;QUIOSQUE_SEM_CAFE|Quiosque sem café;LAR_COM_CAFE|Lar com café;LAR_SEM_CAFE|Lar sem café;LAR|Lar Filadélfia (tratar direto);NENHUMA|Nenhuma','readonly' =>true];
 			$this->form[] = ['label'=>'Equipe refeição','name'=>'equipeRefeicao','type'=>'select','width'=>'col-sm-10','dataenum'=>'LAR_A|Lar A;LAR_B|Lar B;QUIOSQUE_A|Quiosque A;QUIOSQUE_B|Quiosque B','readonly' =>true];
+			$this->form[] = ['label'=>'Cancelada?','name'=>'cancelada','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			$this->form[] = ['label'=>'Pagou?','name'=>'inscricaoPaga','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			$this->form[] = ['label'=>'Presença confirmada','name'=>'presencaConfirmada','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			$this->form[] = ['label'=>'Valor inscricão','name'=>'valorInscricao','type'=>'number','width'=>'col-sm-10'];
@@ -105,6 +118,8 @@
 	        | 
 	        */
 			$this->sub_module[] = ['label'=>'Hist. pagamentos','path'=>'historico_pagamentos','custom_parent_id'=>'numero','parent_columns'=>'numero','foreign_key'=>'inscricao_numero','button_color'=>'info','button_icon'=>'fa fa-dollar'];
+			
+			$this->sub_module[] = ['label'=>'Dep.','path'=>'inscricoes','custom_parent_id'=>'numero','parent_columns'=>'numero','foreign_key'=>'numero_inscricao_responsavel','button_color'=>'primary','button_icon'=>'fa fa-folder'];
 			
 
 	        /* 
@@ -192,7 +207,8 @@
 							SUM(case when numero_inscricao_responsavel is null then 1 else 0 end),
 							' / ', COUNT(*)
 						) as resultado"))
-					->where('evento_id', $this->evento)->first()->resultado,
+					->where([['evento_id', $this->evento],
+					['cancelada', 0]])->first()->resultado,
 				'icon'=>'ion ion-person-stalker','color'=>'aqua'];
 
 			$this->index_statistic[] = ['label'=>'Total de presentes famílias / pessoas ',
@@ -332,7 +348,19 @@
 	    */
 	    public function hook_query_index(&$query) {
 	        //Your code here
-			$query->whereNull('numero_inscricao_responsavel');
+			$parent_id = g('parent_id');
+    		$parent_table = g('parent_table');
+
+			if($parent_id && $parent_table) {
+				if($parent_table === 'eventos') {
+					$query->whereNull('numero_inscricao_responsavel');
+				}
+				else if ($parent_table === 'inscricoes') {
+					$query->where('numero_inscricao_responsavel', $parent_id);
+				}
+			}
+
+			
 	    }
 
 	    /*
