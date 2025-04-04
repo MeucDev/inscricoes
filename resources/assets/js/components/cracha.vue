@@ -44,7 +44,7 @@
         data (){
             return{
                 pessoa :  {
-                    event: 'XXIV Congresso de Famílias',
+                    event: 'XXV Congresso de Famílias',
                     nickname: 'Apelido',
                     fullname: 'Nome completo',
                     city: 'Cidade',
