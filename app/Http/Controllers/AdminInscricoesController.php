@@ -211,7 +211,7 @@
 					['cancelada', 0]])->first()->resultado,
 				'icon'=>'ion ion-person-stalker','color'=>'aqua'];
 
-			$this->index_statistic[] = ['label'=>'Total de presentes famílias / pessoas ',
+			$this->index_statistic[] = ['label'=>'Presentes: total de famílias / pessoas ',
 				'count'=>DB::table('inscricoes')
 				->select(
 					DB::raw("CONCAT(
