@@ -25,6 +25,7 @@ class InscricoesController extends Controller
         ->with('dependentes.pessoa')
         ->findOrFail($id);
 
+        $inscricao->pessoa->idade = Pessoa::getIdade($inscricao->pessoa->nascimento);
         $inscricao->presenca = true;
         $inscricao->imprimir = true;
 
