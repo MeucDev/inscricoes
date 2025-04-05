@@ -32,6 +32,7 @@ class InscricoesController extends Controller
 
         foreach ($inscricao->dependentes as $dependente) {
             $dependente->presenca = true;
+            $dependente->pessoa->idade = Pessoa::getIdade($dependente->pessoa->nascimento);
             $dependente->imprimir = ($dependente->pessoa->idade >= $evento->idade_imprimir);
         }
 
