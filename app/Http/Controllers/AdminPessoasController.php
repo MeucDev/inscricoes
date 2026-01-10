@@ -39,6 +39,7 @@
 			$this->col[] = ["label"=>"Tipo","name"=>"TIPO","callback_php"=>'$this->getTipo($row->TIPO)'];
 			$this->col[] = ["label"=>"Responsável","name"=>"responsavel_id","join"=>"pessoas,nome"];
 			$this->col[] = ["label"=>"Inativo","name"=>"inativo"];
+			$this->col[] = ["label"=>"Necessidades Especiais","name"=>"necessidadesEspeciais","callback_php"=>'$row->necessidadesEspeciais == 1 ? "Sim" : "Não"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -58,6 +59,7 @@
 			$this->form[] = ['label'=>'Cidade','name'=>'cidade','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Uf','name'=>'uf','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Telefone','name'=>'telefone','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Necessidades Especiais','name'=>'necessidadesEspeciais','type'=>'radio','validation'=>'nullable|integer','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			$this->form[] = ['label'=>'Conjuge','name'=>'conjuge_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'pessoas,nome'];
 			# END FORM DO NOT REMOVE THIS LINE
 

@@ -39,6 +39,8 @@ class Pessoa extends Model
             $this->casamento = DateTime::createFromFormat('Y-m-d', $this->casamento)->format('d/m/Y');
         if ($this->alojamento == "LAR")
             $this->refeicao = "NENHUMA";
+        if (is_null($this->necessidadesEspeciais))
+            $this->necessidadesEspeciais = 0;
     }
 
     public function toUI($evento){
@@ -164,6 +166,7 @@ class Pessoa extends Model
         $this->nroend = $dados->nroend;
         $this->sexo = $dados->sexo;
         $this->inativo = 0;
+        $this->necessidadesEspeciais = isset($dados->necessidadesEspeciais) ? ($dados->necessidadesEspeciais ? 1 : 0) : null;
     }
 
     public static function atualizarCadastros($dados){

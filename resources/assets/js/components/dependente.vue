@@ -89,6 +89,16 @@
                 </div>
             </div>
         </div>
+        <div class="row box-body">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" v-model="pessoa.necessidadesEspeciais" :value="true"> 
+                        Possui necessidades especiais
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
 </div>        
 </template>
