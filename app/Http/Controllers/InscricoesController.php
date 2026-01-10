@@ -84,6 +84,7 @@ class InscricoesController extends Controller
             'nroend' => 'required',
             'alojamento' => 'required',
             'refeicao' => 'required',
+            'necessidadesEspeciais' => 'nullable|boolean',
 
             'dependentes.*.TIPO' => 'required',
             'dependentes.*.nome' => 'required',
@@ -93,6 +94,7 @@ class InscricoesController extends Controller
             'dependentes.*.sexo' => 'required',
             'dependentes.*.alojamento' => 'required',
             'dependentes.*.refeicao' => 'required',
+            'dependentes.*.necessidadesEspeciais' => 'nullable|boolean',
         ]); 
 
         if (!strrpos($dados->nome, ' '))

@@ -146,6 +146,16 @@
                 </div>
             </div>
         </div>
+        <div class="row box-body">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" v-model="pessoa.necessidadesEspeciais" :value="true"> 
+                        Possui necessidades especiais
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>    
 	<dependente v-for="dependente in pessoa.dependentes" v-bind:key="dependente.id" 
         ref="dependentes"
@@ -240,7 +250,8 @@
         TIPO: 'R', 
         cpf:'', 
         valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
-        dependentes: []
+        dependentes: [],
+        necessidadesEspeciais: false
     };
 
     export default {
@@ -262,6 +273,7 @@
             getInscricao : function(id){
                 this.$http.get('/inscricoes/' + id + '/pessoa').then(response => {
                     this.pessoa = response.body;
+                    this.normalizarNecessidadesEspeciais(this.pessoa);
                 }, (error) => {
                     this.showError(error);
                 }); 
@@ -281,6 +293,7 @@
                     alojamento: this.pessoa.alojamento,
                     refeicao: this.pessoa.refeicao,
                     valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
+                    necessidadesEspeciais: false
                 });
             },
             removeDependente: function(id){
@@ -296,6 +309,7 @@
                     if (response.body.inscricao)
                     {
                         this.pessoa = response.body;
+                        this.normalizarNecessidadesEspeciais(this.pessoa);
                         this.inscricao = this.pessoa.inscricao;
 
                         this.ajustarTodasRefeicoes(this.pessoa);
@@ -339,6 +353,7 @@
                 });
 
                 this.pessoa.interno = this.interno;
+                this.prepararDadosParaEnvio(this.pessoa);
 
                 var self = this;
                 this.$http.post('/inscricoes/criar/' + this.evento , self.pessoa).then(response => {
@@ -385,6 +400,7 @@
                     }
                 });
 
+                this.prepararDadosParaEnvio(this.pessoa);
                 this.$http.put('/inscricoes/' + this.inscricao, this.pessoa).then(response => {
                     swal.close();
                     $("#modal").modal("hide");
@@ -493,6 +509,35 @@
                 }
 
                 swal('Oops...', message, 'error');
+            },
+            normalizarNecessidadesEspeciais: function(pessoa){
+                if (pessoa.necessidadesEspeciais === null || pessoa.necessidadesEspeciais === undefined) {
+                    pessoa.necessidadesEspeciais = false;
+                } else {
+                    pessoa.necessidadesEspeciais = pessoa.necessidadesEspeciais == 1 || pessoa.necessidadesEspeciais === true;
+                }
+                
+                if (pessoa.dependentes && pessoa.dependentes.length > 0) {
+                    var self = this;
+                    pessoa.dependentes.forEach(function(dependente) {
+                        if (dependente.necessidadesEspeciais === null || dependente.necessidadesEspeciais === undefined) {
+                            dependente.necessidadesEspeciais = false;
+                        } else {
+                            dependente.necessidadesEspeciais = dependente.necessidadesEspeciais == 1 || dependente.necessidadesEspeciais === true;
+                        }
+                    });
+                }
+            },
+            prepararDadosParaEnvio: function(pessoa){
+                // Garantir que necessidadesEspeciais seja sempre 0 ou 1 (não boolean)
+                pessoa.necessidadesEspeciais = pessoa.necessidadesEspeciais ? 1 : 0;
+                
+                if (pessoa.dependentes && pessoa.dependentes.length > 0) {
+                    var self = this;
+                    pessoa.dependentes.forEach(function(dependente) {
+                        dependente.necessidadesEspeciais = dependente.necessidadesEspeciais ? 1 : 0;
+                    });
+                }
             }
         }
     }
