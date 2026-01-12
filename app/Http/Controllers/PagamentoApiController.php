@@ -104,7 +104,7 @@ class PagamentoApiController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => 'Dados inválidos',
-                'errors' => $e->errors()
+                'errors' => $e->validator->errors()
             ], 422);
 
         } catch (Exception $e) {
