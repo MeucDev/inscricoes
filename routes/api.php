@@ -16,3 +16,6 @@ use Illuminate\Http\Request;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
+
+// API de Pagamento
+Route::post('/pagamento/confirmar', 'PagamentoApiController@confirmar')->middleware('api.key');
