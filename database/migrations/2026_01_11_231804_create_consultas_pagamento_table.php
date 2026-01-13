@@ -15,7 +15,7 @@ class CreateConsultasPagamentoTable extends Migration
     {
         Schema::create('consultas_pagamento', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('inscricao_numero')->unsigned();
+            $table->integer('inscricao_numero');
             $table->dateTime('ultima_consulta')->nullable();
             $table->dateTime('proxima_consulta');
             $table->integer('tentativas')->default(0);
@@ -25,11 +25,15 @@ class CreateConsultasPagamentoTable extends Migration
             $table->text('ultimo_erro')->nullable();
             $table->timestamps();
 
-            $table->foreign('inscricao_numero')->references('numero')->on('inscricoes')->onDelete('cascade');
             $table->unique('inscricao_numero', 'uk_inscricao');
             $table->index(['proxima_consulta', 'status'], 'idx_proxima_consulta');
             $table->index(['status', 'processando'], 'idx_status_processando');
             $table->index(['proxima_consulta', 'status', 'processando'], 'idx_proxima_consulta_status');
+        });
+
+        // Criar foreign key em uma alteração separada (mais compatível)
+        Schema::table('consultas_pagamento', function (Blueprint $table) {
+            $table->foreign('inscricao_numero')->references('numero')->on('inscricoes')->onDelete('cascade');
         });
     }
 
