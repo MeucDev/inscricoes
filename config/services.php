@@ -35,4 +35,8 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'pagamento' => [
+        'api_key' => env('PAGAMENTO_API_KEY'),
+    ],
+
 ];
