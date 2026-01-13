@@ -45,6 +45,9 @@
 			$this->form[] = ['label'=>'Operação','name'=>'operacao','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Valor','name'=>'valor','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Código PagSeguro','name'=>'pagseguro_code','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Valor Líquido','name'=>'valorLiquido','type'=>'number','validation'=>'nullable|numeric|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Valor Taxas','name'=>'valorTaxas','type'=>'number','validation'=>'nullable|numeric|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Forma de Pagamento','name'=>'formaPagamento','type'=>'text','validation'=>'nullable|max:50','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Data','name'=>'created_at','type'=>'text','validation'=>'required','width'=>'col-sm-9'];
 			# END FORM DO NOT REMOVE THIS LINE
 
@@ -240,10 +243,12 @@
 	    | @query = current sql query 
 	    |
 	    */
-	    public function hook_query_index(&$query) {
-	        //Your code here
-	            
-	    }
+    public function hook_query_index(&$query) {
+        // Converter null para 0 nos campos money para evitar erro no number_format
+        $query->selectRaw('historico_pagamentos.*, 
+            COALESCE(historico_pagamentos.valorLiquido, 0) as valorLiquido,
+            COALESCE(historico_pagamentos.valorTaxas, 0) as valorTaxas');
+    }
 
 	    /*
 	    | ---------------------------------------------------------------------- 
