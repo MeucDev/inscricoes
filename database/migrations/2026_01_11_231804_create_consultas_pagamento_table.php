@@ -13,6 +13,9 @@ class CreateConsultasPagamentoTable extends Migration
      */
     public function up()
     {
+        // Remover tabela se existir (caso tenha sido criada parcialmente em tentativa anterior)
+        Schema::dropIfExists('consultas_pagamento');
+
         Schema::create('consultas_pagamento', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('inscricao_numero');
@@ -31,10 +34,12 @@ class CreateConsultasPagamentoTable extends Migration
             $table->index(['proxima_consulta', 'status', 'processando'], 'idx_proxima_consulta_status');
         });
 
-        // Criar foreign key em uma alteração separada (mais compatível)
-        Schema::table('consultas_pagamento', function (Blueprint $table) {
-            $table->foreign('inscricao_numero')->references('numero')->on('inscricoes')->onDelete('cascade');
-        });
+        // NOTA: A foreign key foi removida temporariamente devido ao erro 1215 em produção
+        // Para criar a foreign key manualmente após verificar a estrutura, veja DIAGNOSTICO_FOREIGN_KEY.md
+        // SQL manual:
+        // ALTER TABLE consultas_pagamento 
+        // ADD CONSTRAINT consultas_pagamento_inscricao_numero_foreign 
+        // FOREIGN KEY (inscricao_numero) REFERENCES inscricoes(numero) ON DELETE CASCADE;
     }
 
     /**
