@@ -20,6 +20,15 @@ class PagamentoApiController extends Controller
     public function confirmar(Request $request)
     {
         try {
+            // Parse JSON do body (Laravel 5.3 pode não fazer isso automaticamente)
+            $content = $request->getContent();
+            if (!empty($content)) {
+                $jsonData = json_decode($content, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($jsonData)) {
+                    $request->merge($jsonData);
+                }
+            }
+
             // Validação do payload
             $this->validate($request, [
                 'inscricao_numero' => 'required|integer|min:1',
