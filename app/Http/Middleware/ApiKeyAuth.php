@@ -16,7 +16,7 @@ class ApiKeyAuth
     public function handle($request, Closure $next)
     {
         $apiKey = $request->header('X-API-Key');
-        $expectedKey = env('PAGAMENTO_API_KEY');
+        $expectedKey = config('services.pagamento.api_key');
 
         if (!$apiKey || $apiKey !== $expectedKey) {
             return response()->json([
