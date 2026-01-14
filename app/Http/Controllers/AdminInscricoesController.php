@@ -86,6 +86,7 @@
 			$this->form[] = ['label'=>'Valor total','name'=>'valorTotal','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
 			$this->form[] = ['label'=>'Valor total pago','name'=>'valorTotalPago','type'=>'number','width'=>'col-sm-10', 'readonly' =>true];
 			$this->form[] = ['label'=>'PagSeguro code','name'=>'pagseguroCode','type'=>'text','validation'=>'','readonly' => true, 'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'PagSeguro Link','name'=>'pagseguroLink','type'=>'text','validation'=>'','readonly' => true, 'width'=>'col-sm-10'];
 
 			//$this->form[] = ['label'=>'Observação','name'=>'observacao','type'=>'wysiwyg','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
