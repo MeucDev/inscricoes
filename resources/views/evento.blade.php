@@ -68,7 +68,11 @@
 			</div>
 		</div>
 		<div class="container">
-			<inscricao :evento="{{$evento->id}}"></inscricao>
+			<inscricao :evento="{{json_encode([
+				'id' => $evento->id,
+				'nome' => $evento->nome,
+				'registrar_data_casamento' => isset($evento->registrar_data_casamento) ? $evento->registrar_data_casamento : 1
+			])}}"></inscricao>
 		</div>
 	</div>
 	@include('scripts')

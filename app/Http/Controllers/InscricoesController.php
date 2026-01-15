@@ -67,7 +67,7 @@ class InscricoesController extends Controller
     } 
     
     public function validar(Request $request, $dados, $evento){
-        $this->validate($request, [
+        $rules = [
             'TIPO' => 'required',
             'cpf' => 'required|digits:11',
             'nome' => 'required',
@@ -90,12 +90,18 @@ class InscricoesController extends Controller
             'dependentes.*.nome' => 'required',
             'dependentes.*.nomecracha' => 'required',
             'dependentes.*.nascimento' => 'required|date_format:d/m/Y|after:01/01/1900',
-            'dependentes.*.casamento' => 'nullable|date_format:d/m/Y|after:01/01/1900|before:' . date("d/m/Y"),
             'dependentes.*.sexo' => 'required',
             'dependentes.*.alojamento' => 'required',
             'dependentes.*.refeicao' => 'required',
             'dependentes.*.necessidadesEspeciais' => 'nullable|boolean',
-        ]); 
+        ];
+
+        // Adiciona validação de casamento apenas se o evento tiver a configuração habilitada
+        if ($evento->registrar_data_casamento == 1) {
+            $rules['dependentes.*.casamento'] = 'nullable|date_format:d/m/Y|after:01/01/1900|before:' . date("d/m/Y");
+        }
+
+        $this->validate($request, $rules); 
 
         if (!strrpos($dados->nome, ' '))
             throw new Exception("O nome do responsável deve ser completo");
@@ -139,8 +145,9 @@ class InscricoesController extends Controller
     public function alterar(Request $request, $id){
         $inscricao = Inscricao::findOrFail($id);
         $dados = (object) json_decode($request->getContent(), true);
+        $evento = Evento::findOrFail($inscricao->evento_id);
 
-        $this->validar($request, $dados, $inscricao->evento_id);
+        $this->validar($request, $dados, $evento);
         
         $pessoa = Pessoa::atualizarCadastros($dados);
 
