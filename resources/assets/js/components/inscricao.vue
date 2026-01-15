@@ -305,7 +305,7 @@
                 if (!this.pessoa.cpf)
                     return;
                     
-                this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ this.evento).then(response => {
+                this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ (typeof this.evento === 'object' ? this.evento.id : this.evento)).then(response => {
                     if (response.body.inscricao)
                     {
                         this.pessoa = response.body;
@@ -356,7 +356,7 @@
                 this.prepararDadosParaEnvio(this.pessoa);
 
                 var self = this;
-                this.$http.post('/inscricoes/criar/' + this.evento , self.pessoa).then(response => {
+                this.$http.post('/inscricoes/criar/' + (typeof this.evento === 'object' ? this.evento.id : this.evento) , self.pessoa).then(response => {
                     var inscricaoCriada = response.body;
                     swal.close();
                     if (self.interno){

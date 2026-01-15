@@ -51,6 +51,7 @@
 			$this->form[] = ['label'=>'Limite de inscrições','name'=>'limite_inscricoes','type'=>'number','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Limite de refeições','name'=>'limite_refeicoes','type'=>'number','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Idade imprimir crachá','name'=>'idade_imprimir','type'=>'number','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Registrar data casamento','name'=>'registrar_data_casamento','type'=>'radio','validation'=>'required|min:0|max:1','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM

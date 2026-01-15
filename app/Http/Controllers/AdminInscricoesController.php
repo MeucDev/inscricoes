@@ -7,7 +7,8 @@
 	use App\Valor;
 	use App\Variacao;
 	use App\Inscricao;
-	use App\Pessoa; 
+	use App\Pessoa;
+	use App\Evento; 
 	
 	class AdminInscricoesController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -136,7 +137,8 @@
 			*/
 
 			$presenca = 'javascript:modalApp.show("Confirmar presença", "presenca", {id: [numero]})';
-			$editar = 'javascript:modalApp.show("Edição", "inscricao", {interno: true, inscricao: [numero], evento:'. $this->evento .'})';
+			$eventoObj = $this->getEventoObject();
+			$editar = 'javascript:modalApp.show("Edição", "inscricao", {interno: true, inscricao: [numero], evento:'. $eventoObj .'})';
 
 			$this->addaction[] = ['label'=>'Confirmar','url'=>$presenca,'icon'=>'fa fa-check','color'=>'success'];			
 			$this->addaction[] = ['label'=>'Editar','url'=>$editar,'icon'=>'fa fa-pencil','color'=>'primary'];			
@@ -256,7 +258,8 @@
 	        |
 			*/
 			
-			$novo = 'javascript:modalApp.show("Nova inscrição", "inscricao", {interno: true, evento:'. $this->evento .'})';
+			$eventoObj = $this->getEventoObject();
+			$novo = 'javascript:modalApp.show("Nova inscrição", "inscricao", {interno: true, evento:'. $eventoObj .'})';
 			
 			$this->script_js = "
 				$(function() {
@@ -447,6 +450,22 @@
 
 
 	    //By the way, you can still create your own method in here... :) 
+
+		private function getEventoObject() {
+			if ($this->evento > 0) {
+				$evento = Evento::find($this->evento);
+				if ($evento) {
+					$eventoData = [
+						'id' => $evento->id,
+						'nome' => $evento->nome,
+						'registrar_data_casamento' => isset($evento->registrar_data_casamento) ? $evento->registrar_data_casamento : 1
+					];
+					return json_encode($eventoData);
+				}
+			}
+			// Fallback se não encontrar o evento
+			return json_encode(['id' => $this->evento, 'nome' => '', 'registrar_data_casamento' => 1]);
+		}
 
 
 	}
