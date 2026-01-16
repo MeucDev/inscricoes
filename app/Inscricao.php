@@ -35,6 +35,11 @@ class Inscricao extends Model
         return $this->belongsTo('App\Evento', 'evento_id');
     }
 
+    public function linkInscricao()
+    {
+        return $this->belongsTo('App\LinkInscricao', 'link_inscricao_id');
+    }
+
     public function populate($pessoa, $evento, $inicial, $tipoInscricao = "NORMAL"){
         $this->dataInscricao = date("Y-m-d h:i:s");
         $this->ano = date("Y");
@@ -85,10 +90,12 @@ class Inscricao extends Model
         return $result;
     }
 
-    public static function criarInscricao($pessoa, $evento, $interno, $tipoInscricao = "NORMAL"){
+    public static function criarInscricao($pessoa, $evento, $interno, $tipoInscricao = "NORMAL", $bypassLimite = false){
         
         $eventoEmUso = Evento::findOrFail($evento);
-        if(!$interno && $eventoEmUso && $eventoEmUso->limite())
+        // Validar limite apenas se não for interno e não for bypass via link seguro
+        // Inscrições via link seguro (parâmetro 'p') podem bypassar o limite
+        if(!$interno && !$bypassLimite && $eventoEmUso && $eventoEmUso->limite())
             throw new Exception("O número limite de inscrições para este evento já foi atingido. Entre em contato com a organização para maiores esclarecimentos.");
 
         $inscricao = Inscricao::where("pessoa_id", $pessoa->id)

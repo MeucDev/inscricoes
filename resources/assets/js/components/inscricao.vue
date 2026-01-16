@@ -380,7 +380,15 @@
                 this.prepararDadosParaEnvio(this.pessoa);
 
                 var self = this;
-                this.$http.post('/inscricoes/criar/' + (typeof this.evento === 'object' ? this.evento.id : this.evento) , self.pessoa).then(response => {
+                // Extrair parâmetro 'p' da URL atual para incluir na requisição POST
+                var urlParams = new URLSearchParams(window.location.search);
+                var tokenParam = urlParams.get('p');
+                var urlCriar = '/inscricoes/criar/' + (typeof this.evento === 'object' ? this.evento.id : this.evento);
+                if (tokenParam) {
+                    urlCriar += '?p=' + encodeURIComponent(tokenParam);
+                }
+                
+                this.$http.post(urlCriar, self.pessoa).then(response => {
                     var inscricaoCriada = response.body;
                     swal.close();
                     if (self.interno){

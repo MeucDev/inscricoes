@@ -1,14 +1,16 @@
 <?php namespace App\Http\Controllers;
 
 	use Session;
-	use Request;
 	use DB;
 	use CRUDBooster;
-	use App\Valor;
-	use App\Variacao;
-	use App\Inscricao;
-	use App\Pessoa;
-	use App\Evento; 
+use App\Valor;
+use App\Variacao;
+use App\Inscricao;
+use App\Pessoa;
+use App\Evento;
+use App\LinkInscricao;
+use Illuminate\Http\Request;
+use Exception;
 	
 	class AdminInscricoesController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -34,9 +36,9 @@
 			$this->table = "inscricoes";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
-			$this->evento = (int)Request::get('parent_id');
+			$this->evento = (int)request()->get('parent_id');
 			if ($this->evento == 0)
-				$this->evento = (int)Request::get('evento_id');
+				$this->evento = (int)request()->get('evento_id');
 
 			$this->filter_column = [];
 			$this->filter_column[] = [
@@ -338,23 +340,75 @@
 					document.body.removeChild(textarea);
 				}
 				
-				function atualizarLinkInscricao(eventoId) {
+				function atualizarLimiteUso() {
 					var tipo = document.getElementById('modal-link-tipo').value;
-					var dataAtual = new Date().toISOString().split('T')[0];
-					var bypassBase64 = btoa(dataAtual);
-					var typeBase64 = btoa(tipo);
-					var urlBase = window.location.origin;
-					var linkGerado = urlBase + '/eventos/' + eventoId + '?bypass=' + bypassBase64 + '&type=' + typeBase64;
-					document.getElementById('modal-link-input').value = linkGerado;
+					var limiteInput = document.getElementById('modal-link-limite');
+					
+					if (tipo === 'NORMAL' || tipo === 'STAFF') {
+						limiteInput.value = '1';
+						limiteInput.readOnly = true;
+						limiteInput.style.backgroundColor = '#f5f5f5';
+					} else {
+						limiteInput.readOnly = false;
+						limiteInput.style.backgroundColor = '#fff';
+						if (!limiteInput.value || limiteInput.value === '1') {
+							limiteInput.value = '';
+						}
+					}
+				}
+				
+				function gerarLinkViaAPI(eventoId) {
+					var tipo = document.getElementById('modal-link-tipo').value;
+					var limiteUso = document.getElementById('modal-link-limite').value;
+					
+					if (!limiteUso || limiteUso < 1) {
+						alert('Por favor, informe um limite de uso válido (maior que zero).');
+						return;
+					}
+					
+					var btnGerar = document.getElementById('modal-btn-gerar');
+					var btnOriginalText = btnGerar.innerHTML;
+					btnGerar.disabled = true;
+					btnGerar.innerHTML = '<i class=\"fa fa-spinner fa-spin\"></i> Gerando...';
+					
+					var data = {
+						evento_id: eventoId,
+						tipoInscricao: tipo,
+						limiteUso: parseInt(limiteUso),
+						_token: document.querySelector('meta[name=\"csrf-token\"]') ? document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content') : ''
+					};
+					
+					$.ajax({
+						url: '/admin/inscricoes/gerar-link',
+						type: 'POST',
+						data: data,
+						success: function(response) {
+							if (response.success) {
+								document.getElementById('modal-link-input').value = response.link;
+								btnGerar.innerHTML = '<i class=\"fa fa-check\"></i> Link Gerado!';
+								setTimeout(function() {
+									btnGerar.innerHTML = btnOriginalText;
+								}, 2000);
+							} else {
+								alert('Erro ao gerar link: ' + (response.message || 'Erro desconhecido'));
+								btnGerar.innerHTML = btnOriginalText;
+							}
+						},
+						error: function(xhr) {
+							var errorMsg = 'Erro ao gerar link.';
+							if (xhr.responseJSON && xhr.responseJSON.message) {
+								errorMsg = xhr.responseJSON.message;
+							}
+							alert(errorMsg);
+							btnGerar.innerHTML = btnOriginalText;
+						},
+						complete: function() {
+							btnGerar.disabled = false;
+						}
+					});
 				}
 				
 				function gerarLinkInscricao(eventoId, eventoObj) {
-					var dataAtual = new Date().toISOString().split('T')[0];
-					var bypassBase64 = btoa(dataAtual);
-					var typeBase64 = btoa('NORMAL');
-					var urlBase = window.location.origin;
-					var linkInicial = urlBase + '/eventos/' + eventoId + '?bypass=' + bypassBase64 + '&type=' + typeBase64;
-					
 					var modalHtml = '<div class=\"modal fade\" id=\"modalGerarLink\" tabindex=\"-1\" role=\"dialog\">' +
 						'<div class=\"modal-dialog\" role=\"document\" style=\"max-width: 600px;\">' +
 						'<div class=\"modal-content\">' +
@@ -367,7 +421,7 @@
 						'<div class=\"modal-body\">' +
 						'<div class=\"form-group\">' +
 						'<label for=\"modal-link-tipo\" style=\"font-weight: bold;\">Selecione o tipo de inscrição:</label>' +
-						'<select id=\"modal-link-tipo\" class=\"form-control\" onchange=\"atualizarLinkInscricao(' + eventoId + ')\">' +
+						'<select id=\"modal-link-tipo\" class=\"form-control\" onchange=\"atualizarLimiteUso()\">' +
 						'<option value=\"NORMAL\">NORMAL</option>' +
 						'<option value=\"BANDA\">BANDA</option>' +
 						'<option value=\"COMITE\">COMITE</option>' +
@@ -375,11 +429,16 @@
 						'</select>' +
 						'</div>' +
 						'<div class=\"form-group\">' +
+						'<label for=\"modal-link-limite\" style=\"font-weight: bold;\">Limite de utilizações <span style=\"color: red;\">*</span>:</label>' +
+						'<input type=\"number\" id=\"modal-link-limite\" class=\"form-control\" value=\"1\" min=\"1\" required readonly style=\"background-color: #f5f5f5;\">' +
+						'<small class=\"help-block\">Para NORMAL e STAFF, o limite é sempre 1. Para BANDA e COMITE, informe o número desejado.</small>' +
+						'</div>' +
+						'<div class=\"form-group\">' +
 						'<label for=\"modal-link-input\" style=\"font-weight: bold;\">Link gerado:</label>' +
 						'<div class=\"input-group\">' +
-						'<input type=\"text\" id=\"modal-link-input\" class=\"form-control\" value=\"' + linkInicial + '\" readonly style=\"font-size: 12px;\">' +
+						'<input type=\"text\" id=\"modal-link-input\" class=\"form-control\" value=\"\" placeholder=\"Clique em Gerar Link para criar o link\" readonly style=\"font-size: 12px;\">' +
 						'<span class=\"input-group-btn\">' +
-						'<button class=\"btn btn-primary\" type=\"button\" onclick=\"copyToClipboard(document.getElementById(\\'modal-link-input\\').value, \\'modal-link-input\\')\">' +
+						'<button class=\"btn btn-primary\" type=\"button\" onclick=\"copyToClipboard(document.getElementById(\\'modal-link-input\\').value, \\'modal-link-input\\')\" id=\"modal-btn-copiar\">' +
 						'<i class=\"fa fa-copy\"></i> Copiar' +
 						'</button>' +
 						'</span>' +
@@ -387,6 +446,9 @@
 						'</div>' +
 						'</div>' +
 						'<div class=\"modal-footer\">' +
+						'<button type=\"button\" class=\"btn btn-success\" onclick=\"gerarLinkViaAPI(' + eventoId + ')\" id=\"modal-btn-gerar\">' +
+						'<i class=\"fa fa-link\"></i> Gerar Link' +
+						'</button>' +
 						'<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Fechar</button>' +
 						'</div>' +
 						'</div>' +
@@ -396,6 +458,11 @@
 					$('#modalGerarLink').remove();
 					$('body').append(modalHtml);
 					$('#modalGerarLink').modal('show');
+					
+					// Inicializar limite baseado no tipo selecionado
+					setTimeout(function() {
+						atualizarLimiteUso();
+					}, 100);
 				}
 			";
 
@@ -597,6 +664,58 @@
 			}
 			// Fallback se não encontrar o evento
 			return json_encode(['id' => $this->evento, 'nome' => '', 'registrar_data_casamento' => 1]);
+		}
+
+		/**
+		 * Gera um link de inscrição com token único
+		 */
+		public function gerarLink(Request $request) {
+			try {
+				$eventoId = $request->input('evento_id');
+				$tipoInscricao = $request->input('tipoInscricao');
+				$limiteUso = $request->input('limiteUso');
+
+				// Validações
+				if (!$eventoId) {
+					return response()->json(['success' => false, 'message' => 'Evento não informado'], 400);
+				}
+
+				$tiposValidos = ['NORMAL', 'BANDA', 'COMITE', 'STAFF'];
+				if (!in_array($tipoInscricao, $tiposValidos)) {
+					return response()->json(['success' => false, 'message' => 'Tipo de inscrição inválido'], 400);
+				}
+
+				// Validar limite de uso
+				if (!$limiteUso || !is_numeric($limiteUso) || $limiteUso < 1) {
+					return response()->json(['success' => false, 'message' => 'Limite de uso deve ser um número maior que zero'], 400);
+				}
+
+				// Para NORMAL e STAFF, sempre usar limite 1
+				if ($tipoInscricao == 'NORMAL' || $tipoInscricao == 'STAFF') {
+					$limiteUso = 1;
+				}
+
+				// Verificar se evento existe
+				$evento = Evento::find($eventoId);
+				if (!$evento) {
+					return response()->json(['success' => false, 'message' => 'Evento não encontrado'], 404);
+				}
+
+				// Criar link
+				$link = LinkInscricao::criar($eventoId, $tipoInscricao, $limiteUso);
+
+				// Gerar URL completa
+				$urlBase = $request->getSchemeAndHttpHost();
+				$linkCompleto = $urlBase . '/eventos/' . $eventoId . '?p=' . $link->token;
+
+				return response()->json([
+					'success' => true,
+					'token' => $link->token,
+					'link' => $linkCompleto
+				]);
+			} catch (Exception $e) {
+				return response()->json(['success' => false, 'message' => 'Erro ao gerar link: ' . $e->getMessage()], 500);
+			}
 		}
 
 

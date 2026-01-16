@@ -6,6 +6,7 @@ use App\Pessoa;
 use App\Valor;
 use App\Inscricao;
 use App\Evento;
+use App\LinkInscricao;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -38,8 +39,51 @@ class EventosController extends Controller
         if (!$evento)
             return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Evento não encontrado']);
 
-        if(!(request()->has('bypass') && base64_decode(request()->query('bypass')) == date("Y-m-d"))) {
+        $tipoInscricao = null;
+        $bypassAtivo = false;
+
+        // Prioridade 1: Validar parâmetro 'p' (link seguro)
+        if (request()->has('p')) {
+            $token = request()->query('p');
+            $linkInscricao = LinkInscricao::where('token', $token)
+                ->where('evento_id', $evento->id)
+                ->first();
             
+            if (!$linkInscricao) {
+                $evento->toUI();
+                return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Link de inscrição inválido']);
+            }
+            
+            // Validar se o link pode ser usado
+            if (!$linkInscricao->isValido() || !$linkInscricao->podeSerUsado()) {
+                $evento->toUI();
+                return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Link de inscrição inválido']);
+            }
+            
+            $tipoInscricao = $linkInscricao->tipo_inscricao;
+            $bypassAtivo = true; // Link seguro ativa bypass
+        }
+        // Prioridade 2: Validar bypass+type (links antigos - compatibilidade)
+        elseif (request()->has('bypass') && request()->has('type')) {
+            $bypassDate = base64_decode(request()->query('bypass'));
+            $typeDecoded = base64_decode(request()->query('type'));
+            $tiposValidos = ['NORMAL', 'BANDA', 'COMITE', 'STAFF'];
+            
+            if ($bypassDate == date("Y-m-d") && in_array($typeDecoded, $tiposValidos)) {
+                $tipoInscricao = $typeDecoded;
+                $bypassAtivo = true;
+            }
+        }
+        // Prioridade 3: Apenas bypass (compatibilidade)
+        elseif (request()->has('bypass')) {
+            $bypassDate = base64_decode(request()->query('bypass'));
+            if ($bypassDate == date("Y-m-d")) {
+                $bypassAtivo = true;
+            }
+        }
+
+        // Se não tem bypass (nem p nem bypass), aplicar validações normais
+        if (!$bypassAtivo) {
             if($evento->breve()) {
                 $evento->toUI();
                 return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Falta pouco! Em breve as inscrições para o próximo evento serão abertas.']);
@@ -68,18 +112,6 @@ class EventosController extends Controller
                 else {
                     return view('evento_mensagem', ['evento' => $evento, 'mensagem' => 'Desculpe, mas já atingimos o limite de inscrições!']);
                 }
-            }
-
-            
-        }
-        
-        // Processar tipoInscricao da query string se presente
-        $tipoInscricao = null;
-        if (request()->has('type')) {
-            $typeDecoded = base64_decode(request()->query('type'));
-            $tiposValidos = ['NORMAL', 'BANDA', 'COMITE', 'STAFF'];
-            if (in_array($typeDecoded, $tiposValidos)) {
-                $tipoInscricao = $typeDecoded;
             }
         }
         
