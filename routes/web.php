@@ -31,6 +31,9 @@ Route::post('/inscricoes/criar/{evento}', 'InscricoesController@criar');
 Route::put('/inscricoes/{id}', 'InscricoesController@alterar');
 Route::put('/inscricoes/set-pago/{id}/', 'InscricoesController@definirPago');
 
+//Admin - Gerar Link de Inscrição
+Route::post('/admin/inscricoes/gerar-link', 'AdminInscricoesController@gerarLink');
+
 //Equipe
 Route::get('/equipes/imprimir/{id}', 'EquipesController@imprimirCrachas');
 

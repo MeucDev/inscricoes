@@ -35,10 +35,15 @@ class Inscricao extends Model
         return $this->belongsTo('App\Evento', 'evento_id');
     }
 
-    public function populate($pessoa, $evento, $inicial){
+    public function linkInscricao()
+    {
+        return $this->belongsTo('App\LinkInscricao', 'link_inscricao_id');
+    }
+
+    public function populate($pessoa, $evento, $inicial, $tipoInscricao = "NORMAL"){
         $this->dataInscricao = date("Y-m-d h:i:s");
         $this->ano = date("Y");
-        $this->tipoInscricao = "NORMAL";
+        $this->tipoInscricao = $tipoInscricao;
         $this->pessoa_id = $pessoa->id;
         $this->alojamento = $pessoa->alojamento;
         $this->equipeRefeicao = $pessoa->equipeRefeicao;
@@ -85,10 +90,12 @@ class Inscricao extends Model
         return $result;
     }
 
-    public static function criarInscricao($pessoa, $evento, $interno){
+    public static function criarInscricao($pessoa, $evento, $interno, $tipoInscricao = "NORMAL", $bypassLimite = false){
         
         $eventoEmUso = Evento::findOrFail($evento);
-        if(!$interno && $eventoEmUso && $eventoEmUso->limite())
+        // Validar limite apenas se não for interno e não for bypass via link seguro
+        // Inscrições via link seguro (parâmetro 'p') podem bypassar o limite
+        if(!$interno && !$bypassLimite && $eventoEmUso && $eventoEmUso->limite())
             throw new Exception("O número limite de inscrições para este evento já foi atingido. Entre em contato com a organização para maiores esclarecimentos.");
 
         $inscricao = Inscricao::where("pessoa_id", $pessoa->id)
@@ -104,12 +111,12 @@ class Inscricao extends Model
             $inscricao = new Inscricao;
         }
 
-        $inscricao->populate($pessoa, $evento, true);
+        $inscricao->populate($pessoa, $evento, true, $tipoInscricao);
         $inscricao->save();
 
         if ($pessoa->conjuge){
             $inscricaoConjuge = new Inscricao;
-            $inscricaoConjuge->populate($pessoa->conjuge, $evento, true);
+            $inscricaoConjuge->populate($pessoa->conjuge, $evento, true, $tipoInscricao);
             $inscricao->dependentes()->save($inscricaoConjuge);
         }
 
@@ -118,7 +125,7 @@ class Inscricao extends Model
                 continue;
 
             $inscricaoDependente = new Inscricao;
-            $inscricaoDependente->populate($dependente, $evento, true);
+            $inscricaoDependente->populate($dependente, $evento, true, $tipoInscricao);
             $inscricao->dependentes()->save($inscricaoDependente);
         }
 
@@ -158,8 +165,14 @@ class Inscricao extends Model
         $inscricao = Inscricao::findOrFail($id);
 
         $evento = $inscricao->evento_id;
+        
+        // Preservar tipoInscricao existente ou usar do objeto pessoa se fornecido
+        $tipoInscricao = isset($pessoa->tipoInscricao) ? $pessoa->tipoInscricao : $inscricao->tipoInscricao;
+        if (!$tipoInscricao || $tipoInscricao == '') {
+            $tipoInscricao = 'NORMAL';
+        }
 
-        $inscricao->populate($pessoa, $evento, false);
+        $inscricao->populate($pessoa, $evento, false, $tipoInscricao);
         $inscricao->save();
     
         $conjuge = $pessoa->conjuge;
@@ -171,7 +184,7 @@ class Inscricao extends Model
                 $inscricaoConjuge = new Inscricao;
             }
 
-            $inscricaoConjuge->populate($pessoa->conjuge, $evento, false);
+            $inscricaoConjuge->populate($pessoa->conjuge, $evento, false, $tipoInscricao);
             $inscricao->dependentes()->save($inscricaoConjuge);
         }
 
@@ -187,7 +200,7 @@ class Inscricao extends Model
                 $inscricaoDependente = new Inscricao;
             }
                     
-            $inscricaoDependente->populate($dependente, $evento, false);
+            $inscricaoDependente->populate($dependente, $evento, false, $tipoInscricao);
             $inscricao->dependentes()->save($inscricaoDependente);
         }
 

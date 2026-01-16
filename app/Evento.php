@@ -58,6 +58,10 @@ class Evento extends Model
 
         $numero = Inscricao::whereNull("numero_inscricao_responsavel")
             ->where("evento_id", $this->id)
+            ->where(function($query) {
+                $query->where("tipoInscricao", "NORMAL")
+                      ->orWhereNull("tipoInscricao");
+            })
             ->count();
 
         if ($numero >= $this->limite_inscricoes)

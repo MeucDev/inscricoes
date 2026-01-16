@@ -6,6 +6,7 @@ use App\Pessoa;
 use App\Valor;
 use App\Inscricao;
 use App\Evento;
+use App\LinkInscricao;
 use App\HistoricoPagamento;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -52,6 +53,7 @@ class InscricoesController extends Controller
 
         $result =  (object) $inscricao->pessoa->toArray();
         $result->valores = $inscricao->getValores();
+        $result->tipoInscricao = $inscricao->tipoInscricao ? $inscricao->tipoInscricao : 'NORMAL';
 
         foreach ($inscricao->dependentes as $dependente) {
             $dependente->pessoa->ajustarDados();
@@ -118,12 +120,62 @@ class InscricoesController extends Controller
         $evento = Evento::findOrFail($evento);
         $dados = (object) json_decode($request->getContent(), true);
 
+        // Processar tipoInscricao e validar link seguro (parâmetro 'p')
+        $tipoInscricao = "NORMAL";
+        $tiposValidos = ['NORMAL', 'BANDA', 'COMITE', 'STAFF'];
+        $linkInscricao = null;
+        
+        // Prioridade 1: Validar parâmetro 'p' (link seguro)
+        if ($request->has('p')) {
+            $token = $request->query('p');
+            $linkInscricao = LinkInscricao::where('token', $token)
+                ->where('evento_id', $evento->id)
+                ->first();
+            
+            if (!$linkInscricao) {
+                throw new Exception("Link de inscrição inválido");
+            }
+            
+            // Validar se o link pode ser usado antes de criar a inscrição
+            if (!$linkInscricao->isValido() || !$linkInscricao->podeSerUsado()) {
+                throw new Exception("Link de inscrição inválido");
+            }
+            
+            $tipoInscricao = $linkInscricao->tipo_inscricao;
+        }
+        // Prioridade 2: tipoInscricao do objeto dados (admin ou link especial via Vue)
+        elseif (isset($dados->tipoInscricao) && in_array($dados->tipoInscricao, $tiposValidos)) {
+            $tipoInscricao = $dados->tipoInscricao;
+        }
+        // Prioridade 3: Fallback - verificar se vem da query string (link especial direto - compatibilidade)
+        elseif ($request->has('bypass') && $request->has('type')) {
+            $bypassDate = base64_decode($request->query('bypass'));
+            $typeDecoded = base64_decode($request->query('type'));
+            
+            // Validar que bypass corresponde à data atual
+            if ($bypassDate == date("Y-m-d") && in_array($typeDecoded, $tiposValidos)) {
+                $tipoInscricao = $typeDecoded;
+            }
+        }
+
         $this->validar($request, $dados, $evento);
         
         $pessoa = Pessoa::atualizarCadastros($dados);
 
-        $result = DB::transaction(function() use ($dados, $pessoa, $evento) {
-            $inscricao = Inscricao::criarInscricao($pessoa, $evento->id, $dados->interno);
+        $result = DB::transaction(function() use ($dados, $pessoa, $evento, $tipoInscricao, $linkInscricao) {
+            // Se há link válido via parâmetro 'p', permite bypass do limite de inscrições
+            $bypassLimite = $linkInscricao !== null;
+            $inscricao = Inscricao::criarInscricao($pessoa, $evento->id, $dados->interno, $tipoInscricao, $bypassLimite);
+            
+            // Vincular inscrição ao link se foi criada via parâmetro 'p'
+            if ($linkInscricao) {
+                $inscricao->link_inscricao_id = $linkInscricao->id;
+                $inscricao->save();
+                
+                // Incrementar contador de uso do link
+                $linkInscricao->incrementarUso();
+            }
+            
             $result = (object)[];
             
             // Sempre executa o checkout PagSeguro e registra no histórico
