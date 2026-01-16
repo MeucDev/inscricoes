@@ -179,8 +179,11 @@
 	        | 
 			*/
 			
+			$eventoObj = $this->getEventoObject();
+			$gerarLink = 'javascript:gerarLinkInscricao('. $this->evento .', '. $eventoObj .')';
 			$cracha = 'javascript:modalApp.show("Cracha", "cracha", {})';
 
+			$this->index_button[] = ["label"=>"Gerar link inscrição","icon"=>"fa fa-link","url"=>$gerarLink];
 			$this->index_button[] = ["label"=>"Imprimir cracha customizado","icon"=>"fa fa-print","url"=>$cracha];			
 
 	        /* 
@@ -210,9 +213,56 @@
 							SUM(case when numero_inscricao_responsavel is null then 1 else 0 end),
 							' / ', COUNT(*)
 						) as resultado"))
-					->where([['evento_id', $this->evento],
-					['cancelada', 0]])->first()->resultado,
+					->where('evento_id', $this->evento)
+					->where('cancelada', 0)
+					->where(function($query) {
+						$query->where("tipoInscricao", "NORMAL")
+							  ->orWhereNull("tipoInscricao");
+					})
+					->first()->resultado,
 				'icon'=>'ion ion-person-stalker','color'=>'aqua'];
+
+			$this->index_statistic[] = ['label'=>'Famílias banda / pessoas',
+				'count'=>
+					DB::table('inscricoes')
+					->select(
+						DB::raw("CONCAT(
+							SUM(case when numero_inscricao_responsavel is null then 1 else 0 end),
+							' / ', COUNT(*)
+						) as resultado"))
+					->where('evento_id', $this->evento)
+					->where('cancelada', 0)
+					->where('tipoInscricao', 'BANDA')
+					->first()->resultado,
+				'icon'=>'fa fa-music','color'=>'purple'];
+
+			$this->index_statistic[] = ['label'=>'Famílias comitê / pessoas',
+				'count'=>
+					DB::table('inscricoes')
+					->select(
+						DB::raw("CONCAT(
+							SUM(case when numero_inscricao_responsavel is null then 1 else 0 end),
+							' / ', COUNT(*)
+						) as resultado"))
+					->where('evento_id', $this->evento)
+					->where('cancelada', 0)
+					->where('tipoInscricao', 'COMITE')
+					->first()->resultado,
+				'icon'=>'fa fa-users','color'=>'blue'];
+
+			$this->index_statistic[] = ['label'=>'Famílias staff / pessoas',
+				'count'=>
+					DB::table('inscricoes')
+					->select(
+						DB::raw("CONCAT(
+							SUM(case when numero_inscricao_responsavel is null then 1 else 0 end),
+							' / ', COUNT(*)
+						) as resultado"))
+					->where('evento_id', $this->evento)
+					->where('cancelada', 0)
+					->where('tipoInscricao', 'STAFF')
+					->first()->resultado,
+				'icon'=>'fa fa-star','color'=>'orange'];
 
 			$this->index_statistic[] = ['label'=>'Presentes: total de famílias / pessoas ',
 				'count'=>DB::table('inscricoes')
@@ -221,7 +271,8 @@
 						SUM(case when numero_inscricao_responsavel is null then 1 else 0 end),
 						' / ', COUNT(*)
 					) as resultado"))
-				->where([['presencaConfirmada', '1'] , ['evento_id', $this->evento]])->first()->resultado,
+				->where([['presencaConfirmada', '1'] , ['evento_id', $this->evento]])
+				->first()->resultado,
 				'icon'=>'fa fa-check','color'=>'green'];
 
 			$this->index_statistic[] = ['label'=> 'Equipes quiosque'
@@ -265,6 +316,87 @@
 				$(function() {
 					$('#btn_add_new_data').attr('href', '". $novo ."');
 				});
+				
+				function copyToClipboard(text, inputId) {
+					var input = document.getElementById(inputId);
+					if (input) {
+						input.select();
+						input.setSelectionRange(0, 99999);
+					}
+					var textarea = document.createElement('textarea');
+					textarea.value = text;
+					textarea.style.position = 'fixed';
+					textarea.style.opacity = '0';
+					document.body.appendChild(textarea);
+					textarea.select();
+					try {
+						document.execCommand('copy');
+						alert('Link copiado para a área de transferência!');
+					} catch (err) {
+						alert('Não foi possível copiar o link');
+					}
+					document.body.removeChild(textarea);
+				}
+				
+				function atualizarLinkInscricao(eventoId) {
+					var tipo = document.getElementById('modal-link-tipo').value;
+					var dataAtual = new Date().toISOString().split('T')[0];
+					var bypassBase64 = btoa(dataAtual);
+					var typeBase64 = btoa(tipo);
+					var urlBase = window.location.origin;
+					var linkGerado = urlBase + '/eventos/' + eventoId + '?bypass=' + bypassBase64 + '&type=' + typeBase64;
+					document.getElementById('modal-link-input').value = linkGerado;
+				}
+				
+				function gerarLinkInscricao(eventoId, eventoObj) {
+					var dataAtual = new Date().toISOString().split('T')[0];
+					var bypassBase64 = btoa(dataAtual);
+					var typeBase64 = btoa('NORMAL');
+					var urlBase = window.location.origin;
+					var linkInicial = urlBase + '/eventos/' + eventoId + '?bypass=' + bypassBase64 + '&type=' + typeBase64;
+					
+					var modalHtml = '<div class=\"modal fade\" id=\"modalGerarLink\" tabindex=\"-1\" role=\"dialog\">' +
+						'<div class=\"modal-dialog\" role=\"document\" style=\"max-width: 600px;\">' +
+						'<div class=\"modal-content\">' +
+						'<div class=\"modal-header\">' +
+						'<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">' +
+						'<span aria-hidden=\"true\">&times;</span>' +
+						'</button>' +
+						'<h4 class=\"modal-title\">Gerar Link de Inscrição</h4>' +
+						'</div>' +
+						'<div class=\"modal-body\">' +
+						'<div class=\"form-group\">' +
+						'<label for=\"modal-link-tipo\" style=\"font-weight: bold;\">Selecione o tipo de inscrição:</label>' +
+						'<select id=\"modal-link-tipo\" class=\"form-control\" onchange=\"atualizarLinkInscricao(' + eventoId + ')\">' +
+						'<option value=\"NORMAL\">NORMAL</option>' +
+						'<option value=\"BANDA\">BANDA</option>' +
+						'<option value=\"COMITE\">COMITE</option>' +
+						'<option value=\"STAFF\">STAFF</option>' +
+						'</select>' +
+						'</div>' +
+						'<div class=\"form-group\">' +
+						'<label for=\"modal-link-input\" style=\"font-weight: bold;\">Link gerado:</label>' +
+						'<div class=\"input-group\">' +
+						'<input type=\"text\" id=\"modal-link-input\" class=\"form-control\" value=\"' + linkInicial + '\" readonly style=\"font-size: 12px;\">' +
+						'<span class=\"input-group-btn\">' +
+						'<button class=\"btn btn-primary\" type=\"button\" onclick=\"copyToClipboard(document.getElementById(\\'modal-link-input\\').value, \\'modal-link-input\\')\">' +
+						'<i class=\"fa fa-copy\"></i> Copiar' +
+						'</button>' +
+						'</span>' +
+						'</div>' +
+						'</div>' +
+						'</div>' +
+						'<div class=\"modal-footer\">' +
+						'<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Fechar</button>' +
+						'</div>' +
+						'</div>' +
+						'</div>' +
+						'</div>';
+					
+					$('#modalGerarLink').remove();
+					$('body').append(modalHtml);
+					$('#modalGerarLink').modal('show');
+				}
 			";
 
             /*

@@ -72,7 +72,7 @@
 				'id' => $evento->id,
 				'nome' => $evento->nome,
 				'registrar_data_casamento' => isset($evento->registrar_data_casamento) ? $evento->registrar_data_casamento : 1
-			])}}"></inscricao>
+			])}}" :tipo-inscricao-link="{{isset($tipoInscricao) ? json_encode($tipoInscricao) : 'null'}}"></inscricao>
 		</div>
 	</div>
 	@include('scripts')

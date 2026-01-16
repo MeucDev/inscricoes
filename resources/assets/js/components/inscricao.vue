@@ -1,5 +1,23 @@
 <template>
 <div id="inscricao">
+    <div v-if="interno" class="box box-primary">
+        <div class="box-header with-border">
+            <h4 class="box-title">Tipo de Inscrição</h4>
+        </div>
+        <div class="row box-body">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="tipoInscricao">Tipo</label>
+                    <select name="tipoInscricao" id="tipoInscricao" v-model="pessoa.tipoInscricao" class="form-control">
+                        <option value="NORMAL">NORMAL</option>
+                        <option value="BANDA">BANDA</option>
+                        <option value="COMITE">COMITE</option>
+                        <option value="STAFF">STAFF</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="box box-primary">
         <div class="box-header with-border">
             <h4 class="box-title">Dados do responsável</h4>
@@ -249,13 +267,14 @@
         id: -1, 
         TIPO: 'R', 
         cpf:'', 
-        valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
+        tipoInscricao: 'NORMAL',
+        valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0, boleto: 0, descontoEventoAnterior: 0},
         dependentes: [],
         necessidadesEspeciais: false
     };
 
     export default {
-        props: ['evento', 'inscricao', 'interno'],
+        props: ['evento', 'inscricao', 'interno', 'tipoInscricaoLink'],
         mixins: [helpers],
         components: {dependente},
         data (){
@@ -265,6 +284,11 @@
             }
         },
         mounted: function(){
+            // Se veio um tipoInscricaoLink (via query string), usar ele
+            if (this.tipoInscricaoLink) {
+                this.pessoa.tipoInscricao = this.tipoInscricaoLink;
+            }
+            
             if (this.inscricao){
                 this.getInscricao(this.inscricao);
             }
@@ -363,7 +387,11 @@
                         $('#modal').modal('hide');
                     }
                     else{
-                        if(this.getTotalDescontoEventoAnterior() >= this.getTotalPagar()) {
+                        var totalPagar = this.getTotalPagar();
+                        var totalDesconto = this.getTotalDescontoEventoAnterior();
+                        
+                        // Só mostrar mensagem de crédito se houver desconto real e se o total a pagar for maior que zero
+                        if (totalDesconto > 0 && totalPagar > 0 && totalDesconto >= totalPagar) {
                             swal({
                                 allowOutsideClick: false,
                                 title: 'Que boa notícia!',
@@ -444,15 +472,17 @@
             },
 
             getTotalPagar: function(){
-                var total = this.pessoa.valores.boleto;
+                var total = this.pessoa.valores && this.pessoa.valores.boleto ? parseFloat(this.pessoa.valores.boleto) : 0;
 
                 if (this.pessoa.dependentes){
                     this.pessoa.dependentes.forEach(dependente => {
-                        total += dependente.valores.boleto;
+                        if (dependente.valores && dependente.valores.boleto) {
+                            total += parseFloat(dependente.valores.boleto);
+                        }
                     });
                 }
                 
-                return total;
+                return total || 0;
             },
             getTotalRefeicao: function(){
                 var total = this.pessoa.valores.refeicao;
@@ -488,7 +518,10 @@
                 return total - desc;
             },
             getTotalDescontoEventoAnterior: function(){
-                return this.pessoa.valores.descontoEventoAnterior ? this.pessoa.valores.descontoEventoAnterior : 0;
+                if (!this.pessoa.valores || !this.pessoa.valores.descontoEventoAnterior) {
+                    return 0;
+                }
+                return parseFloat(this.pessoa.valores.descontoEventoAnterior) || 0;
             },
             setInscricaoPagaCreditosEventoAnterior: function(inscricao_id){
                 this.$http.put('/inscricoes/set-pago/' + inscricao_id).then(response => {

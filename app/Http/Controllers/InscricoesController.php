@@ -52,6 +52,7 @@ class InscricoesController extends Controller
 
         $result =  (object) $inscricao->pessoa->toArray();
         $result->valores = $inscricao->getValores();
+        $result->tipoInscricao = $inscricao->tipoInscricao ? $inscricao->tipoInscricao : 'NORMAL';
 
         foreach ($inscricao->dependentes as $dependente) {
             $dependente->pessoa->ajustarDados();
@@ -118,12 +119,31 @@ class InscricoesController extends Controller
         $evento = Evento::findOrFail($evento);
         $dados = (object) json_decode($request->getContent(), true);
 
+        // Processar tipoInscricao do objeto dados (prioritário) ou da query string como fallback
+        $tipoInscricao = "NORMAL";
+        $tiposValidos = ['NORMAL', 'BANDA', 'COMITE', 'STAFF'];
+        
+        // Priorizar tipoInscricao que vem do objeto dados (admin ou link especial via Vue)
+        if (isset($dados->tipoInscricao) && in_array($dados->tipoInscricao, $tiposValidos)) {
+            $tipoInscricao = $dados->tipoInscricao;
+        }
+        // Fallback: verificar se vem da query string (link especial direto)
+        elseif ($request->has('bypass') && $request->has('type')) {
+            $bypassDate = base64_decode($request->query('bypass'));
+            $typeDecoded = base64_decode($request->query('type'));
+            
+            // Validar que bypass corresponde à data atual
+            if ($bypassDate == date("Y-m-d") && in_array($typeDecoded, $tiposValidos)) {
+                $tipoInscricao = $typeDecoded;
+            }
+        }
+
         $this->validar($request, $dados, $evento);
         
         $pessoa = Pessoa::atualizarCadastros($dados);
 
-        $result = DB::transaction(function() use ($dados, $pessoa, $evento) {
-            $inscricao = Inscricao::criarInscricao($pessoa, $evento->id, $dados->interno);
+        $result = DB::transaction(function() use ($dados, $pessoa, $evento, $tipoInscricao) {
+            $inscricao = Inscricao::criarInscricao($pessoa, $evento->id, $dados->interno, $tipoInscricao);
             $result = (object)[];
             
             // Sempre executa o checkout PagSeguro e registra no histórico

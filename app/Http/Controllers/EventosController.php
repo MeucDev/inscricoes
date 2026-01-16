@@ -72,7 +72,18 @@ class EventosController extends Controller
 
             
         }
+        
+        // Processar tipoInscricao da query string se presente
+        $tipoInscricao = null;
+        if (request()->has('type')) {
+            $typeDecoded = base64_decode(request()->query('type'));
+            $tiposValidos = ['NORMAL', 'BANDA', 'COMITE', 'STAFF'];
+            if (in_array($typeDecoded, $tiposValidos)) {
+                $tipoInscricao = $typeDecoded;
+            }
+        }
+        
         $evento->toUI();
-        return view('evento', ['evento' => $evento]);
+        return view('evento', ['evento' => $evento, 'tipoInscricao' => $tipoInscricao]);
     }
 }
