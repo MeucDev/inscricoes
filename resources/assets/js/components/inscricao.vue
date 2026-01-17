@@ -27,7 +27,7 @@
                 <div class="col-md-3">
                     <div :class="{'form-group': true, 'has-error': errors.has('cpf') }">
                         <label for="cpf">CPF</label>
-                        <input type="text" v-bind:readonly="inscricao" v-validate="'required|digits:11'" v-model="pessoa.cpf" @change="getPessoa" class="form-control" id="cpf" name="cpf">
+                        <input type="text" v-bind:readonly="inscricao" v-mask="'###.###.###-##'" v-validate="{required:true, regex:/\d{3}\.\d{3}\.\d{3}-\d{2}/}" v-model="pessoa.cpf" @change="getPessoa" class="form-control" id="cpf" name="cpf" placeholder="000.000.000-00">
                         <span v-show="errors.has('cpf')" class="help-block">O CPF deve ter 11 dígitos</span>                        
                     </div>
                 </div>
@@ -377,9 +377,12 @@
             getPessoa: function(){
                 if (!this.pessoa.cpf)
                     return;
+                
+                // Remove caracteres não numéricos do CPF antes de enviar
+                var cpfLimpo = this.pessoa.cpf.replace(/\D/g, '');
                     
                 var eventoId = typeof this.evento === 'object' ? this.evento.id : this.evento;
-                this.$http.get('/pessoas/' + this.pessoa.cpf + '/' + eventoId).then(response => {
+                this.$http.get('/pessoas/' + cpfLimpo + '/' + eventoId).then(response => {
                     if (response.body.inscricao)
                     {
                         this.pessoa = response.body;
@@ -676,6 +679,11 @@
                 }
             },
             prepararDadosParaEnvio: function(pessoa){
+                // Remove caracteres não numéricos do CPF antes de enviar
+                if (pessoa.cpf) {
+                    pessoa.cpf = pessoa.cpf.replace(/\D/g, '');
+                }
+                
                 // Garantir que necessidadesEspeciais seja sempre 0 ou 1 (não boolean)
                 pessoa.necessidadesEspeciais = pessoa.necessidadesEspeciais ? 1 : 0;
                 
