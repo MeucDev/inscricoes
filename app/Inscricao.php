@@ -59,14 +59,24 @@ class Inscricao extends Model
         }
 
         $this->valorRefeicao = Pessoa::getValorRefeicao($pessoa, $evento);
-        $this->valorAlojamento = Pessoa::getValorAlojamento($pessoa, $evento);
+        // Inscrições COMITE não pagam taxa de camping
+        if ($tipoInscricao == 'COMITE' && $pessoa->alojamento == 'CAMPING') {
+            $this->valorAlojamento = 0;
+        } else {
+            $this->valorAlojamento = Pessoa::getValorAlojamento($pessoa, $evento);
+        }
         $this->valorTotal = $this->getValorTotal();
     }
 
     public function calcularValores(){
         $this->valorInscricao = Pessoa::getValorInscricao($this->pessoa, $this->evento_id);
         $this->valorRefeicao = Valor::getValor($this->refeicao, $this->evento_id, $this->pessoa);
-        $this->valorAlojamento = Valor::getValor($this->alojamento, $this->evento_id, $this->pessoa);;
+        // Inscrições COMITE não pagam taxa de camping
+        if ($this->tipoInscricao == 'COMITE' && $this->alojamento == 'CAMPING') {
+            $this->valorAlojamento = 0;
+        } else {
+            $this->valorAlojamento = Valor::getValor($this->alojamento, $this->evento_id, $this->pessoa);
+        }
         $this->valorTotal = $this->getValorTotal();
     }
 
