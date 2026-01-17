@@ -292,12 +292,54 @@
             if (this.inscricao){
                 this.getInscricao(this.inscricao);
             }
+            
+            // Calcular valores automaticamente após um pequeno delay para garantir que todos os campos foram inicializados
+            // Isso funciona tanto para edição quanto para criação de nova inscrição
+            var self = this;
+            this.$nextTick(function() {
+                setTimeout(function() {
+                    // Calcular valores se já temos todos os dados necessários preenchidos
+                    if (self.pessoa && self.pessoa.nascimento && self.pessoa.alojamento && self.pessoa.refeicao) {
+                        self.calcularValoresSeNecessario(self.pessoa);
+                    }
+                }, 500);
+            });
+        },
+        watch: {
+            'pessoa.nascimento': function(newVal) {
+                if (newVal && this.pessoa.alojamento && this.pessoa.refeicao) {
+                    var self = this;
+                    this.$nextTick(function() {
+                        self.calcularValoresSeNecessario(self.pessoa);
+                    });
+                }
+            },
+            'pessoa.alojamento': function(newVal) {
+                if (newVal && this.pessoa.nascimento && this.pessoa.refeicao) {
+                    var self = this;
+                    this.$nextTick(function() {
+                        self.calcularValoresSeNecessario(self.pessoa);
+                    });
+                }
+            },
+            'pessoa.refeicao': function(newVal) {
+                if (newVal && this.pessoa.nascimento && this.pessoa.alojamento) {
+                    var self = this;
+                    this.$nextTick(function() {
+                        self.calcularValoresSeNecessario(self.pessoa);
+                    });
+                }
+            }
         },
         methods: {
             getInscricao : function(id){
                 this.$http.get('/inscricoes/' + id + '/pessoa').then(response => {
                     this.pessoa = response.body;
                     this.normalizarNecessidadesEspeciais(this.pessoa);
+                    // Garantir que os valores sejam calculados se estiverem zerados
+                    this.$nextTick(() => {
+                        this.calcularValoresSeNecessario(this.pessoa);
+                    });
                 }, (error) => {
                     this.showError(error);
                 }); 
@@ -312,12 +354,19 @@
                     );
                     return;
                 }
-                this.pessoa.dependentes.push({
+                var novoDependente = {
                     id: this.pessoa.dependentes.length -100,
                     alojamento: this.pessoa.alojamento,
                     refeicao: this.pessoa.refeicao,
                     valores : {inscricao:0, refeicao : 0, alojamento: 0, total: 0},
                     necessidadesEspeciais: false
+                };
+                this.pessoa.dependentes.push(novoDependente);
+                // Calcular valores automaticamente se já tiver nascimento preenchido
+                this.$nextTick(() => {
+                    if (novoDependente.nascimento) {
+                        this.calcularValoresSeNecessario({dependentes: [novoDependente]});
+                    }
                 });
             },
             removeDependente: function(id){
@@ -329,7 +378,8 @@
                 if (!this.pessoa.cpf)
                     return;
                     
-                this.$http.get('/pessoas/' + this.pessoa.cpf + '/'+ (typeof this.evento === 'object' ? this.evento.id : this.evento)).then(response => {
+                var eventoId = typeof this.evento === 'object' ? this.evento.id : this.evento;
+                this.$http.get('/pessoas/' + this.pessoa.cpf + '/' + eventoId).then(response => {
                     if (response.body.inscricao)
                     {
                         this.pessoa = response.body;
@@ -337,6 +387,9 @@
                         this.inscricao = this.pessoa.inscricao;
 
                         this.ajustarTodasRefeicoes(this.pessoa);
+
+                        // Garantir que os valores sejam calculados se estiverem zerados
+                        this.calcularValoresSeNecessario(this.pessoa);
 
                         $("#confirmar").show();
 
@@ -363,8 +416,61 @@
                         }
                     }
                 }, (error) => {
-                    console.log(error.body);
+                    // Se a pessoa não existe no banco (404/400), isso é normal durante criação de nova inscrição
+                    // Não mostrar erro, apenas continuar com o formulário vazio
+                    if (error.status !== 404 && error.status !== 400) {
+                        console.log('Erro ao buscar pessoa:', error.body);
+                    }
+                    
+                    // Mesmo se a pessoa não existir, se o usuário já preencheu os campos necessários,
+                    // podemos calcular os valores automaticamente
+                    var self = this;
+                    this.$nextTick(function() {
+                        self.calcularValoresSeNecessario(self.pessoa);
+                    });
                 });            
+            },
+            calcularValoresSeNecessario: function(pessoa){
+                // Não calcular se não tivermos os dados mínimos necessários
+                if (!pessoa || !this.evento) {
+                    return;
+                }
+                
+                // Verifica se os valores estão zerados e se temos os dados necessários para calcular
+                var valoresZerados = !pessoa.valores || 
+                    (pessoa.valores.inscricao === 0 && pessoa.valores.alojamento === 0 && pessoa.valores.refeicao === 0);
+                
+                var temDadosNecessarios = pessoa.nascimento && pessoa.alojamento && pessoa.refeicao;
+                
+                // Só calcular valores se estão zerados E temos os dados necessários
+                // Isso calcula valores usando apenas os dados do objeto pessoa (via POST /valores)
+                // sem precisar buscar a pessoa no banco de dados
+                if (valoresZerados && temDadosNecessarios) {
+                    // Garantir que temos TIPO definido (necessário para cálculo)
+                    if (!pessoa.TIPO) {
+                        pessoa.TIPO = 'R'; // Responsável
+                    }
+                    this.getValor(pessoa, typeof this.evento === 'object' ? this.evento.id : this.evento, {target: {}});
+                }
+                
+                // Calcular valores dos dependentes também
+                if (pessoa.dependentes && pessoa.dependentes.length > 0) {
+                    var self = this;
+                    pessoa.dependentes.forEach(function(dependente) {
+                        var depValoresZerados = !dependente.valores || 
+                            (dependente.valores.inscricao === 0 && dependente.valores.alojamento === 0 && dependente.valores.refeicao === 0);
+                        
+                        var depTemDadosNecessarios = dependente.nascimento && dependente.alojamento && dependente.refeicao;
+                        
+                        if (depValoresZerados && depTemDadosNecessarios) {
+                            // Garantir que dependentes têm TIPO definido
+                            if (!dependente.TIPO) {
+                                dependente.TIPO = 'F'; // Filho (padrão)
+                            }
+                            self.getValor(dependente, typeof self.evento === 'object' ? self.evento.id : self.evento, {target: {}});
+                        }
+                    });
+                }
             },
             criarIncricao: function(){
                 swal({

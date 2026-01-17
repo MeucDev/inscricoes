@@ -48,23 +48,27 @@ export default {
         },
         getValor: function(pessoa, evento, event){
             if (!pessoa.nascimento){
-                var el =  $(event.target);
-                swal(
-                    'Informação',
-                    'Informe a data de nascimento para obter o valor!',
-                    'info'
-                ).then((result) =>{
-                    var box = el.closest(".box");
-                    box.find("#nascimento").focus();
-                });                   
+                // Só mostrar alerta se houver um evento real (não quando chamado automaticamente)
+                if (event && event.target && $(event.target).length > 0) {
+                    var el = $(event.target);
+                    swal(
+                        'Informação',
+                        'Informe a data de nascimento para obter o valor!',
+                        'info'
+                    ).then((result) =>{
+                        var box = el.closest(".box");
+                        box.find("#nascimento").focus();
+                    });
+                }
                 return;
             }
 
             if (pessoa.nascimento && (pessoa.alojamento || pessoa.refeicao)){
-                this.$http.post('/valores/' + evento , pessoa).then(response => {
+                var eventoId = typeof evento === 'object' ? evento.id : evento;
+                this.$http.post('/valores/' + eventoId , pessoa).then(response => {
                     pessoa.valores = response.body;
                 }, (error) => {
-                    console.log(error);
+                    console.log('Erro ao calcular valores:', error);
                 });            
             }
         },
