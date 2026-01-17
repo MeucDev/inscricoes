@@ -207,6 +207,29 @@ use Exception;
 	        |
 			*/
 			
+			// Famílias geral / pessoas - inclui todos os tipos de inscrições e membros das equipes
+			$totalFamilias = DB::table('inscricoes')
+				->where('evento_id', $this->evento)
+				->where('cancelada', 0)
+				->whereNull('numero_inscricao_responsavel')
+				->count();
+			
+			$totalPessoas = DB::table('inscricoes')
+				->where('evento_id', $this->evento)
+				->where('cancelada', 0)
+				->count();
+			
+			$totalMembrosEquipes = DB::table('equipe_membros')
+				->join('equipes', 'equipe_membros.equipe_id', '=', 'equipes.id')
+				->where('equipes.evento_id', $this->evento)
+				->count();
+			
+			$totalGeralPessoas = $totalPessoas + $totalMembrosEquipes;
+			
+			$this->index_statistic[] = ['label'=>'Famílias geral / pessoas',
+				'count'=> $totalFamilias . ' / ' . $totalGeralPessoas,
+				'icon'=>'fa fa-group','color'=>'teal'];
+
 			$this->index_statistic[] = ['label'=>'Total de famílias / pessoas',
 				'count'=>
 					DB::table('inscricoes')
