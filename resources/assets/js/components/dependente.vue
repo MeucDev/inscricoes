@@ -43,7 +43,7 @@
                 </div>
                 <div v-if="pessoa.TIPO == 'C' && evento && (typeof evento === 'object' ? (evento.registrar_data_casamento == 1 || evento.registrar_data_casamento === true) : true)" :class="{'form-group': true, 'has-error': errors.has('casamento') }">
                     <label for="casamento">Data de Casamento</label>
-                    <input type="text" v-mask="'##/##/####'" v-validate="'required|date_format:dd/MM/yyyy'" class="form-control" v-model="pessoa.casamento" id="casamento" name="casamento" placeholder="dd/mm/aaaa">
+                    <input type="text" v-mask="'##/##/####'" v-validate="regrasValidacaoCasamento" data-vv-as="Data de Casamento" class="form-control" v-model="pessoa.casamento" id="casamento" name="casamento" placeholder="dd/mm/aaaa">
                     <span v-show="errors.has('casamento')" class="help-block">A data deve estar no formato dd/mm/aaaa</span>                        
                 </div>
             </div>
@@ -114,6 +114,14 @@
     export default {
         props: ['pessoa', 'remove', 'evento'],
         mixins: [helpers],
+        computed: {
+            regrasValidacaoCasamento: function() {
+                if (this.deveValidarCasamento()) {
+                    return 'required|date_format:dd/MM/yyyy';
+                }
+                return 'date_format:dd/MM/yyyy';
+            }
+        },
         methods:{
             getTipo : function(tipo){
                 switch(tipo) {
@@ -127,6 +135,9 @@
             },
             validateAll: function(){
                 return this.$validator.validateAll();
+            },
+            deveValidarCasamento: function(){
+                return this.pessoa.TIPO == 'C' && this.evento && (typeof this.evento === 'object' ? (this.evento.registrar_data_casamento == 1 || this.evento.registrar_data_casamento === true) : true);
             },
         }
     }
