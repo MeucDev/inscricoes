@@ -572,22 +572,28 @@ use Exception;
 	    | @query = current sql query 
 	    |
 	    */
-	    public function hook_query_index(&$query) {
-	        //Your code here
-			$parent_id = g('parent_id');
-    		$parent_table = g('parent_table');
+    public function hook_query_index(&$query) {
+        //Your code here
+		$parent_id = g('parent_id');
+    	$parent_table = g('parent_table');
+		$link_inscricao_id = g('link_inscricao_id');
 
-			if($parent_id && $parent_table) {
-				if($parent_table === 'eventos') {
-					$query->whereNull('numero_inscricao_responsavel');
-				}
-				else if ($parent_table === 'inscricoes') {
-					$query->where('numero_inscricao_responsavel', $parent_id);
-				}
+		// Se há link_inscricao_id, filtrar apenas por ele (não usar parent_id para evitar conflitos)
+		if($link_inscricao_id) {
+			$query->where('link_inscricao_id', $link_inscricao_id);
+		} else if($parent_id && $parent_table) {
+			// Aplicar filtro parent apenas quando não há link_inscricao_id
+			if($parent_table === 'eventos') {
+				$query->where('evento_id', $parent_id);
+				$query->whereNull('numero_inscricao_responsavel');
 			}
+			else if ($parent_table === 'inscricoes') {
+				$query->where('numero_inscricao_responsavel', $parent_id);
+			}
+		}
 
 			
-	    }
+    }
 
 	    /*
 	    | ---------------------------------------------------------------------- 

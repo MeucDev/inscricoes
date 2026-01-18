@@ -4,88 +4,77 @@
 	use Request;
 	use DB;
 	use CRUDBooster;
+	use App\LinkInscricao;
+	use Carbon\Carbon;
 
-	class AdminEventosController extends \crocodicstudio\crudbooster\controllers\CBController {
+	class AdminLinksInscricaoController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
-			$this->title_field = "nome";
+			$this->title_field = "token";
 			$this->limit = "20";
-			$this->orderby = "nome,desc";
+			$this->orderby = "data_geracao,desc";
 			$this->global_privilege = false;
 			$this->button_table_action = true;
-			$this->button_bulk_action = true;
+			$this->button_bulk_action = false;
 			$this->button_action_style = "button_icon";
-			$this->button_add = true;
+			$this->button_add = false;
 			$this->button_edit = true;
-			$this->button_delete = true;
-			$this->button_detail = true;
-			$this->button_show = true;
+			$this->button_delete = false;
+			$this->button_detail = false;
+			$this->button_show = false;
 			$this->button_filter = true;
 			$this->button_import = false;
 			$this->button_export = false;
-			$this->table = "eventos";
+			$this->table = "link_inscricoes";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
+
+			$this->evento = (int)request()->get('parent_id');
+			if ($this->evento == 0)
+				$this->evento = (int)request()->get('evento_id');
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Nome","name"=>"nome"];
-			$this->col[] = ["label"=>"Data Inicio","name"=>"data_inicio"];
-			$this->col[] = ["label"=>"Data Fim","name"=>"data_fim"];
-			$this->col[] = ["label"=>"Aberto?","name"=>"aberto","callback"=>function($row) {
-				return ($row->aberto == 1) ? '<span class="label label-success">sim</span>' : '<span class="label label-danger">não</span>';
+			$this->col[] = ["label"=>"Tipo de Inscrição","name"=>"tipo_inscricao","callback"=>function($row) {
+				$tipos = [
+					'NORMAL' => '<span class="label label-primary">NORMAL</span>',
+					'BANDA' => '<span class="label label-info">BANDA</span>',
+					'COMITE' => '<span class="label label-warning">COMITE</span>',
+					'STAFF' => '<span class="label label-success">STAFF</span>'
+				];
+				return isset($tipos[$row->tipo_inscricao]) ? $tipos[$row->tipo_inscricao] : $row->tipo_inscricao;
+			}];
+			$this->col[] = ["label"=>"Limite de Uso","name"=>"limite_uso"];
+			$this->col[] = ["label"=>"Uso Atual","name"=>"uso_atual"];
+			$this->col[] = ["label"=>"Data de Expiração","name"=>"data_expiracao","callback"=>function($row) {
+				if (!$row->data_expiracao) return '-';
+				$dataExpiracao = Carbon::parse($row->data_expiracao);
+				$agora = Carbon::now();
+				$formatoData = $dataExpiracao->format('d/m/Y H:i');
+				
+				// Adicionar indicador visual na data baseado no status
+				if ($dataExpiracao->lessThan($agora)) {
+					return '<span class="text-danger">' . $formatoData . ' <span class="label label-danger">Expirado</span></span>';
+				} elseif ($row->uso_atual >= $row->limite_uso) {
+					return '<span class="text-warning">' . $formatoData . ' <span class="label label-warning">Limite Atingido</span></span>';
+				} else {
+					return '<span class="text-success">' . $formatoData . ' <span class="label label-success">Ativo</span></span>';
+				}
 			}];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Data Início','name'=>'data_inicio','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Data Fim','name'=>'data_fim','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Aberto','name'=>'aberto','type'=>'radio','validation'=>'required|min:0|max:1','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-			$this->form[] = ['label'=>'Fila de espera','name'=>'fila_espera','type'=>'radio','validation'=>'required|min:0|max:1','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-			$this->form[] = ['label'=>'Link detalhes','name'=>'linkDetalhes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Link mapa','name'=>'linkMapa','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Local','name'=>'local','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Limite de inscrições','name'=>'limite_inscricoes','type'=>'number','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Limite de refeições','name'=>'limite_refeicoes','type'=>'number','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Idade imprimir crachá','name'=>'idade_imprimir','type'=>'number','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Registrar data casamento','name'=>'registrar_data_casamento','type'=>'radio','validation'=>'required|min:0|max:1','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
+			$this->form[] = ['label'=>'Evento','name'=>'evento_id','type'=>'hidden', 'value'=>$this->evento];
+			$this->form[] = ['label'=>'Token','name'=>'token','type'=>'text','validation'=>'required','readonly'=>true,'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Tipo de Inscrição','name'=>'tipo_inscricao','type'=>'select','validation'=>'required','width'=>'col-sm-10','dataenum'=>'NORMAL|NORMAL;BANDA|BANDA;COMITE|COMITE;STAFF|STAFF'];
+			$this->form[] = ['label'=>'Limite de Uso','name'=>'limite_uso','type'=>'number','validation'=>'required|integer|min:1','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Uso Atual','name'=>'uso_atual','type'=>'number','validation'=>'required|integer|min:0','readonly'=>true,'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Data de Geração','name'=>'data_geracao','type'=>'datetime','validation'=>'required','readonly'=>true,'width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Data de Expiração','name'=>'data_expiracao','type'=>'datetime','validation'=>'required','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
-			# OLD START FORM
-			//$this->form = [];
-			//$this->form[] = ['label'=>'Nome','name'=>'nome','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Data Início','name'=>'data_inicio','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Data Fim','name'=>'data_fim','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Aberto','name'=>'aberto','type'=>'radio','validation'=>'required|min:0|max:1','width'=>'col-sm-10','dataenum'=>'1|Sim;0|Não'];
-			//$this->form[] = ['label'=>'Link detalhes','name'=>'linkDetalhes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Link mapa','name'=>'linkMapa','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Local','name'=>'local','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Limite de inscrições','name'=>'limite_inscricoes','type'=>'number', 'width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Limite de refeições','name'=>'limite_refeicoes','type'=>'number', 'width'=>'col-sm-10'];
-			# OLD END FORM
-
-			/* 
-	        | ---------------------------------------------------------------------- 
-	        | Sub Module
-	        | ----------------------------------------------------------------------     
-			| @label          = Label of action 
-			| @path           = Path of sub module
-			| @foreign_key 	  = foreign key of sub table/module
-			| @button_color   = Bootstrap Class (primary,success,warning,danger)
-			| @button_icon    = Font Awesome Class  
-			| @parent_columns = Sparate with comma, e.g : name,created_at
-	        | 
-	        */
-			$this->sub_module[] = ['label'=>'Inscrições','path'=>'inscricoes','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'primary','button_icon'=>'fa fa-list'];
-			$this->sub_module[] = ['label'=>'Lar','path'=>'lar','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'warning','button_icon'=>'fa fa-home'];
-			$this->sub_module[] = ['label'=>'Quiosque','path'=>'quiosque','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'danger','button_icon'=>'fa fa-tree'];
-			$this->sub_module[] = ['label'=>'Valores','path'=>'valores','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'success','button_icon'=>'fa fa-dollar'];
-			$this->sub_module[] = ['label'=>'Descontos','path'=>'Descontos','parent_columns'=>'nome','foreign_key'=>'evento_aplicar_id','button_color'=>'warning','button_icon'=>'fa fa-dollar'];
-			$this->sub_module[] = ['label'=>'Links','path'=>'links_inscricao','parent_columns'=>'nome','foreign_key'=>'evento_id','button_color'=>'info','button_icon'=>'fa fa-link'];
-			
 	        /* 
 	        | ---------------------------------------------------------------------- 
 	        | Add More Action Button / Menu
@@ -96,9 +85,11 @@
 	        | @color 	   = Default is primary. (primary, warning, succecss, info)     
 	        | @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
 	        | 
-	        */
-			$this->addaction = array();
-
+			*/
+			// Não incluir parent_id na URL quando filtrando por link_inscricao_id para evitar conflitos
+			$urlInscricoes = CRUDBooster::adminPath('inscricoes?link_inscricao_id=[id]');
+			
+			$this->addaction[] = ['label'=>'Inscrições','url'=>$urlInscricoes,'icon'=>'fa fa-list','color'=>'info'];
 
 	        /* 
 	        | ---------------------------------------------------------------------- 
@@ -121,7 +112,7 @@
 	        | @type    = warning,success,danger,info        
 	        | 
 	        */
-	        $this->alert        = array();
+	        $this->alert = array();
 	                
 
 	        
@@ -135,8 +126,6 @@
 	        | 
 	        */
 	        $this->index_button = array();
-
-
 
 	        /* 
 	        | ---------------------------------------------------------------------- 
@@ -169,6 +158,7 @@
 	        |
 	        */
 	        $this->script_js = NULL;
+
 
 
             /*
@@ -256,7 +246,9 @@
 	    */
 	    public function hook_query_index(&$query) {
 	        //Your code here
-	            
+			if ($this->evento > 0) {
+				$query->where('evento_id', $this->evento);
+			}
 	    }
 
 	    /*
@@ -303,7 +295,6 @@
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
 	        //Your code here
-
 	    }
 
 	    /* 
@@ -344,7 +335,7 @@
 
 
 
-	    //By the way, you can still create your own method in here... :) 
+	    //By the way, you can still create your own method in here... :)
 
 
 	}

@@ -115,6 +115,16 @@ class Meuc_modulsSeeder extends Seeder {
             'controller'=>'AdminLarController',
             'is_protected'=>0,                                
             'is_active'=>1
+        ],
+        [
+            'created_at'=>date('Y-m-d H:i:s'),
+            'name'=>trans('Links de Inscrição'),
+            'icon'=>'fa fa-link',
+            'path'=>'links_inscricao',
+            'table_name'=>'link_inscricoes',
+            'controller'=>'AdminLinksInscricaoController',
+            'is_protected'=>0,                                
+            'is_active'=>1
         ],                  
         ];
 
