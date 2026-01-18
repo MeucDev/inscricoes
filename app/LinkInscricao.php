@@ -93,12 +93,16 @@ class LinkInscricao extends Model
     
     /**
      * Cria um novo link de inscrição
+     * @param int $eventoId ID do evento
+     * @param string $tipoInscricao Tipo de inscrição (NORMAL, BANDA, COMITE, STAFF)
+     * @param int $limiteUso Limite de utilizações do link
+     * @param int $horasValidade Validade do link em horas (padrão: 24 horas)
      */
-    public static function criar($eventoId, $tipoInscricao, $limiteUso)
+    public static function criar($eventoId, $tipoInscricao, $limiteUso, $horasValidade = 24)
     {
         $token = self::gerarToken();
         $dataGeracao = Carbon::now();
-        $dataExpiracao = $dataGeracao->copy()->addHours(24);
+        $dataExpiracao = $dataGeracao->copy()->addHours($horasValidade);
         
         return self::create([
             'evento_id' => $eventoId,

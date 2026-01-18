@@ -367,7 +367,7 @@ use Exception;
 					var tipo = document.getElementById('modal-link-tipo').value;
 					var limiteInput = document.getElementById('modal-link-limite');
 					
-					if (tipo === 'NORMAL' || tipo === 'STAFF') {
+					if (tipo === 'NORMAL') {
 						limiteInput.value = '1';
 						limiteInput.readOnly = true;
 						limiteInput.style.backgroundColor = '#f5f5f5';
@@ -383,9 +383,15 @@ use Exception;
 				function gerarLinkViaAPI(eventoId) {
 					var tipo = document.getElementById('modal-link-tipo').value;
 					var limiteUso = document.getElementById('modal-link-limite').value;
+					var horasValidade = document.getElementById('modal-link-horas').value;
 					
 					if (!limiteUso || limiteUso < 1) {
 						alert('Por favor, informe um limite de uso válido (maior que zero).');
+						return;
+					}
+					
+					if (!horasValidade || horasValidade < 1) {
+						alert('Por favor, informe uma validade em horas válida (maior que zero).');
 						return;
 					}
 					
@@ -398,6 +404,7 @@ use Exception;
 						evento_id: eventoId,
 						tipoInscricao: tipo,
 						limiteUso: parseInt(limiteUso),
+						horasValidade: parseInt(horasValidade),
 						_token: document.querySelector('meta[name=\"csrf-token\"]') ? document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content') : ''
 					};
 					
@@ -454,7 +461,12 @@ use Exception;
 						'<div class=\"form-group\">' +
 						'<label for=\"modal-link-limite\" style=\"font-weight: bold;\">Limite de utilizações <span style=\"color: red;\">*</span>:</label>' +
 						'<input type=\"number\" id=\"modal-link-limite\" class=\"form-control\" value=\"1\" min=\"1\" required readonly style=\"background-color: #f5f5f5;\">' +
-						'<small class=\"help-block\">Para NORMAL e STAFF, o limite é sempre 1. Para BANDA e COMITE, informe o número desejado.</small>' +
+						'<small class=\"help-block\">Para NORMAL, o limite é sempre 1. Para BANDA, COMITE e STAFF, informe o número desejado.</small>' +
+						'</div>' +
+						'<div class=\"form-group\">' +
+						'<label for=\"modal-link-horas\" style=\"font-weight: bold;\">Validade do link (horas) <span style=\"color: red;\">*</span>:</label>' +
+						'<input type=\"number\" id=\"modal-link-horas\" class=\"form-control\" value=\"24\" min=\"1\" required>' +
+						'<small class=\"help-block\">Informe por quantas horas o link será válido a partir da criação.</small>' +
 						'</div>' +
 						'<div class=\"form-group\">' +
 						'<label for=\"modal-link-input\" style=\"font-weight: bold;\">Link gerado:</label>' +
@@ -703,6 +715,7 @@ use Exception;
 				$eventoId = $request->input('evento_id');
 				$tipoInscricao = $request->input('tipoInscricao');
 				$limiteUso = $request->input('limiteUso');
+				$horasValidade = $request->input('horasValidade', 24); // Padrão: 24 horas
 
 				// Validações
 				if (!$eventoId) {
@@ -719,9 +732,14 @@ use Exception;
 					return response()->json(['success' => false, 'message' => 'Limite de uso deve ser um número maior que zero'], 400);
 				}
 
-				// Para NORMAL e STAFF, sempre usar limite 1
-				if ($tipoInscricao == 'NORMAL' || $tipoInscricao == 'STAFF') {
+				// Para NORMAL, sempre usar limite 1
+				if ($tipoInscricao == 'NORMAL') {
 					$limiteUso = 1;
+				}
+
+				// Validar horas de validade
+				if (!is_numeric($horasValidade) || $horasValidade < 1) {
+					return response()->json(['success' => false, 'message' => 'Validade em horas deve ser um número maior que zero'], 400);
 				}
 
 				// Verificar se evento existe
@@ -731,7 +749,7 @@ use Exception;
 				}
 
 				// Criar link
-				$link = LinkInscricao::criar($eventoId, $tipoInscricao, $limiteUso);
+				$link = LinkInscricao::criar($eventoId, $tipoInscricao, $limiteUso, $horasValidade);
 
 				// Gerar URL completa
 				$urlBase = $request->getSchemeAndHttpHost();
