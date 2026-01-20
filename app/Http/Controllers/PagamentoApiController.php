@@ -157,6 +157,7 @@ class PagamentoApiController extends Controller
                 if (!$emailJaEnviado) {
                     PagSeguroNotificacao::enviarEmail($inscricao, "confirmacao");
                     $inscricao->emailConfirmacaoEnviado = 1;
+                    $inscricao->emailConfirmacaoEnviadoAt = date('Y-m-d H:i:s');
                     $inscricao->save();
                 }
             });
