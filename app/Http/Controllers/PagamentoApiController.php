@@ -61,15 +61,6 @@ class PagamentoApiController extends Controller
                 ], 404);
             }
 
-            // Verificar se já está paga (evitar duplicação)
-            if ($inscricao->inscricaoPaga) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Inscrição já foi paga',
-                    'inscricao_numero' => $inscricaoNumero
-                ], 409);
-            }
-
             // Verificar status (3 ou 4 = pago)
             if ($status != 3 && $status != 4) {
                 return response()->json([
@@ -79,33 +70,100 @@ class PagamentoApiController extends Controller
                 ], 400);
             }
 
-            // Processar pagamento dentro de transação
+            // Processar pagamento (criação ou atualização) dentro de transação
             DB::transaction(function() use ($inscricao, $valor, $pagseguroCode, $status, $valorLiquido, $valorTaxas, $formaPagamento, $inscricaoNumero) {
-                // Atualizar inscrição
-                $inscricao->inscricaoPaga = 1;
-                $inscricao->valorInscricaoPago = $valor;
-                $inscricao->valorTotalPago = $inscricao->valorInscricaoPago;
-                $inscricao->pagseguroCode = $pagseguroCode;
-                $inscricao->save();
+                // Compatibilidade com versões antigas de PHP (sem operador ??)
+                $emailJaEnviado = isset($inscricao->emailConfirmacaoEnviado)
+                    ? (bool) $inscricao->emailConfirmacaoEnviado
+                    : false;
 
-                // Registrar no histórico
-                HistoricoPagamento::registrar(
-                    $inscricaoNumero, 
-                    'APROVADO', 
-                    $valor, 
-                    $pagseguroCode,
-                    $valorLiquido,
-                    $valorTaxas,
-                    $formaPagamento
-                );
+                if (!$inscricao->inscricaoPaga) {
+                    // Primeiro pagamento: comportamento atual (criação)
+                    $inscricao->inscricaoPaga = 1;
+                    $inscricao->valorInscricaoPago = $valor;
+                    $inscricao->valorTotalPago = $inscricao->valorInscricaoPago;
+                    $inscricao->pagseguroCode = $pagseguroCode;
+                    $inscricao->save();
 
-                // Enviar email de confirmação
-                PagSeguroNotificacao::enviarEmail($inscricao, "confirmacao");
+                    // Registrar no histórico
+                    HistoricoPagamento::registrar(
+                        $inscricaoNumero, 
+                        'APROVADO', 
+                        $valor, 
+                        $pagseguroCode,
+                        $valorLiquido,
+                        $valorTaxas,
+                        $formaPagamento
+                    );
+                } else {
+                    // Inscrição já paga: atualizar dados e histórico existente
+                    $inscricao->inscricaoPaga = 1;
+                    $inscricao->valorInscricaoPago = $valor;
+                    $inscricao->valorTotalPago = $inscricao->valorInscricaoPago;
+                    $inscricao->pagseguroCode = $pagseguroCode;
+                    $inscricao->save();
+
+                    // Localizar último registro APROVADO no histórico
+                    $historico = HistoricoPagamento::where('inscricao_numero', $inscricaoNumero)
+                        ->where('operacao', 'APROVADO')
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+
+                    if (!$historico) {
+                        // Cenário raro: inscrição paga sem histórico APROVADO registrado
+                        HistoricoPagamento::registrar(
+                            $inscricaoNumero, 
+                            'APROVADO', 
+                            $valor, 
+                            $pagseguroCode,
+                            $valorLiquido,
+                            $valorTaxas,
+                            $formaPagamento
+                        );
+                    } else {
+                        $atualizou = false;
+
+                        // Atualizar sempre o valor bruto
+                        if ($historico->valor != $valor) {
+                            $historico->valor = $valor;
+                            $atualizou = true;
+                        }
+
+                        // Atualizar valor líquido apenas se enviado e diferente
+                        if ($valorLiquido !== null && $historico->valorLiquido != $valorLiquido) {
+                            $historico->valorLiquido = $valorLiquido;
+                            $atualizou = true;
+                        }
+
+                        // Atualizar valor de taxas apenas se enviado e diferente
+                        if ($valorTaxas !== null && $historico->valorTaxas != $valorTaxas) {
+                            $historico->valorTaxas = $valorTaxas;
+                            $atualizou = true;
+                        }
+
+                        // Atualizar forma de pagamento apenas se enviada e diferente
+                        if ($formaPagamento !== null && $historico->formaPagamento != $formaPagamento) {
+                            $historico->formaPagamento = $formaPagamento;
+                            $atualizou = true;
+                        }
+
+                        if ($atualizou) {
+                            $historico->save();
+                        }
+                    }
+                }
+
+                // Enviar email de confirmação apenas se ainda não enviado
+                if (!$emailJaEnviado) {
+                    PagSeguroNotificacao::enviarEmail($inscricao, "confirmacao");
+                    $inscricao->emailConfirmacaoEnviado = 1;
+                    $inscricao->save();
+                }
             });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pagamento confirmado com sucesso',
+                'message' => 'Pagamento processado com sucesso',
                 'inscricao_numero' => $inscricaoNumero
             ], 200);
 

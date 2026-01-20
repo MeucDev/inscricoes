@@ -114,15 +114,26 @@ Invoke-RestMethod -Uri "https://seu-dominio.com.br/api/pagamento/confirmar" `
 ```json
 {
   "success": true,
-  "message": "Pagamento confirmado com sucesso"
+  "message": "Pagamento processado com sucesso"
 }
 ```
 
 **Ações realizadas:**
-1. Inscrição marcada como paga (`inscricaoPaga = 1`)
-2. Valores atualizados na inscrição
-3. Registro criado no histórico de pagamentos (`historico_pagamentos`) com operação "APROVADO"
-4. Email de confirmação enviado para o responsável
+1. Se a inscrição **ainda não estava paga**:
+   - Inscrição marcada como paga (`inscricaoPaga = 1`)
+   - Valores atualizados na inscrição
+   - Registro criado no histórico de pagamentos (`historico_pagamentos`) com operação "APROVADO"
+2. Se a inscrição **já estava paga**:
+   - Inscrição mantida como paga e valores atualizados (bruto e código PagSeguro)
+   - Último registro `APROVADO` em `historico_pagamentos` é atualizado com:
+     - `valor` (bruto)
+     - `valorLiquido` (se enviado e diferente)
+     - `valorTaxas` (se enviado e diferente)
+     - `formaPagamento` (se enviada e diferente)
+   - Caso não exista registro `APROVADO`, um novo registro é criado com esses dados
+3. Email de confirmação é enviado **apenas uma vez** por inscrição:
+   - Primeiro envio marca `emailConfirmacaoEnviado = 1` na tabela `inscricoes`
+   - Chamadas futuras não reenviam o email se `emailConfirmacaoEnviado = 1`
 
 ### Erro: Não Autorizado (401 Unauthorized)
 
