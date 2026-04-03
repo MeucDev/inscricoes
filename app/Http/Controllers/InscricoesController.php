@@ -179,14 +179,14 @@ class InscricoesController extends Controller
             $result = (object)[];
             
             // Sempre executa o checkout PagSeguro e registra no histórico
-            $pagamentoResult = PagSeguroIntegracao::gerarPagamento($inscricao);
-            HistoricoPagamento::registrar($inscricao->numero, 'CRIADO', $inscricao->valorTotal, '');
+            //$pagamentoResult = PagSeguroIntegracao::gerarPagamento($inscricao);
+            //HistoricoPagamento::registrar($inscricao->numero, 'CRIADO', $inscricao->valorTotal, '');
             
             // Se não for interno, retorna o link para redirecionamento
             // Se for interno, retorna objeto vazio (link já foi salvo em pagseguroLink)
-            if (!$dados->interno) {
-                $result = $pagamentoResult;
-            }
+            //if (!$dados->interno) {
+            //    $result = $pagamentoResult;
+            //}
             
             return $result;
         });        
