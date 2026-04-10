@@ -22,7 +22,9 @@ class InscricoesController extends Controller
     {
         $inscricao = Inscricao::with('pessoa')
         ->with('evento')
-        ->with('dependentes')
+        ->with(['dependentes' => function ($query) {
+            $query->where('cancelada', 0);
+        }])
         ->with('dependentes.pessoa')
         ->findOrFail($id);
 
@@ -224,7 +226,9 @@ class InscricoesController extends Controller
     {
         $dados = (object) json_decode($request->getContent(), true);
 
-        $inscricao = Inscricao::with('dependentes')->findOrFail($id);
+        $inscricao = Inscricao::with(['dependentes' => function ($query) {
+            $query->where('cancelada', 0);
+        }])->findOrFail($id);
 
         DB::transaction(function() use ($inscricao, $dados, $id) {
             foreach ($inscricao->dependentes as $key => $value) {
