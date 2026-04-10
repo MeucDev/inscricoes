@@ -63,7 +63,12 @@ use Exception;
 				return ($row->inscricaoPaga == 1) ? '<span class="label label-success">sim</span>' : '<span class="label label-danger">não</span>';
 			}];
 			$this->col[] = ["label"=>"Presente?","name"=>"presencaConfirmada","callback"=>function($row) {
-				return ($row->presencaConfirmada == 1) ? '<span class="label label-success">sim</span>' : '<span class="label label-danger">não</span>';
+				if ($row->presencaConfirmada == 1) {
+					$checkinEm = isset($row->checkinEm) ? $row->checkinEm : null;
+					$tooltip = $this->formatarTooltipCheckin($checkinEm);
+					return '<span class="label label-success" data-toggle="tooltip" data-placement="top" title="' . e($tooltip) . '">sim</span>';
+				}
+				return '<span class="label label-danger">não</span>';
 			}];
 			$this->col[] = ["label"=>"Inscritos","name"=>"(select count(*) from inscricoes ins where ins.numero_inscricao_responsavel = inscricoes.numero) + 1 as total_inscritos","callback"=>function($row) {
 				return '<span class="badge bg-yellow">'. $row->total_inscritos .'</span>';
@@ -340,6 +345,7 @@ use Exception;
 			$this->script_js = "
 				$(function() {
 					$('#btn_add_new_data').attr('href', '". $novo ."');
+					$('[data-toggle=\"tooltip\"]').tooltip();
 				});
 				
 				function copyToClipboard(text, inputId) {
@@ -586,6 +592,7 @@ use Exception;
 	    */
     public function hook_query_index(&$query) {
         //Your code here
+		$query->addSelect('inscricoes.checkinEm as checkinEm');
 		$parent_id = g('parent_id');
     	$parent_table = g('parent_table');
 		$link_inscricao_id = g('link_inscricao_id');
@@ -705,6 +712,23 @@ use Exception;
 			}
 			// Fallback se não encontrar o evento
 			return json_encode(['id' => $this->evento, 'nome' => '', 'registrar_data_casamento' => 1]);
+		}
+
+		private function formatarTooltipCheckin($checkinEm) {
+			if (!$checkinEm) {
+				return 'Check-in sem horário registrado';
+			}
+
+			if ($checkinEm instanceof \DateTimeInterface) {
+				return 'Check-in em ' . $checkinEm->format('d/m/Y H:i:s');
+			}
+
+			$timestamp = strtotime((string)$checkinEm);
+			if (!$timestamp) {
+				return 'Check-in confirmado';
+			}
+
+			return 'Check-in em ' . date('d/m/Y H:i:s', $timestamp);
 		}
 
 		/**
