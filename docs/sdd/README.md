@@ -31,5 +31,6 @@ Responder na conversa por número (`Q1 = A`, `Q4 = A com ressalva…`) ou editan
 ## Status
 
 - Spec: rascunho a partir da wiki
-- Drill: **rodada 1 em andamento** (Q1–Q11, decisões de espinha)
+- Drill: **rodada 1 em andamento** (Q1–Q12, decisões de espinha)
 - Implementação: bloqueada até fechar a rodada 1
+- Rodada 2 (Q13–Q42) está escrita e bloqueada até Q1–Q12
