@@ -152,6 +152,8 @@ Comportamentos implícitos na wiki:
 
 Ainda não especificado: provedor, meios (PIX/cartão/boleto), momento da cobrança, o que acontece se o valor muda antes do pagamento, split, nota fiscal, prazos de cancelamento automático e de reembolso.
 
+Decisões **candidatas** em issues, não herdadas até o drill confirmar: #25 Asaas; #26 cancelar não paga no vencimento; #28 política de reembolso (100%−taxas até 7 dias; 50% taxa + 100% alimentação até 15 dias antes).
+
 ## 14. Fila de espera
 
 - Evento pode ter fila ativa
@@ -199,3 +201,7 @@ Entidades citadas na wiki e ainda sem campos: Evento, TipoEvento, Lote, ItemAdic
 ## 19. Requisitos não funcionais `[ABERTO]`
 
 Volume esperado, hospedagem, SLA do checkout, e-mail, PII, backup, se a v1 é sistema novo ou evolução deste repositório.
+
+## 20. Rascunho de modelo
+
+Ver `modelo-dados.md`. A wiki só listou o agregado Inscrição e parou. Entidades citadas sem campos permanecem `[ABERTO]` até a rodada 2.

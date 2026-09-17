@@ -52,7 +52,7 @@ Pontos de atrito com a wiki:
 
 ## 3. Proposta de agregados (hipótese)
 
-A ser confirmada em D9.* do drill.
+A ser confirmada em Q4 / Q40 / Q17 do `drill.md`.
 
 ```
 EventType
@@ -106,7 +106,7 @@ PaymentCredential
 
 ## 4. Estados de inscrição (hipótese)
 
-A wiki lista ações, não a máquina de estados. Hipótese para D6/D3:
+A wiki lista ações, não a máquina de estados. Hipótese para Q9 / Q23 / Q25:
 
 ```
 rascunho? → aguardando_pagamento → paga
@@ -119,7 +119,7 @@ rascunho? → aguardando_pagamento → paga
 ```
 
 Fila de espera é **outra** entidade, não um status da inscrição — a menos que
-D6.1 diga o contrário.
+Q32 diga o contrário.
 
 ## 5. Lacunas explícitas da seção Dados
 
