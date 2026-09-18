@@ -1,25 +1,30 @@
 # Modelo de dados — rascunho Next-gen
 
-A wiki só descreveu o agregado **Inscrição** e parou. Este arquivo propõe um
-esqueleto para discussão. Nenhuma tabela abaixo é contrato até o drill P0/P1
-ser respondido.
+Status: espinha alinhada à rodada 1. Campos e catálogos ainda `[ABERTO]`.
 
-## 1. O que a wiki definiu
+## 1. Fechado na rodada 1
+
+- **Inscrição** é agregado de **núcleo** (não 1 linha por pessoa).
+- 1 inscrição → 1 cobrança → 1 status de pagamento.
+- **Tipo de evento** define modo de inscrição e se exige vínculo.
+- **Dois grupos distintos:** vínculo (origem/igreja) vs operacional (staff/banda/comitê, com prioridade/gratuidade).
+- **PaymentCredential** é por evento: `provider` + segredos da conta.
+- Operação v1: presença, crachá, equipes de refeição, links seguros, grupos operacionais.
+- Não há estado `rascunho` sem cobrança: ao finalizar já existe cobrança.
+
+## 2. O que a wiki definiu
 
 ```
 Inscrição
   - Id
   - Evento
   - DataInscricao
-  - PrevisaoaChegada
+  - PrevisaoChegada
   - Membros
   - Adicionais
 ```
 
-Implicação importante: a inscrição deixa de ser “uma linha por pessoa”
-(legado) e vira um **agregado familiar/grupo** com membros e adicionais.
-
-## 2. Como o legado persiste hoje
+## 3. Como o legado persiste hoje
 
 ```
 pessoas 1 ──< inscricoes (uma linha por pessoa, por evento)
@@ -41,101 +46,110 @@ eventos 1 ──< equipes 1 ──< equipe_membros
 inscricoes 1 ──< historico_pagamentos
 ```
 
-Pontos de atrito com a wiki:
+Mapeamento de migração (script à parte): N linhas de inscrição do mesmo responsável → 1 agregado núcleo. `[ABERTO]` regras de conflito (dependente pago vs responsável não, Pix externo, etc.).
 
-1. **Membros na inscrição** vs pessoa global reutilizada por CPF entre anos.
-2. **Adicionais** vs colunas `alojamento` / `refeicao`.
-3. **Lote** não é entidade; está escondido em variação de preço.
-4. **PrevisaoChegada** não existe.
-5. Não há entidade de pagamento/cobrança própria (só código PagSeguro na inscrição + histórico).
-6. Não há termo, aceite, fila, solicitação de alteração, reembolso, OTP.
-
-## 3. Proposta de agregados (hipótese)
-
-A ser confirmada em Q4 / Q40 / Q17 do `drill.md`.
+## 4. Agregados (hipótese atualizada)
 
 ```
 EventType
-  flags: hasDiscount, requiresGroupLink, inscriptionMode
-         (individual | responsible_with_dependents | responsible_on_behalf)
+  hasDiscount: bool
+  requiresGroupLink: bool          # Jovens = true; Famílias = false
+  inscriptionMode:
+    responsible_participates       # Congresso de Famílias
+    | responsible_on_behalf_minors # responsável não é membro participante
+    | individual                   # [ABERTO se v1]
 
 Event
-  type, termsVersion, paymentCredentialRef
-  copy-from (deep clone)
+  type
+  termsVersion
+  paymentProvider                  # asaas | pagseguro | …
+  paymentCredentialRef             # conta daquele evento
+  unpaidCancelAfter                # prazo configurável
   waitlistEnabled
-  extras[] (catalog)
-  batches[] (lotes)
-  participationGroups[]
-  linkGroups[]          # “grupos para vínculo de inscrição”
+  extras[]
+  batches[]
+  operationalGroups[]              # staff, banda, comitê, … + prioridade/gratuidade
+  linkGroups[]                     # vínculo de origem, se o tipo exigir
+  mealTeams[]                      # [ABERTO: separado de operationalGroups?]
 
-Batch (lote)
+Batch
   opensAt, closesAt, capacity, feeAmount
 
-CatalogItem (adicional)
+CatalogItem
   category (lodging | meal | other)
-  priceVariations[] (by age range and/or until date)
+  priceVariations[] (age and/or until date)
 
 DiscountRule
-  percent | progressiveDependents | byTaxId | byDistance | previousEventCredit
+  percent | progressiveDependents | byTaxId | byDistance
+  | previousEventCredit | operationalGroupBenefit
 
-Person (identidade)
+Person
   contacts, taxId?, locale (BR/PY), lgpdConsent[]
 
-Inscription (agregado)
+User
+  login (OTP) → Person?
+  # modo menores: User é o responsável; pode não haver Member correspondente
+
+Inscription
   event, batch, status, createdAt, estimatedArrival
+  accountableUser                  # quem se autentica / paga
+  groupLink?                       # se o tipo exigir
+  operationalGroup?                # staff/banda/comitê; pode vir de SecureLink
   members[]
     personRef or snapshot
-    role (holder | spouse | dependent | …)
+    role (holder | spouse | dependent | minor | …)
+    participates: bool             # false para responsável no modo menores
     selectedExtras[]
-    badgeName, specialNeeds
+    badgeName, specialNeeds, checkInAt?
   pricingSnapshot
-  payment[] / refund[]
+  charges[]                        # 1 no fluxo feliz; 2ª se alteração aumentar valor [ABERTO]
+  refunds[]
   changeRequests[]
   cancellationRequest?
 
+SecureLink
+  event, operationalGroup?, usageLimit, expiresAt
+  # legado: fura limite do evento
+
 WaitlistEntry
-  event, person/family, status, createdAt
+  event, inscription-or-user, status, createdAt
 
 TermsDocument
   version, body, effectiveAt
-  acceptances[] (person, version, at, ip)
+  acceptances[] (user/person, version, at, ip)
 
 PaymentCredential
   provider, event-scoped secrets
 ```
 
-## 4. Estados de inscrição (hipótese)
-
-A wiki lista ações, não a máquina de estados. Hipótese para Q9 / Q23 / Q25:
+## 5. Estados de inscrição
 
 ```
-rascunho? → aguardando_pagamento → paga
-                 ↓                    ↓
-            cancelada_nao_paga   solicitacao_alteracao
-                                 solicitacao_cancelamento
-                                      ↓
-                                 reembolso_pendente → reembolsada
-                                 (ou indeferida → paga)
+aguardando_pagamento → paga
+        │                 ├── solicitacao_alteracao → (aprovada: paga | 2ª cobrança [ABERTO])
+        │                 └── solicitacao_cancelamento
+        │                          ↓
+        │                    reembolso_pendente → reembolsada
+        │                    (ou indeferida → paga)
+        ↓
+cancelada_nao_paga   (prazo do evento esgotou, ou cancelamento pelo usuário)
 ```
 
-Fila de espera é **outra** entidade, não um status da inscrição — a menos que
-Q32 diga o contrário.
+Fila de espera é **outra** entidade.
 
-## 5. Lacunas explícitas da seção Dados
+## 6. Lacunas explícitas
 
-Preencher depois do drill (não inventar agora):
-
-- [ ] Pessoa / Membro (campos, CPF opcional, Paraguai, complemento de endereço)
-- [ ] Snapshot vs identidade viva
+- [ ] Pessoa / Membro (campos, CPF opcional, Paraguai, complemento)
+- [ ] Snapshot vs identidade viva (Q40)
 - [ ] Catálogo de adicionais e variações
-- [ ] Lote
-- [ ] Desconto (incluindo progressivo)
-- [ ] Grupo de vínculo × grupo de participação
+- [ ] Lote / o que o `capacity` conta
+- [ ] Desconto progressivo e empilhamento com grupo operacional
+- [ ] Vínculo vs grupo operacional vs equipe de refeição
 - [ ] Termo e aceite
-- [ ] Credencial de pagamento e cobrança
+- [ ] Primeiro `provider` e formato da cobrança
 - [ ] Fila de espera
 - [ ] Solicitação de alteração / cancelamento / reembolso
 - [ ] OTP / sessão
-- [ ] Auditoria LGPD (pedido de anonimização)
-- [ ] Presença / equipe / crachá (se v1 incluir operação do evento)
-- [ ] KPIs: quais fatos precisam estar no modelo para os três dashboards
+- [ ] Auditoria LGPD
+- [ ] KPIs: fatos para os três dashboards
+- [ ] Mapeamento do script de migração

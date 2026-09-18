@@ -1,8 +1,11 @@
 # Inventário do legado (wiki ainda não cobre)
 
 Leitura do código atual (`master`) e das issues abertas, para o drill não
-“descobrir” o Congresso de Famílias na hora de implementar. Nada aqui é
-requisito Next Gen até ser aceito na spec.
+“descobrir” o Congresso de Famílias na hora de implementar.
+
+Aceito na spec v1 (rodada 1): check-in, crachá, equipes de refeição,
+BANDA/COMITE/STAFF (como grupos operacionais), links seguros, agregado
+familiar. O restante continua candidato até a wiki/rodada 2.
 
 ## Unidade de inscrição hoje
 
@@ -28,12 +31,12 @@ requisito Next Gen até ser aceito na spec.
 
 ## Pagamento hoje
 
-- PagSeguro legado (`allw/laravel-pagseguro`), checkout por inscrição responsável.
+- PagSeguro legado (`allw/laravel-pagseguro`), checkout por inscrição responsável. **Já inoperante** (caiu 2 dias antes do último evento; resto via Pix externo).
 - Webhook de notificação + consulta assíncrona em análise (`analysis/ConsultaPagamentos`, tabela `consultas_pagamento`).
 - Histórico de pagamentos (`valorLiquido`, `valorTaxas`, `formaPagamento`).
-- Flags `inscricaoPaga`, `cancelada`. Cancelamento automático de não pagas **não** está ligado; a análise sugere 7 dias. (#26)
+- Flags `inscricaoPaga`, `cancelada`. Cancelamento automático de não pagas **não** está ligado; a análise sugere 7 dias. (#26). Spec v1: prazo configurável **no evento**.
 
-## Operação de evento hoje (ausente na wiki)
+## Operação de evento hoje (ausente na wiki; **aceito na v1**)
 
 - Check-in / presença (`presencaConfirmada`, `checkin_em`). (#36, #37)
 - Crachá (`nomecracha`, componentes Vue). (#59, #70)
@@ -55,7 +58,7 @@ Confirmar ou rejeitar na rodada 2; a wiki não as cita.
 
 | Issue | Decisão candidata | Estado |
 |---|---|---|
-| #25 | Trocar PagSeguro por **Asaas** (cobrança vs link ainda em aberto) | OPEN |
+| #25 | Trocar PagSeguro por **Asaas** (cobrança vs link ainda em aberto). Spec: pluggable; Asaas **ou** PagSeguro atual; motor+credenciais por evento | OPEN (adapter) |
 | #26 | Cancelar não paga quando o gateway expirar; avisar na confirmação | OPEN |
 | #27 | Usuário autenticado edita/cancela inscrição **não paga** | OPEN |
 | #28 | Reembolso: 100%−taxas até 7 dias; 50% taxa + 100% alimentação até 15 dias antes do evento | OPEN |
